@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $skillDir = Resolve-Path (Join-Path $scriptDir "..")
-$destination = Join-Path $DestinationRoot "ALIGNHARNESS"
+$destination = Join-Path $DestinationRoot "alignharness"
 
 New-Item -ItemType Directory -Force -Path $DestinationRoot | Out-Null
 
@@ -25,4 +25,4 @@ foreach ($dir in $excludeDirs) {
     Remove-Item -Recurse -Force
 }
 
-Write-Host "Installed ALIGNHARNESS Codex skill to $destination"
+Write-Host "Installed AlignHarness Codex skill to $destination"

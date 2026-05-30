@@ -118,6 +118,8 @@ Use any Promptfoo provider id that works in your environment. Only use hosted pr
 
 A generated example visualization is checked in at `examples/skill-chart.example.html`.
 
+The checked-in chart uses bundled demo results, so its model/config labels are examples. After a real Promptfoo run, the chart will reflect the providers or configs from `reports/results.json`.
+
 ## Optional: judge-based A/B runner
 
 Use the custom runner when you specifically want to compare a default prompt against a custom prompt and have a judge decide which response better matches the profile.

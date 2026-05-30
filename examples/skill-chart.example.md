@@ -13,10 +13,10 @@ This is a personal-fit chart, not a general model leaderboard. Higher scores mea
 
 | Preference | careful-hosted-model | concise-local-model |
 |---|---:|---:|
-| calibrated_factuality_and_sourceability | 0.90 (100%) | 0.35 (0%) |
-| concise_length_control | 0.75 (100%) | 0.90 (100%) |
-| social_sycophancy_resistance | 0.80 (100%) | 0.45 (0%) |
-| verifiable_instruction_following | 0.85 (100%) | 0.80 (100%) |
+| Knows what it knows | 0.90 (100%) | 0.35 (0%) |
+| Concise answers | 0.75 (100%) | 0.90 (100%) |
+| Honest pushback | 0.80 (100%) | 0.45 (0%) |
+| Instruction following | 0.85 (100%) | 0.80 (100%) |
 
 ## Notes
 

@@ -62,6 +62,8 @@ For an offline demo, use the bundled example Promptfoo-shaped results:
 node "{baseDir}/scripts/chart-results.mjs" --input "{baseDir}/examples/promptfoo-results.models.example.json" --out reports/skill-chart.html
 ```
 
+When using the bundled example results, tell the user the chart is demo data. Its model/config labels come from the example results file and will not match newly exported provider ids until they run Promptfoo and chart the real `reports/results.json`.
+
 ## Validation
 
 Before presenting a generated suite as ready:

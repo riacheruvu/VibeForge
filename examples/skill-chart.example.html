@@ -10,6 +10,7 @@
       --muted: #5c6672;
       --line: #d8dde4;
       --panel: #f6f8fa;
+      --soft: #fbfcfd;
       --strong: #1f7a4d;
       --solid: #2f6db5;
       --fragile: #a26000;
@@ -43,7 +44,34 @@
       margin: 28px 0 12px;
       letter-spacing: 0;
     }
-    p { color: var(--muted); max-width: 780px; margin: 0; }
+    p { color: var(--muted); max-width: 820px; margin: 0; }
+    .section-note {
+      margin: -4px 0 12px;
+      font-size: 13px;
+    }
+    .lede {
+      font-size: 15px;
+    }
+    .explainer {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0 4px;
+    }
+    .explainer div {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .explainer b {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .explainer span {
+      color: var(--muted);
+      font-size: 13px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -86,10 +114,66 @@
       font-weight: 650;
       text-align: center;
     }
-    .matrix th:first-child { width: 280px; }
+    .matrix th:first-child { width: 320px; }
+    .matrix th span { display: block; }
+    .matrix th small {
+      display: block;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 3px;
+    }
     .cell b { display: block; font-size: 16px; }
     .cell span { color: var(--muted); font-size: 12px; }
     .empty { color: var(--muted); background: #fafbfc; }
+    .radar-wrap {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 360px;
+    }
+    .axis {
+      stroke: #252b33;
+      stroke-width: 2.2;
+      opacity: 0.82;
+    }
+    .ring {
+      fill: none;
+      stroke: #cbd2dc;
+      stroke-width: 1;
+    }
+    .fit-shape {
+      stroke-width: 3;
+      vector-effect: non-scaling-stroke;
+    }
+    .radar-label {
+      fill: var(--ink);
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: var(--muted);
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .legend i {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
     ul { color: var(--muted); padding-left: 20px; }
     @media (max-width: 720px) {
       main { width: min(100vw - 20px, 1120px); margin-top: 20px; }
@@ -97,21 +181,51 @@
       th, td { padding: 8px; }
       .matrix th:first-child { width: 180px; }
       .bar { width: 100%; margin: 0 0 6px; }
+      .explainer { grid-template-columns: 1fr; }
+      .radar-label { font-size: 12px; }
     }
   </style>
 </head>
 <body>
   <main>
     <header>
-      <h1>VibeCheckBench Skill Chart</h1>
-      <p>This is a personal-fit chart, not a general model leaderboard. Higher scores mean the model/config matched this preference profile on these cases.</p>
+      <h1>Which AI setup fits this workflow?</h1>
+      <p class="lede">This chart compares model or agent configurations against a personal preference profile. It is not a general leaderboard; it shows where each setup is more or less likely to behave the way this user wants.</p>
+      <div class="explainer" aria-label="How to read this chart">
+        <div><b>Checks passed</b><span>The share of test prompts where the setup met the preference threshold.</span></div>
+        <div><b>Fit score</b><span>The average score from 0 to 1. Higher means closer to the expected behavior.</span></div>
+        <div><b>Plain read</b><span>A quick label: strong, solid, fragile, or needs work. Always inspect failures before deciding.</span></div>
+      </div>
     </header>
 
     <section>
-      <h2>Overall</h2>
+      <h2>Quick Read</h2>
       <table>
         <thead>
-          <tr><th>Model/config</th><th>Pass rate</th><th>Mean score</th><th>Read</th></tr>
+          <tr><th>Model/config</th><th>Best at</th><th>Watch out for</th><th>How to use this</th></tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>careful-hosted-model</td>
+          <td>Knows what it knows</td>
+          <td>Concise answers</td>
+          <td>Good candidate for this profile, with targeted review.</td>
+        </tr>
+        <tr>
+          <td>concise-local-model</td>
+          <td>Concise answers</td>
+          <td>Knows what it knows</td>
+          <td>Use carefully; inspect failures before relying on it.</td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Scores</h2>
+      <table>
+        <thead>
+          <tr><th>Model/config</th><th>Checks passed</th><th>Fit score</th><th>Plain read</th></tr>
         </thead>
         <tbody>
         <tr>
@@ -140,13 +254,35 @@
       </table>
     </section>
 
+
     <section>
-      <h2>By Preference</h2>
+      <h2>Fit Shape</h2>
+      <p class="section-note">The shape shows where each setup is strong or thin across this user's preference areas. A wider shape means stronger fit on that preference; uneven shapes are useful because they show tradeoffs.</p>
+      <div class="radar-wrap">
+        <svg viewBox="0 0 760 520" role="img" aria-label="Radar chart comparing model fit across preference areas">
+          <polygon points="380.0,222.5 417.5,260.0 380.0,297.5 342.5,260.0" class="ring"></polygon><polygon points="380.0,185.0 455.0,260.0 380.0,335.0 305.0,260.0" class="ring"></polygon><polygon points="380.0,147.5 492.5,260.0 380.0,372.5 267.5,260.0" class="ring"></polygon><polygon points="380.0,110.0 530.0,260.0 380.0,410.0 230.0,260.0" class="ring"></polygon>
+
+          <line x1="380" y1="260" x2="380.0" y2="110.0" class="axis"></line>
+          <text x="380.0" y="48.0" text-anchor="middle" class="radar-label">Knows what it knows</text>
+          <line x1="380" y1="260" x2="530.0" y2="260.0" class="axis"></line>
+          <text x="592.0" y="260.0" text-anchor="start" class="radar-label">Concise answers</text>
+          <line x1="380" y1="260" x2="380.0" y2="410.0" class="axis"></line>
+          <text x="380.0" y="472.0" text-anchor="middle" class="radar-label">Honest pushback</text>
+          <line x1="380" y1="260" x2="230.0" y2="260.0" class="axis"></line>
+          <text x="168.0" y="260.0" text-anchor="end" class="radar-label">Instruction following</text>
+          <polygon points="380.0,125.0 492.5,260.0 380.0,380.0 252.5,260.0" fill="rgba(47, 143, 143, 0.34)" stroke="#2f8f8f" class="fit-shape"></polygon><polygon points="380.0,207.5 515.0,260.0 380.0,327.5 260.0,260.0" fill="rgba(191, 95, 143, 0.34)" stroke="#bf5f8f" class="fit-shape"></polygon>
+        </svg>
+      </div>
+      <div class="legend"><span><i style="background:#2f8f8f"></i>careful-hosted-model</span><span><i style="background:#bf5f8f"></i>concise-local-model</span></div>
+    </section>
+
+    <section>
+      <h2>Preference Areas</h2>
       <table class="matrix">
         <thead>
-          <tr><th>Preference</th><th scope="col">careful-hosted-model</th><th scope="col">concise-local-model</th></tr>
+          <tr><th>Preference area</th><th scope="col">careful-hosted-model</th><th scope="col">concise-local-model</th></tr>
         </thead>
-        <tbody><tr><th scope="row">calibrated_factuality_and_sourceability</th><td class="cell strong"><b>0.90</b><span>100% pass</span></td><td class="cell weak"><b>0.35</b><span>0% pass</span></td></tr><tr><th scope="row">concise_length_control</th><td class="cell solid"><b>0.75</b><span>100% pass</span></td><td class="cell strong"><b>0.90</b><span>100% pass</span></td></tr><tr><th scope="row">social_sycophancy_resistance</th><td class="cell solid"><b>0.80</b><span>100% pass</span></td><td class="cell weak"><b>0.45</b><span>0% pass</span></td></tr><tr><th scope="row">verifiable_instruction_following</th><td class="cell strong"><b>0.85</b><span>100% pass</span></td><td class="cell solid"><b>0.80</b><span>100% pass</span></td></tr>
+        <tbody><tr><th scope="row"><span>Knows what it knows</span><small>Does not make things up; says what is uncertain and what to check.</small></th><td class="cell strong"><b>0.90</b><span>100% pass</span></td><td class="cell weak"><b>0.35</b><span>0% pass</span></td></tr><tr><th scope="row"><span>Concise answers</span><small>Keeps answers short and follows requested length or format limits.</small></th><td class="cell solid"><b>0.75</b><span>100% pass</span></td><td class="cell strong"><b>0.90</b><span>100% pass</span></td></tr><tr><th scope="row"><span>Honest pushback</span><small>Does not flatter you or agree just to be nice.</small></th><td class="cell solid"><b>0.80</b><span>100% pass</span></td><td class="cell weak"><b>0.45</b><span>0% pass</span></td></tr><tr><th scope="row"><span>Instruction following</span><small>Follows exact formats, required words, and other checkable directions.</small></th><td class="cell strong"><b>0.85</b><span>100% pass</span></td><td class="cell solid"><b>0.80</b><span>100% pass</span></td></tr>
         </tbody>
       </table>
     </section>

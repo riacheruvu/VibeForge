@@ -24,7 +24,7 @@ Promptfoo handles execution, UI, reports, and CI. VibeCheckBench owns the prefer
 ## Workflow
 
 1. Identify the profile, case file, and system prompt.
-2. Run the exporter:
+2. Run the exporter yourself. Do not merely tell the user to run `node` for local export/chart steps:
 
 ```bash
 node "{baseDir}/scripts/export-promptfoo.mjs" --provider openai:chat:gpt-4.1-mini --out promptfooconfig.yaml
@@ -32,13 +32,20 @@ node "{baseDir}/scripts/export-promptfoo.mjs" --provider openai:chat:gpt-4.1-min
 
 Use `--example complex` when the user wants the richer, public-safe preference suite for sycophancy resistance, concise answers, instruction following, "knows what it knows" behavior, non-refusal, and decision fit.
 
-3. Tell the user to run:
+3. If the user asked for a real model comparison, check whether Promptfoo is already available before running or installing anything:
 
 ```bash
-npx promptfoo@latest eval -c promptfooconfig.yaml
+promptfoo --version
+npx --no-install promptfoo --version
 ```
 
-`npx promptfoo@latest` may download Promptfoo if it is not already cached or installed. Ask before running it in restricted/no-network contexts.
+If Promptfoo is available and the configured providers are local/offline, run it and save JSON results:
+
+```bash
+promptfoo eval -c promptfooconfig.yaml --output reports/results.json
+```
+
+If Promptfoo is not available, or if running it would download packages or call hosted providers, ask the user for explicit approval before using `npx promptfoo@latest` or any provider API. Explain that `npx promptfoo@latest` may download code and hosted providers may receive prompts/outputs.
 
 4. Summarize pass/fail patterns by preference id and call out brittle rubric edges.
 
@@ -63,6 +70,8 @@ node "{baseDir}/scripts/chart-results.mjs" --input "{baseDir}/examples/promptfoo
 ```
 
 When using the bundled example results, tell the user the chart is demo data. Its model/config labels come from the example results file and will not match newly exported provider ids until they run Promptfoo and chart the real `reports/results.json`.
+
+For demo requests, create the config and chart artifacts in the current workspace when possible, then report the paths. Do not ask the user to run commands unless the next step requires their provider credentials, local model setup, package installation, or network access.
 
 ## Validation
 

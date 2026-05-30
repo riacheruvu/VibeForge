@@ -184,6 +184,8 @@ Then in Codex:
 Use $vibecheckbench to export the complex example and generate a skill chart.
 ```
 
+The skill is meant to run the local `node` commands for you. For real model comparisons, it should ask before installing/downloading Promptfoo or sending prompts to hosted providers.
+
 Claude Code files are also included:
 
 ```text

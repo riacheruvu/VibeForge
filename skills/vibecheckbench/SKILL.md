@@ -36,6 +36,8 @@ node "{baseDir}/scripts/export-promptfoo.mjs" --profile examples/public-agent-pr
 npx promptfoo@latest eval -c promptfooconfig.yaml
 ```
 
+`npx promptfoo@latest` may download Promptfoo if it is not already cached or installed. Ask before running it in restricted/no-network contexts.
+
 4. Summarize pass/fail patterns by preference id and call out brittle rubric edges.
 
 Use a local provider id such as `ollama:chat:qwen3:8b` when the user wants offline testing.
@@ -50,6 +52,12 @@ node "{baseDir}/scripts/export-promptfoo.mjs" --profile examples/public-agent-pr
 ```
 
 The `echo` provider is a plumbing test only. Echoed prompts should fail the generated JavaScript rubrics because non-answers are guarded against.
+
+Use `--stdout` for no-write validation:
+
+```bash
+node "{baseDir}/scripts/export-promptfoo.mjs" --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/public-agent-system-prompt.txt --provider echo --stdout
+```
 
 For a no-API positive control, use:
 

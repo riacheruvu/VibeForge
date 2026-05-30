@@ -20,6 +20,8 @@ Then suggest:
 npx promptfoo@latest eval -c "$OUT"
 ```
 
+`npx promptfoo@latest` may download Promptfoo if it is not already cached or installed. Ask before running it in restricted/no-network contexts.
+
 Report the generated config path, provider id, test count, and whether this is a local/private or hosted run.
 
 ## Validate
@@ -29,6 +31,8 @@ node skills/vibecheckbench/scripts/export-promptfoo.mjs --profile examples/publi
 ```
 
 Echo is a plumbing check only. Echoed prompts should fail the generated rubrics because non-answers are guarded against.
+
+Use `--stdout` when validating without writing files.
 
 ## Optional Legacy A/B
 
@@ -53,6 +57,7 @@ For serious A/B runs, prefer:
 | `--prompt-file path` | System prompt/config to test |
 | `--provider id` | Promptfoo provider id |
 | `--out path` | Promptfoo config output path |
+| `--stdout` | Print generated config instead of writing it |
 | `--threshold N` | JavaScript assertion pass threshold |
 | `--cases N` | Legacy runner cases per preference |
 | `--repeat N` | Legacy runner repeat count |

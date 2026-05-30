@@ -50,6 +50,8 @@ node skills/vibecheckbench/scripts/export-promptfoo.mjs \
 npx promptfoo@latest eval -c promptfooconfig.yaml
 ```
 
+This may download Promptfoo if it is not already installed or cached.
+
 ### Legacy llama.cpp server on host
 
 ```bash

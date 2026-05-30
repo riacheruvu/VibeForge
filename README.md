@@ -64,6 +64,8 @@ Run it:
 npx promptfoo@latest eval -c promptfooconfig.yaml
 ```
 
+This may download Promptfoo if it is not already installed or cached.
+
 An exported example is checked in at `examples/promptfooconfig.example.yaml`.
 
 For local models, point Promptfoo at your local provider instead of changing the profile:

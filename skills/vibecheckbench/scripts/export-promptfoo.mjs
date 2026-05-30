@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Export an VibeCheckBench preference profile to a Promptfoo regression suite.
+ * Export a VibeCheckBench preference profile to a Promptfoo regression suite.
  *
  * This keeps VibeCheckBench focused on preference/case authoring and lets
  * Promptfoo handle provider execution, UI, reporting, and CI.
@@ -30,6 +30,7 @@ Options:
   --prompt-file <path>  System prompt to test
   --provider <id>       Promptfoo provider id (default: openai:chat:gpt-4.1-mini)
   --out <path>          Output promptfooconfig.yaml path
+  --stdout              Print config instead of writing a file
   --threshold <n>       JavaScript assertion pass threshold (default: 0.5)
 
 Example:
@@ -51,6 +52,7 @@ function parseArgs(argv) {
     promptFile: DEFAULT_PROMPT_FILE,
     provider: "openai:chat:gpt-4.1-mini",
     out: "promptfooconfig.yaml",
+    stdout: false,
     threshold: 0.5,
   };
 
@@ -61,6 +63,7 @@ function parseArgs(argv) {
     if (arg === "--prompt-file") { args.promptFile = argv[++i]; continue; }
     if (arg === "--provider") { args.provider = argv[++i]; continue; }
     if (arg === "--out") { args.out = argv[++i]; continue; }
+    if (arg === "--stdout") { args.stdout = true; continue; }
     if (arg === "--threshold") { args.threshold = Number.parseFloat(argv[++i]); continue; }
     if (arg === "--help" || arg === "-h") { usage(); process.exit(0); }
   }
@@ -237,10 +240,16 @@ function main() {
     threshold: args.threshold,
   });
 
+  const testCount = Object.values(cases).reduce((sum, prompts) => sum + (Array.isArray(prompts) ? prompts.length : 0), 0);
+  if (args.stdout) {
+    process.stdout.write(config);
+    return;
+  }
+
   const outPath = path.resolve(process.cwd(), args.out);
   fs.writeFileSync(outPath, config, "utf8");
   console.log(`Wrote Promptfoo config: ${outPath}`);
-  console.log(`Tests: ${Object.values(cases).reduce((sum, prompts) => sum + (Array.isArray(prompts) ? prompts.length : 0), 0)}`);
+  console.log(`Tests: ${testCount}`);
   console.log("Run: npx promptfoo@latest eval -c " + path.basename(outPath));
 }
 

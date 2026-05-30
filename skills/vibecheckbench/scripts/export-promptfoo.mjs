@@ -12,11 +12,26 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const SKILL_ROOT = path.resolve(__dirname, "..");
 const REPO_ROOT = path.resolve(__dirname, "../../..");
 
-const DEFAULT_PROFILE_PATH = path.join(REPO_ROOT, "preferences.yaml");
-const DEFAULT_CASE_FILE = path.join(REPO_ROOT, "examples", "public-agent-cases.json");
-const DEFAULT_PROMPT_FILE = path.join(REPO_ROOT, "examples", "public-agent-system-prompt.txt");
+function firstExisting(paths) {
+  return paths.find(candidate => fs.existsSync(candidate)) || paths[0];
+}
+
+const DEFAULT_PROFILE_PATH = firstExisting([
+  path.join(SKILL_ROOT, "examples", "public-agent-profile.yaml"),
+  path.join(REPO_ROOT, "examples", "public-agent-profile.yaml"),
+  path.join(REPO_ROOT, "preferences.yaml"),
+]);
+const DEFAULT_CASE_FILE = firstExisting([
+  path.join(SKILL_ROOT, "examples", "public-agent-cases.json"),
+  path.join(REPO_ROOT, "examples", "public-agent-cases.json"),
+]);
+const DEFAULT_PROMPT_FILE = firstExisting([
+  path.join(SKILL_ROOT, "examples", "public-agent-system-prompt.txt"),
+  path.join(REPO_ROOT, "examples", "public-agent-system-prompt.txt"),
+]);
 
 function usage() {
   console.log(`VibeCheckBench Promptfoo exporter
@@ -35,9 +50,9 @@ Options:
 
 Example:
   node skills/vibecheckbench/scripts/export-promptfoo.mjs \\
-    --profile examples/literature-backed-user-preferences.yaml \\
-    --case-file examples/literature-backed-user-cases.json \\
-    --prompt-file examples/complex-use-case-system-prompt.txt \\
+    --profile examples/public-agent-profile.yaml \\
+    --case-file examples/public-agent-cases.json \\
+    --prompt-file examples/public-agent-system-prompt.txt \\
     --provider openai:chat:gpt-4.1-mini \\
     --out promptfooconfig.yaml
 

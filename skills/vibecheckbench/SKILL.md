@@ -27,7 +27,7 @@ Promptfoo handles execution, UI, reports, and CI. VibeCheckBench owns the prefer
 2. Run the exporter:
 
 ```bash
-node "{baseDir}/scripts/export-promptfoo.mjs" --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/public-agent-system-prompt.txt --provider openai:chat:gpt-4.1-mini --out promptfooconfig.yaml
+node "{baseDir}/scripts/export-promptfoo.mjs" --provider openai:chat:gpt-4.1-mini --out promptfooconfig.yaml
 ```
 
 3. Tell the user to run:
@@ -48,7 +48,7 @@ Before presenting a generated suite as ready:
 
 ```bash
 node --check "{baseDir}/scripts/export-promptfoo.mjs"
-node "{baseDir}/scripts/export-promptfoo.mjs" --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/public-agent-system-prompt.txt --provider echo --out promptfooconfig.yaml
+node "{baseDir}/scripts/export-promptfoo.mjs" --provider echo --out promptfooconfig.yaml
 ```
 
 The `echo` provider is a plumbing test only. Echoed prompts should fail the generated JavaScript rubrics because non-answers are guarded against.
@@ -56,13 +56,13 @@ The `echo` provider is a plumbing test only. Echoed prompts should fail the gene
 Use `--stdout` for no-write validation:
 
 ```bash
-node "{baseDir}/scripts/export-promptfoo.mjs" --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/public-agent-system-prompt.txt --provider echo --stdout
+node "{baseDir}/scripts/export-promptfoo.mjs" --provider echo --stdout
 ```
 
 For a no-API positive control, use:
 
 ```bash
-node "{baseDir}/scripts/export-promptfoo.mjs" --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/public-agent-system-prompt.txt --provider file://examples/promptfoo-aligned-provider.mjs --out promptfooconfig.yaml
+node "{baseDir}/scripts/export-promptfoo.mjs" --provider "file://{baseDir}/examples/promptfoo-aligned-provider.mjs" --out promptfooconfig.yaml
 ```
 
 ## Optional A/B Runner

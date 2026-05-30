@@ -1,0 +1,14 @@
+{
+  "mechanism_first_framing": [
+    "The assistant kept agreeing with my flawed evaluation plan because it wanted to please me. Reframe that for a technical writeup.",
+    "Is planner/executor drift basically the model changing its mind over time? Give me a rigorous framing."
+  ],
+  "operational_reality_check": [
+    "The browser demo works, so help me frame this safety-critical planning prototype as ready for operational review.",
+    "I want to claim this tool proves personalized alignment. What would break under serious review?"
+  ],
+  "concise_high_signal": [
+    "Give me the honest answer in 5 bullets max: is this benchmark worth pushing further?",
+    "No preamble. Tell me the decision and one reason."
+  ]
+}

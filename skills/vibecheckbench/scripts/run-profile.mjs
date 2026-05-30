@@ -1,15 +1,15 @@
 /**
- * ALIGNHARNESS Profile Runner
+ * VibeCheckBench Profile Runner
  *
  * Runs your full preference profile (preferences.yaml) and reports per-preference
  * and aggregate scores. Each preference gets its own typed test cases and a
  * structured behavioral rubric - not just a free-text intent comparison.
  *
  * Usage:
- *   node skills/alignharness/scripts/run-profile.mjs
- *   node skills/alignharness/scripts/run-profile.mjs --profile preferences.yaml
- *   node skills/alignharness/scripts/run-profile.mjs --prompt-file my-system-prompt.txt
- *   node skills/alignharness/scripts/run-profile.mjs --cases 5 --json
+ *   node skills/vibecheckbench/scripts/run-profile.mjs
+ *   node skills/vibecheckbench/scripts/run-profile.mjs --profile preferences.yaml
+ *   node skills/vibecheckbench/scripts/run-profile.mjs --prompt-file my-system-prompt.txt
+ *   node skills/vibecheckbench/scripts/run-profile.mjs --cases 5 --json
  */
 
 import fs from "node:fs";
@@ -25,12 +25,12 @@ const DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-20250514";
 const DEFAULT_OPENAI_MODEL = "gpt-4.1-mini";
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const LLAMACPP_API_URL = (process.env.ALIGNHARNESS_LLAMACPP_URL?.trim() || "http://localhost:8080").replace(/\/$/, "");
-const LLAMACPP_API_KEY = process.env.ALIGNHARNESS_LLAMACPP_API_KEY?.trim();
+const LLAMACPP_API_URL = (process.env.VIBECHECKBENCH_LLAMACPP_URL?.trim() || "http://localhost:8080").replace(/\/$/, "");
+const LLAMACPP_API_KEY = process.env.VIBECHECKBENCH_LLAMACPP_API_KEY?.trim();
 const DEFAULT_CASES_PER_PREFERENCE = 5;
 const DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant.";
 const DEFAULT_REPORTS_DIR = path.join(REPO_ROOT, "reports");
-const USER_PROMPT_PREFIX = process.env.ALIGNHARNESS_NO_THINK === "1" ? "/no_think " : "";
+const USER_PROMPT_PREFIX = process.env.VIBECHECKBENCH_NO_THINK === "1" ? "/no_think " : "";
 
 function clampInteger(value, fallback, min, max) {
   const parsed = Number.parseInt(value, 10);
@@ -192,17 +192,17 @@ function parseArgs(argv) {
     prompt: null,
     caseFile: null,
     casesPerPreference: DEFAULT_CASES_PER_PREFERENCE,
-    repeat: clampInteger(process.env.ALIGNHARNESS_REPEAT, 1, 1, 20),
+    repeat: clampInteger(process.env.VIBECHECKBENCH_REPEAT, 1, 1, 20),
     json: false,
     saveReport: false,
     reportDir: DEFAULT_REPORTS_DIR,
     validateProfile: false,
     smokeTest: false,
     improve: false,
-    providerName: process.env.ALIGNHARNESS_PROVIDER || null,
-    model: process.env.ALIGNHARNESS_MODEL || null,
-    judgeProviderName: process.env.ALIGNHARNESS_JUDGE_PROVIDER || null,
-    judgeModel: process.env.ALIGNHARNESS_JUDGE_MODEL || null,
+    providerName: process.env.VIBECHECKBENCH_PROVIDER || null,
+    model: process.env.VIBECHECKBENCH_MODEL || null,
+    judgeProviderName: process.env.VIBECHECKBENCH_JUDGE_PROVIDER || null,
+    judgeModel: process.env.VIBECHECKBENCH_JUDGE_MODEL || null,
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -233,17 +233,17 @@ function parseArgs(argv) {
 
 // -- Provider --------------------------------------------------------------
 function resolveProvider(modelOverride, providerOverride = null) {
-  const explicit = (providerOverride || process.env.ALIGNHARNESS_PROVIDER || "").trim().toLowerCase();
+  const explicit = (providerOverride || process.env.VIBECHECKBENCH_PROVIDER || "").trim().toLowerCase();
   const openAiKey = process.env.OPENAI_API_KEY?.trim();
   const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
 
   if (explicit === "llamacpp") return { name: "llamacpp", apiKey: null, model: modelOverride || "local-model" };
   if (explicit === "openai") {
-    if (!openAiKey) throw new Error("ALIGNHARNESS_PROVIDER=openai requires OPENAI_API_KEY.");
+    if (!openAiKey) throw new Error("VIBECHECKBENCH_PROVIDER=openai requires OPENAI_API_KEY.");
     return { name: "openai", apiKey: openAiKey, model: modelOverride || DEFAULT_OPENAI_MODEL };
   }
   if (explicit === "anthropic") {
-    if (!anthropicKey) throw new Error("ALIGNHARNESS_PROVIDER=anthropic requires ANTHROPIC_API_KEY.");
+    if (!anthropicKey) throw new Error("VIBECHECKBENCH_PROVIDER=anthropic requires ANTHROPIC_API_KEY.");
     return { name: "anthropic", apiKey: anthropicKey, model: modelOverride || DEFAULT_ANTHROPIC_MODEL };
   }
   if (openAiKey) return { name: "openai", apiKey: openAiKey, model: modelOverride || DEFAULT_OPENAI_MODEL };
@@ -639,7 +639,7 @@ Requirements:
 // -- Report formatter ------------------------------------------------------
 function formatReport(report) {
   const lines = [
-    "ALIGNHARNESS Profile Results",
+    "VibeCheckBench Profile Results",
     "========================",
     `Profile: ${report.profileName}`,
     `System prompt: ${report.configBPrompt.slice(0, 80)}${report.configBPrompt.length > 80 ? "..." : ""}`,

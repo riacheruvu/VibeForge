@@ -7,16 +7,16 @@ import { fileURLToPath } from "node:url";
 const DEFAULT_OPENAI_MODEL = "gpt-4.1-mini";
 const DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-20250514";
 const DEFAULT_LOCAL_MODEL = "HuggingFaceTB/SmolLM2-135M-Instruct";
-const DEFAULT_TEST_CASES = clampInteger(process.env.ALIGNHARNESS_NUM_CASES, 10, 1, 20);
+const DEFAULT_TEST_CASES = clampInteger(process.env.VIBECHECKBENCH_NUM_CASES, 10, 1, 20);
 const DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant.";
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const LLAMACPP_API_URL = (process.env.ALIGNHARNESS_LLAMACPP_URL?.trim() || "http://localhost:8080").replace(/\/$/, "");
-const LLAMACPP_API_KEY = process.env.ALIGNHARNESS_LLAMACPP_API_KEY?.trim();
-const USER_PROMPT_PREFIX = process.env.ALIGNHARNESS_NO_THINK === "1" ? "/no_think " : "";
+const LLAMACPP_API_URL = (process.env.VIBECHECKBENCH_LLAMACPP_URL?.trim() || "http://localhost:8080").replace(/\/$/, "");
+const LLAMACPP_API_KEY = process.env.VIBECHECKBENCH_LLAMACPP_API_KEY?.trim();
+const USER_PROMPT_PREFIX = process.env.VIBECHECKBENCH_NO_THINK === "1" ? "/no_think " : "";
 const LOCAL_SCRIPT_PATH = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
-  "run-alignharness-local.py",
+  "run-vibecheckbench-local.py",
 );
 
 function clampInteger(value, fallback, min, max) {
@@ -37,7 +37,7 @@ function parseArgs(argv) {
     intent: "",
     prompt: null,
     promptFile: null,
-    model: process.env.ALIGNHARNESS_MODEL || null,
+    model: process.env.VIBECHECKBENCH_MODEL || null,
     testCases: DEFAULT_TEST_CASES,
     json: false,
   };
@@ -65,7 +65,7 @@ function parseArgs(argv) {
     }
 
     if (arg === "--model") {
-      args.model = argv[index + 1] || process.env.ALIGNHARNESS_MODEL || null;
+      args.model = argv[index + 1] || process.env.VIBECHECKBENCH_MODEL || null;
       index += 1;
       continue;
     }
@@ -110,11 +110,11 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`ALIGNHARNESS
+  console.log(`VibeCheckBench
 
 Usage:
-  node scripts/run-alignharness.mjs --intent "warm email replies"
-  node scripts/run-alignharness.mjs --intent "patient coding help" --prompt-file prompt.txt
+  node scripts/run-vibecheckbench.mjs --intent "warm email replies"
+  node scripts/run-vibecheckbench.mjs --intent "patient coding help" --prompt-file prompt.txt
 
 Options:
   --intent <text>       Benchmark target behavior
@@ -127,16 +127,16 @@ Options:
 }
 
 function resolveProvider(modelOverride = null) {
-  const explicitProvider = (process.env.ALIGNHARNESS_PROVIDER || "").trim().toLowerCase();
+  const explicitProvider = (process.env.VIBECHECKBENCH_PROVIDER || "").trim().toLowerCase();
   const openAiKey = process.env.OPENAI_API_KEY?.trim();
   const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
-  const localModel = process.env.ALIGNHARNESS_LOCAL_MODEL?.trim() || DEFAULT_LOCAL_MODEL;
+  const localModel = process.env.VIBECHECKBENCH_LOCAL_MODEL?.trim() || DEFAULT_LOCAL_MODEL;
 
   if (explicitProvider === "local") {
     return {
       name: "local",
       apiKey: null,
-      model: modelOverride || process.env.ALIGNHARNESS_MODEL || localModel,
+      model: modelOverride || process.env.VIBECHECKBENCH_MODEL || localModel,
     };
   }
 
@@ -144,7 +144,7 @@ function resolveProvider(modelOverride = null) {
     return {
       name: "llamacpp",
       apiKey: null,
-      model: modelOverride || process.env.ALIGNHARNESS_MODEL || "local-model",
+      model: modelOverride || process.env.VIBECHECKBENCH_MODEL || "local-model",
     };
   }
 
@@ -152,7 +152,7 @@ function resolveProvider(modelOverride = null) {
     return {
       name: "openai",
       apiKey: openAiKey,
-      model: modelOverride || process.env.ALIGNHARNESS_MODEL || DEFAULT_OPENAI_MODEL,
+      model: modelOverride || process.env.VIBECHECKBENCH_MODEL || DEFAULT_OPENAI_MODEL,
     };
   }
 
@@ -160,14 +160,14 @@ function resolveProvider(modelOverride = null) {
     return {
       name: "anthropic",
       apiKey: anthropicKey,
-      model: modelOverride || process.env.ALIGNHARNESS_MODEL || DEFAULT_ANTHROPIC_MODEL,
+      model: modelOverride || process.env.VIBECHECKBENCH_MODEL || DEFAULT_ANTHROPIC_MODEL,
     };
   }
 
   return {
     name: "local",
     apiKey: null,
-    model: modelOverride || process.env.ALIGNHARNESS_MODEL || localModel,
+    model: modelOverride || process.env.VIBECHECKBENCH_MODEL || localModel,
   };
 }
 
@@ -189,7 +189,7 @@ function buildPythonArgs(userIntent, configBSystemPrompt, options = {}) {
   return args;
 }
 
-async function runLocalALIGNHARNESS(userIntent, configBSystemPrompt = null, options = {}) {
+async function runLocalVibeCheckBench(userIntent, configBSystemPrompt = null, options = {}) {
   const args = buildPythonArgs(userIntent, configBSystemPrompt, options);
 
   return new Promise((resolve, reject) => {
@@ -469,11 +469,11 @@ ${weaknessAnalysis}`,
   });
 }
 
-export async function runALIGNHARNESS(userIntent, configBSystemPrompt = null, options = {}) {
+export async function runVibeCheckBench(userIntent, configBSystemPrompt = null, options = {}) {
   const provider = resolveProvider(options.model);
 
   if (provider.name === "local" || provider.name === "llamacpp-python") {
-    return runLocalALIGNHARNESS(userIntent, configBSystemPrompt, {
+    return runLocalVibeCheckBench(userIntent, configBSystemPrompt, {
       ...options,
       model: provider.model,
     });
@@ -542,7 +542,7 @@ export async function runALIGNHARNESS(userIntent, configBSystemPrompt = null, op
 
 export function formatReport(report) {
   const lines = [
-    "ALIGNHARNESS Results",
+    "VibeCheckBench Results",
     "================",
     `Intent: ${report.intent}`,
     `Provider: ${report.provider}`,
@@ -577,7 +577,7 @@ export function formatReport(report) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const report = await runALIGNHARNESS(args.intent, args.prompt, {
+  const report = await runVibeCheckBench(args.intent, args.prompt, {
     model: args.model,
     testCases: args.testCases,
   });
@@ -596,7 +596,7 @@ const isMainModule =
 
 if (isMainModule) {
   main().catch((error) => {
-    console.error(`ALIGNHARNESS error: ${error.message}`);
+    console.error(`VibeCheckBench error: ${error.message}`);
     process.exit(1);
   });
 }

@@ -13,10 +13,10 @@ function parseArgs(argv) {
     iterations: 2,
     cases: 1,
     repeat: 1,
-    provider: process.env.ALIGNHARNESS_PROVIDER || null,
-    model: process.env.ALIGNHARNESS_MODEL || null,
-    judgeProvider: process.env.ALIGNHARNESS_JUDGE_PROVIDER || null,
-    judgeModel: process.env.ALIGNHARNESS_JUDGE_MODEL || null,
+    provider: process.env.VIBECHECKBENCH_PROVIDER || null,
+    model: process.env.VIBECHECKBENCH_MODEL || null,
+    judgeProvider: process.env.VIBECHECKBENCH_JUDGE_PROVIDER || null,
+    judgeModel: process.env.VIBECHECKBENCH_JUDGE_MODEL || null,
     outputDir: DEFAULT_OUTPUT_DIR,
     json: false,
   };
@@ -46,10 +46,10 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`ALIGNHARNESS config optimizer
+  console.log(`VibeCheckBench config optimizer
 
 Usage:
-  node skills/alignharness/scripts/optimize-config.mjs --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/config-candidates/generic-supportive.txt --iterations 2
+  node skills/vibecheckbench/scripts/optimize-config.mjs --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/config-candidates/generic-supportive.txt --iterations 2
 
 This runs a profile, asks for an improved prompt with --improve, saves the improved
 prompt, then reruns it for the next iteration. Use a reliable judge model.`);
@@ -108,7 +108,7 @@ async function runIteration(args, promptPath, iteration) {
 
 function formatResult(result) {
   const lines = [
-    "ALIGNHARNESS Config Optimization",
+    "VibeCheckBench Config Optimization",
     "===========================",
   ];
 

@@ -16,9 +16,9 @@ function parseArgs(argv) {
     prompt: null,
     cases: 1,
     repeat: 1,
-    provider: process.env.ALIGNHARNESS_PROVIDER || null,
-    judgeProvider: process.env.ALIGNHARNESS_JUDGE_PROVIDER || null,
-    judgeModel: process.env.ALIGNHARNESS_JUDGE_MODEL || null,
+    provider: process.env.VIBECHECKBENCH_PROVIDER || null,
+    judgeProvider: process.env.VIBECHECKBENCH_JUDGE_PROVIDER || null,
+    judgeModel: process.env.VIBECHECKBENCH_JUDGE_MODEL || null,
     improve: false,
     saveReport: false,
     json: false,
@@ -53,10 +53,10 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`ALIGNHARNESS model comparison
+  console.log(`VibeCheckBench model comparison
 
 Usage:
-  node skills/alignharness/scripts/compare-models.mjs --models "gpt-5.5,gpt-5.4,gpt-5.4-mini" --provider openai --profile preferences.yaml --cases 3
+  node skills/vibecheckbench/scripts/compare-models.mjs --models "gpt-5.5,gpt-5.4,gpt-5.4-mini" --provider openai --profile preferences.yaml --cases 3
 
 Options:
   --models <csv>          Candidate models to compare
@@ -133,7 +133,7 @@ function summarizeReport(report) {
 
 function formatComparison(comparison) {
   const lines = [
-    "ALIGNHARNESS Model Comparison",
+    "VibeCheckBench Model Comparison",
     "========================",
     `Profile: ${comparison.profile}`,
     `Cases per preference: ${comparison.cases}`,

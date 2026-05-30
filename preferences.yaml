@@ -1,4 +1,4 @@
-# AlignHarness Preference Profile
+# VibeCheckBench Preference Profile
 # -----------------------------------------------------------------------------
 # Each preference has:
 #   type        : behavioral category (factuality | pushback | initiative | anti_sycophancy)
@@ -7,8 +7,8 @@
 #   examples    : concrete behaviors that should or shouldn't appear
 #
 # Run your full profile:
-#   node skills/alignharness/scripts/run-profile.mjs
-#   python3 skills/alignharness/scripts/run-profile.py
+#   node skills/vibecheckbench/scripts/run-profile.mjs
+#   python3 skills/vibecheckbench/scripts/run-profile.py
 # -----------------------------------------------------------------------------
 
 profile:

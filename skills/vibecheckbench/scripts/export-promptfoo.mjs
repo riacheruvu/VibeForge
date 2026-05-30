@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Export an AlignHarness preference profile to a Promptfoo regression suite.
+ * Export an VibeCheckBench preference profile to a Promptfoo regression suite.
  *
- * This keeps AlignHarness focused on preference/case authoring and lets
+ * This keeps VibeCheckBench focused on preference/case authoring and lets
  * Promptfoo handle provider execution, UI, reporting, and CI.
  */
 
@@ -19,10 +19,10 @@ const DEFAULT_CASE_FILE = path.join(REPO_ROOT, "examples", "public-agent-cases.j
 const DEFAULT_PROMPT_FILE = path.join(REPO_ROOT, "examples", "public-agent-system-prompt.txt");
 
 function usage() {
-  console.log(`AlignHarness Promptfoo exporter
+  console.log(`VibeCheckBench Promptfoo exporter
 
 Usage:
-  node skills/alignharness/scripts/export-promptfoo.mjs --out promptfooconfig.yaml
+  node skills/vibecheckbench/scripts/export-promptfoo.mjs --out promptfooconfig.yaml
 
 Options:
   --profile <path>      Preference YAML file
@@ -33,7 +33,7 @@ Options:
   --threshold <n>       JavaScript assertion pass threshold (default: 0.5)
 
 Example:
-  node skills/alignharness/scripts/export-promptfoo.mjs \\
+  node skills/vibecheckbench/scripts/export-promptfoo.mjs \\
     --profile examples/literature-backed-user-preferences.yaml \\
     --case-file examples/literature-backed-user-cases.json \\
     --prompt-file examples/complex-use-case-system-prompt.txt \\
@@ -200,7 +200,7 @@ function buildConfig({ profile, preferences, cases, prompt, provider, threshold 
 
   return [
     "# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json",
-    `description: ${yamlQuote(`AlignHarness regression suite: ${profile.name || "profile"}`)}`,
+    `description: ${yamlQuote(`VibeCheckBench regression suite: ${profile.name || "profile"}`)}`,
     "",
     "prompts:",
     "  - |",

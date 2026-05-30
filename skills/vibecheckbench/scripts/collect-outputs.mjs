@@ -3,9 +3,9 @@ import path from "node:path";
 import process from "node:process";
 
 const DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant.";
-const LLAMACPP_API_URL = (process.env.ALIGNHARNESS_LLAMACPP_URL?.trim() || "http://localhost:8080").replace(/\/$/, "");
-const LLAMACPP_API_KEY = process.env.ALIGNHARNESS_LLAMACPP_API_KEY?.trim();
-const USER_PROMPT_PREFIX = process.env.ALIGNHARNESS_NO_THINK === "1" ? "/no_think " : "";
+const LLAMACPP_API_URL = (process.env.VIBECHECKBENCH_LLAMACPP_URL?.trim() || "http://localhost:8080").replace(/\/$/, "");
+const LLAMACPP_API_KEY = process.env.VIBECHECKBENCH_LLAMACPP_API_KEY?.trim();
+const USER_PROMPT_PREFIX = process.env.VIBECHECKBENCH_NO_THINK === "1" ? "/no_think " : "";
 
 function parseArgs(argv) {
   const args = {
@@ -14,7 +14,7 @@ function parseArgs(argv) {
     promptFile: null,
     prompt: null,
     cases: 1,
-    model: process.env.ALIGNHARNESS_MODEL || "local-model",
+    model: process.env.VIBECHECKBENCH_MODEL || "local-model",
     output: null,
   };
 
@@ -45,7 +45,7 @@ function printHelp() {
   console.log(`Collect model outputs without judging
 
 Usage:
-  node skills/alignharness/scripts/collect-outputs.mjs --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/public-agent-system-prompt.txt --cases 1 --output reports/local-outputs.json`);
+  node skills/vibecheckbench/scripts/collect-outputs.mjs --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json --prompt-file examples/public-agent-system-prompt.txt --cases 1 --output reports/local-outputs.json`);
 }
 
 function stripYamlScalar(value) {

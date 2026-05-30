@@ -1,0 +1,8 @@
+interface:
+  display_name: "VibeCheckBench"
+  short_description: "Regression-test AI outputs against your preferences"
+  brand_color: "#2563EB"
+  default_prompt: "Use $vibecheckbench to turn my AI preferences into a Promptfoo regression suite."
+
+policy:
+  allow_implicit_invocation: true

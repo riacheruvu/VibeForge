@@ -1,6 +1,6 @@
 import http from "node:http";
 
-const PORT = Number(process.env.ALIGNHARNESS_MOCK_PORT || 18084);
+const PORT = Number(process.env.VIBECHECKBENCH_MOCK_PORT || 18084);
 
 function extractBetween(text, start, end) {
   const startIndex = text.indexOf(start);

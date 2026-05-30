@@ -1,13 +1,13 @@
 """
-ALIGNHARNESS local runner - llama.cpp backend (llama-cpp-python).
+VibeCheckBench local runner - llama.cpp backend (llama-cpp-python).
 
 Requires:
     pip install llama-cpp-python
 
-Set ALIGNHARNESS_GGUF_PATH to the GGUF model file you want to use, e.g.:
-    export ALIGNHARNESS_GGUF_PATH=~/models/phi-3-mini-4k-instruct-q4.gguf
+Set VIBECHECKBENCH_GGUF_PATH to the GGUF model file you want to use, e.g.:
+    export VIBECHECKBENCH_GGUF_PATH=~/models/phi-3-mini-4k-instruct-q4.gguf
 
-If ALIGNHARNESS_GGUF_PATH is not set, the runner will exit with a clear error.
+If VIBECHECKBENCH_GGUF_PATH is not set, the runner will exit with a clear error.
 """
 
 import argparse
@@ -18,14 +18,14 @@ import re
 import sys
 import time
 
-DEFAULT_TEST_CASES = min(20, max(1, int(os.environ.get("ALIGNHARNESS_NUM_CASES", "10"))))
+DEFAULT_TEST_CASES = min(20, max(1, int(os.environ.get("VIBECHECKBENCH_NUM_CASES", "10"))))
 DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant."
-DEFAULT_LOCAL_FAST = os.environ.get("ALIGNHARNESS_LOCAL_FAST", "1").strip().lower() not in {"0", "false", "no"}
-GGUF_PATH = os.environ.get("ALIGNHARNESS_GGUF_PATH", "").strip()
+DEFAULT_LOCAL_FAST = os.environ.get("VIBECHECKBENCH_LOCAL_FAST", "1").strip().lower() not in {"0", "false", "no"}
+GGUF_PATH = os.environ.get("VIBECHECKBENCH_GGUF_PATH", "").strip()
 
-CTX_SIZE = int(os.environ.get("ALIGNHARNESS_CTX_SIZE", "2048"))
-N_THREADS = int(os.environ.get("ALIGNHARNESS_N_THREADS", "4"))
-N_GPU_LAYERS = int(os.environ.get("ALIGNHARNESS_N_GPU_LAYERS", "0"))  # 0 = CPU only
+CTX_SIZE = int(os.environ.get("VIBECHECKBENCH_CTX_SIZE", "2048"))
+N_THREADS = int(os.environ.get("VIBECHECKBENCH_N_THREADS", "4"))
+N_GPU_LAYERS = int(os.environ.get("VIBECHECKBENCH_N_GPU_LAYERS", "0"))  # 0 = CPU only
 
 
 def load_llama(model_path):
@@ -64,12 +64,12 @@ def chat(llm, system, user_prompt, max_tokens):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run ALIGNHARNESS against a local GGUF model via llama-cpp-python.")
+    parser = argparse.ArgumentParser(description="Run VibeCheckBench against a local GGUF model via llama-cpp-python.")
     parser.add_argument("--intent", required=True, help="Benchmark target behavior")
     parser.add_argument("--prompt", default=None, help="Custom system prompt for config B")
     parser.add_argument("--prompt-file", default=None, help="Read the custom system prompt from a file")
     parser.add_argument("--cases", type=int, default=DEFAULT_TEST_CASES, help="Number of cases (1-20)")
-    parser.add_argument("--model", default=GGUF_PATH, help="Path to GGUF model file (overrides ALIGNHARNESS_GGUF_PATH)")
+    parser.add_argument("--model", default=GGUF_PATH, help="Path to GGUF model file (overrides VIBECHECKBENCH_GGUF_PATH)")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
     return parser.parse_args()
 
@@ -192,11 +192,11 @@ def generate_improved_prompt(llm, user_intent, config_b_prompt, weakness_analysi
     )
 
 
-def run_ALIGNHARNESS(user_intent, config_b_prompt, model_path, test_cases):
+def run_VibeCheckBench(user_intent, config_b_prompt, model_path, test_cases):
     if not model_path:
         print(
             "No GGUF model path provided.\n"
-            "Set ALIGNHARNESS_GGUF_PATH or pass --model <path/to/model.gguf>",
+            "Set VIBECHECKBENCH_GGUF_PATH or pass --model <path/to/model.gguf>",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -255,7 +255,7 @@ def main():
     args = parse_args()
     test_cases = min(20, max(1, args.cases))
     prompt = load_prompt(args)
-    report = run_ALIGNHARNESS(args.intent, prompt, args.model, test_cases)
+    report = run_VibeCheckBench(args.intent, prompt, args.model, test_cases)
     print(json.dumps(report, indent=2))
 
 
@@ -263,5 +263,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as error:
-        print(f"ALIGNHARNESS local error: {error}", file=sys.stderr)
+        print(f"VibeCheckBench local error: {error}", file=sys.stderr)
         sys.exit(1)

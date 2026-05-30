@@ -13,10 +13,10 @@ function parseArgs(argv) {
     caseFile: null,
     cases: 1,
     repeat: 1,
-    provider: process.env.ALIGNHARNESS_PROVIDER || null,
-    model: process.env.ALIGNHARNESS_MODEL || null,
-    judgeProvider: process.env.ALIGNHARNESS_JUDGE_PROVIDER || null,
-    judgeModel: process.env.ALIGNHARNESS_JUDGE_MODEL || null,
+    provider: process.env.VIBECHECKBENCH_PROVIDER || null,
+    model: process.env.VIBECHECKBENCH_MODEL || null,
+    judgeProvider: process.env.VIBECHECKBENCH_JUDGE_PROVIDER || null,
+    judgeModel: process.env.VIBECHECKBENCH_JUDGE_MODEL || null,
     saveReport: false,
     json: false,
   };
@@ -59,10 +59,10 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`ALIGNHARNESS config comparison
+  console.log(`VibeCheckBench config comparison
 
 Usage:
-  node skills/alignharness/scripts/compare-configs.mjs --config-dir examples/config-candidates --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json
+  node skills/vibecheckbench/scripts/compare-configs.mjs --config-dir examples/config-candidates --profile examples/public-agent-profile.yaml --case-file examples/public-agent-cases.json
 
 Options:
   --configs <csv>         Prompt/config files to compare
@@ -125,7 +125,7 @@ async function runConfig(args, configPath) {
 
 function formatComparison(comparison) {
   const lines = [
-    "ALIGNHARNESS Config Comparison",
+    "VibeCheckBench Config Comparison",
     "=========================",
     `Profile: ${comparison.profile}`,
     `Cases per preference: ${comparison.cases}`,

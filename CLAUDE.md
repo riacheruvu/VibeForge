@@ -1,10 +1,10 @@
-# AlignHarness - Claude Code Integration
+# VibeCheckBench - Claude Code Integration
 
-This file teaches Claude Code how to work with AlignHarness.
+This file teaches Claude Code how to work with VibeCheckBench.
 
 ## What this repo does
 
-AlignHarness turns user preference profiles into runnable AI regression suites.
+VibeCheckBench turns user preference profiles into runnable AI regression suites.
 
 The preferred path is:
 
@@ -21,14 +21,14 @@ but it should not be treated as the default architecture.
 ## Project layout
 
 ```
-skills/alignharness/scripts/
+skills/vibecheckbench/scripts/
   export-promptfoo.mjs        # Preferred: Promptfoo config exporter
-  run-alignharness.mjs          # Node runner (llamacpp / openai / anthropic)
+  run-vibecheckbench.mjs          # Node runner (llamacpp / openai / anthropic)
   run-profile.mjs          # Full preference profile runner
-  run-alignharness-local.py     # Python runner (llama-cpp-python, GGUF direct)
-  install-codex-skill.ps1  # Copies this skill into ~/.codex/skills/alignharness
-.claude/commands/alignharness.md # Claude Code slash command
-skills/alignharness/agents/openai.yaml # Codex UI metadata
+  run-vibecheckbench-local.py     # Python runner (llama-cpp-python, GGUF direct)
+  install-codex-skill.ps1  # Copies this skill into ~/.codex/skills/vibecheckbench
+.claude/commands/vibecheckbench.md # Claude Code slash command
+skills/vibecheckbench/agents/openai.yaml # Codex UI metadata
 docker/
   sandbox.Dockerfile       # Lightweight sandbox - no inference deps
   gateway.Dockerfile       # OpenClaw gateway
@@ -41,7 +41,7 @@ docker-compose.yml         # OpenClaw + optional llama-server profile
 ### Preferred Promptfoo export
 
 ```bash
-node skills/alignharness/scripts/export-promptfoo.mjs \
+node skills/vibecheckbench/scripts/export-promptfoo.mjs \
   --profile examples/public-agent-profile.yaml \
   --case-file examples/public-agent-cases.json \
   --prompt-file examples/public-agent-system-prompt.txt \
@@ -54,21 +54,21 @@ npx promptfoo@latest eval -c promptfooconfig.yaml
 
 ```bash
 # Make sure llama-server is running on port 8080, then:
-ALIGNHARNESS_PROVIDER=llamacpp node skills/alignharness/scripts/run-alignharness.mjs \
+VIBECHECKBENCH_PROVIDER=llamacpp node skills/vibecheckbench/scripts/run-vibecheckbench.mjs \
   --intent "concise technical explanations"
 ```
 
 ### With a hosted API
 
 ```bash
-ANTHROPIC_API_KEY=<your-anthropic-api-key> node skills/alignharness/scripts/run-alignharness.mjs \
+ANTHROPIC_API_KEY=<your-anthropic-api-key> node skills/vibecheckbench/scripts/run-vibecheckbench.mjs \
   --intent "warm and friendly email replies"
 ```
 
 ### With custom system prompt
 
 ```bash
-node skills/alignharness/scripts/run-alignharness.mjs \
+node skills/vibecheckbench/scripts/run-vibecheckbench.mjs \
   --intent "patient coding help" \
   --prompt "You are a patient coding mentor who celebrates small wins."
 ```
@@ -76,7 +76,7 @@ node skills/alignharness/scripts/run-alignharness.mjs \
 ### JSON output
 
 ```bash
-node skills/alignharness/scripts/run-alignharness.mjs --intent "warm emails" --json
+node skills/vibecheckbench/scripts/run-vibecheckbench.mjs --intent "warm emails" --json
 ```
 
 ## Agent skill workflow
@@ -86,25 +86,25 @@ node skills/alignharness/scripts/run-alignharness.mjs --intent "warm emails" --j
 Use the slash command:
 
 ```text
-/alignharness "warm emails" --cases 5
-/alignharness profile --cases 3 --repeat 3 --save-report
-/alignharness validate
-/alignharness smoke
+/vibecheckbench "warm emails" --cases 5
+/vibecheckbench profile --cases 3 --repeat 3 --save-report
+/vibecheckbench validate
+/vibecheckbench smoke
 ```
 
-The implementation lives in `.claude/commands/alignharness.md`; keep that file pointed at the same runner scripts as the Codex skill.
+The implementation lives in `.claude/commands/vibecheckbench.md`; keep that file pointed at the same runner scripts as the Codex skill.
 
 ### Codex
 
-The reusable Codex skill lives in `skills/alignharness/SKILL.md`, with UI metadata in `skills/alignharness/agents/openai.yaml`.
+The reusable Codex skill lives in `skills/vibecheckbench/SKILL.md`, with UI metadata in `skills/vibecheckbench/agents/openai.yaml`.
 
 Install locally on Windows:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File skills/alignharness/scripts/install-codex-skill.ps1
+powershell -ExecutionPolicy Bypass -File skills/vibecheckbench/scripts/install-codex-skill.ps1
 ```
 
-After installation, invoke it as `$alignharness` in Codex.
+After installation, invoke it as `$vibecheckbench` in Codex.
 
 ## Docker workflow
 
@@ -125,20 +125,20 @@ See `.env.example` for the full list. Key ones:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `ALIGNHARNESS_PROVIDER` | `llamacpp` | Provider: llamacpp / openai / anthropic |
-| `ALIGNHARNESS_MODEL` | blank | Model override |
-| `ALIGNHARNESS_JUDGE_PROVIDER` | blank | Optional separate judge provider |
-| `ALIGNHARNESS_JUDGE_MODEL` | blank | Optional separate judge model |
-| `ALIGNHARNESS_LLAMACPP_URL` | `http://host.docker.internal:8080` | llama.cpp server URL |
-| `ALIGNHARNESS_NUM_CASES` | `10` | Number of test cases per benchmark |
-| `ALIGNHARNESS_REPEAT` | `1` | Repeat count for profile runs |
-| `ALIGNHARNESS_LOCAL_FAST` | `1` | Shorter outputs for speed (set 0 for quality) |
+| `VIBECHECKBENCH_PROVIDER` | `llamacpp` | Provider: llamacpp / openai / anthropic |
+| `VIBECHECKBENCH_MODEL` | blank | Model override |
+| `VIBECHECKBENCH_JUDGE_PROVIDER` | blank | Optional separate judge provider |
+| `VIBECHECKBENCH_JUDGE_MODEL` | blank | Optional separate judge model |
+| `VIBECHECKBENCH_LLAMACPP_URL` | `http://host.docker.internal:8080` | llama.cpp server URL |
+| `VIBECHECKBENCH_NUM_CASES` | `10` | Number of test cases per benchmark |
+| `VIBECHECKBENCH_REPEAT` | `1` | Repeat count for profile runs |
+| `VIBECHECKBENCH_LOCAL_FAST` | `1` | Shorter outputs for speed (set 0 for quality) |
 
 ## Common tasks for Claude Code
 
-- **Add a new provider**: edit `resolveProvider()` and provider call helpers in `run-alignharness.mjs` and `run-profile.mjs`
+- **Add a new provider**: edit `resolveProvider()` and provider call helpers in `run-vibecheckbench.mjs` and `run-profile.mjs`
 - **Change judge behavior**: edit the `scoreOutputs()` system prompt
-- **Add a CLI flag**: edit `parseArgs()` in the relevant runner and document it in `.claude/commands/alignharness.md` plus `skills/alignharness/SKILL.md`
+- **Add a CLI flag**: edit `parseArgs()` in the relevant runner and document it in `.claude/commands/vibecheckbench.md` plus `skills/vibecheckbench/SKILL.md`
 - **Tune Docker sandbox**: edit `docker/sandbox.Dockerfile`
 - **Add inference knobs**: add env vars to `docker-compose.yml` and `.env.example`
 
@@ -149,11 +149,11 @@ Current preferences: factuality, pushback, initiative, anti_sycophancy.
 
 ### Run the full profile
 ```bash
-node skills/alignharness/scripts/run-profile.mjs
-node skills/alignharness/scripts/run-profile.mjs --prompt-file my-prompt.txt --cases 3
-node skills/alignharness/scripts/run-profile.mjs --validate-profile
-node skills/alignharness/scripts/run-profile.mjs --smoke-test
-node skills/alignharness/scripts/run-profile.mjs --cases 3 --repeat 3 --judge-provider openai --judge-model gpt-4.1-mini --save-report
+node skills/vibecheckbench/scripts/run-profile.mjs
+node skills/vibecheckbench/scripts/run-profile.mjs --prompt-file my-prompt.txt --cases 3
+node skills/vibecheckbench/scripts/run-profile.mjs --validate-profile
+node skills/vibecheckbench/scripts/run-profile.mjs --smoke-test
+node skills/vibecheckbench/scripts/run-profile.mjs --cases 3 --repeat 3 --judge-provider openai --judge-model gpt-4.1-mini --save-report
 ```
 
 ### Profile schema

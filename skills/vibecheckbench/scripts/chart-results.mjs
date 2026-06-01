@@ -42,6 +42,7 @@ function readRows(inputPath) {
 
   const payload = JSON.parse(text);
   if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.results?.results)) return payload.results.results;
   if (Array.isArray(payload.results?.outputs)) return payload.results.outputs;
   if (Array.isArray(payload.outputs)) return payload.outputs;
   if (Array.isArray(payload.results)) return payload.results;

@@ -26,7 +26,7 @@ skills/vibecheckbench/scripts/
   run-vibecheckbench.mjs          # Node runner (llamacpp / openai / anthropic)
   run-profile.mjs          # Full preference profile runner
   run-vibecheckbench-local.py     # Python runner (llama-cpp-python, GGUF direct)
-  install-codex-skill.ps1  # Copies this skill into ~/.codex/skills/vibecheckbench
+  install-codex-skill.mjs  # Cross-platform installer for ~/.codex/skills/vibecheckbench
 .claude/commands/vibecheckbench.md # Claude Code slash command
 skills/vibecheckbench/agents/openai.yaml # Codex UI metadata
 docker/
@@ -103,7 +103,7 @@ The reusable Codex skill lives in `skills/vibecheckbench/SKILL.md`, with UI meta
 Install locally on Windows:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File skills/vibecheckbench/scripts/install-codex-skill.ps1
+npm run skill:install
 ```
 
 After installation, invoke it as `$vibecheckbench` in Codex.

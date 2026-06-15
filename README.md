@@ -2,6 +2,8 @@
 
 VibeCheckBench is a small prototype for turning "this AI feels off" into repeatable checks.
 
+[**Open the live dashboard demo**](https://riacheruvu.github.io/MyBench/)
+
 ![VibeCheckBench social preview](assets/vibecheckbench-social-preview.png)
 
 > Demo visual showing how different AI setups might fit or miss across user preference areas. Not a leaderboard; a way to make "this felt useful/off" easier to inspect.
@@ -13,6 +15,39 @@ Most AI benchmarks ask which model is best overall. VibeCheckBench asks a more p
 It focuses on everyday interaction failures that standard benchmarks often miss: answers that are too long, too agreeable, too vague, too hesitant, too confident, or too poor at following exact instructions.
 
 The goal is practical and user-owned: define preferences, run public-safe cases, compare setups, and visualize where each one fits or misses.
+
+## What this project is exploring
+
+VibeCheckBench starts from a few working ideas:
+
+- **"The vibes are off" often points to a real requirement.** Preferences such as "stay concise," "push back kindly," and "do not overclaim" affect effort, trust, and usability. They can be made more explicit and tested.
+- **Capability is not the same as fit.** A capable model can still create avoidable work by ignoring constraints, agreeing too readily, or giving the wrong level of detail.
+- **The AI setup is the useful unit of evaluation.** People experience a combination of model, prompt, memory, tools, skills, and settings, not a model in isolation.
+- **Evaluation should lead to improvement.** The useful loop is `preference -> test -> compare -> inspect failures -> adjust -> test again`, not producing a score and stopping there.
+- **Past interactions can reveal missing tests.** Repeated corrections and workarounds may contain useful evidence about what someone needs, provided that private history stays protected and inferred preferences are reviewed by the user.
+- **Improvement needs guardrails.** Held-out cases, repeat runs, regression checks, cost, latency, and manual review help distinguish a genuine improvement from a prompt that merely learned the test.
+- **The workflow should remain approachable.** A person should be able to see what was tested, where a setup fit, what failed, and whether a change helped without becoming an evaluation-infrastructure expert.
+
+The broader question is not simply which model performs best. It is:
+
+> Where does an AI setup create avoidable work, uncertainty, or loss of trust, and what changes actually reduce that friction?
+
+## One place to run and understand evaluations
+
+The skill-owned local dashboard is now the simplest path through the project. It
+can launch allowlisted, local-only evaluations and stores one canonical
+`run.json` for each run, including the compared setups, preference-level scores,
+failed outputs, latency, token usage, and any config-promotion decision.
+
+```powershell
+npm run dashboard
+```
+
+Open `http://127.0.0.1:4173`.
+
+The local app can trigger evaluations. The
+[GitHub Pages demo](https://riacheruvu.github.io/MyBench/) is read-only and uses
+clearly labeled, checked-in example data.
 
 ## What it helps test
 
@@ -31,12 +66,12 @@ The bundled complex example checks whether an AI setup:
 
 You only need Node.js for the offline demo. The first run does not install packages, call hosted APIs, or send prompts anywhere.
 
-```powershell
+```bash
 git clone https://github.com/riacheruvu/VibeCheckBench.git
 cd VibeCheckBench
 
-node skills/vibecheckbench/scripts/chart-results.mjs `
-  --input examples/promptfoo-results.user-fit-demo.json `
+node skills/vibecheckbench/scripts/chart-results.mjs \
+  --input examples/promptfoo-results.user-fit-demo.json \
   --out reports/skill-chart.demo.html
 ```
 
@@ -47,6 +82,9 @@ reports/skill-chart.demo.html
 ```
 
 That shows the chart format using checked-in example results.
+
+If this experiment helps you make an AI setup easier to work with, a GitHub star
+helps other people who feel the same friction find it.
 
 ### Example Outputs
 
@@ -176,6 +214,96 @@ There are two useful scoring styles:
 - **Judge checks** catch softer user-fit issues: overconfidence, flattery, weak pushback, ignoring the user's real concern, or giving advice that sounds polished but is not actually safe/helpful.
 
 The strongest path is usually hybrid: deterministic checks for the crisp constraints, plus a separate judge for semantic fit.
+
+## Learn from conversation history
+
+VibeCheckBench can mine a local conversation export for moments where the user
+states a preference, corrects an interaction pattern, or repeats a constraint.
+The miner is deterministic and local: it does not call a model or send the
+conversation anywhere.
+
+```powershell
+node skills/vibecheckbench/scripts/mine-conversation-history.mjs `
+  --input examples/conversation-history.public-safe.example.json
+```
+
+This writes:
+
+```text
+captures/history-review.json
+captures/history-tasks/
+```
+
+Both stay local because `captures/` is gitignored. The output is a review queue,
+not an automatically trusted profile. Each candidate includes a redacted excerpt,
+an evidence hash, an inferred preference area, and a draft task marked
+`needs_review`.
+
+Use `--include-content` only when you intentionally want redacted conversation
+excerpts copied into the local task drafts. Before promoting a draft into a real
+suite:
+
+1. Remove identifying or confidential context.
+2. Rewrite it as a public-safe case when possible.
+3. Confirm that it reflects a durable preference, not a one-off mood or task.
+4. Put some accepted cases in a held-out validation set.
+
+### Multi-turn preference checks
+
+Task packs may use `input.turns` instead of a single `input.prompt`. Promptfoo
+supports chat-format prompts, so VibeCheckBench preserves the prior user and
+assistant turns when testing the setup's next response.
+
+```json
+{
+  "input": {
+    "user_profile": "The user expects explicit corrections to persist.",
+    "turns": [
+      { "role": "user", "content": "Give me a recommendation." },
+      { "role": "assistant", "content": "A long, overly broad answer." },
+      { "role": "user", "content": "Try again: exactly two short bullets." }
+    ]
+  }
+}
+```
+
+See `examples/tasks/multiturn_correction_fit_001.json`.
+
+This evaluates conversational state and correction-following. Full agent
+workflows need more evidence than the final answer, so tasks may also include a
+`workflow` block for expected or forbidden tool calls. Trace-aware scoring is a
+separate planned layer; VibeCheckBench does not currently pretend that final-text
+grading proves the tools or state transitions were correct.
+
+## Guarded self-improvement loop
+
+`optimize-config.mjs` can propose prompt revisions from observed failures. The
+loop now separates proposal cases from held-out validation and writes an
+auditable promotion manifest:
+
+```powershell
+node skills/vibecheckbench/scripts/optimize-config.mjs `
+  --profile examples/public-agent-profile.yaml `
+  --case-file path\to\training-cases.json `
+  --validation-case-file path\to\held-out-cases.json `
+  --prompt-file examples/config-candidates/generic-supportive.txt `
+  --iterations 3 `
+  --min-improvement 2 `
+  --max-preference-regression 8
+```
+
+A revision is accepted into the next iteration only when its held-out weighted
+score improves by the configured margin and no preference area regresses beyond
+the allowed limit. “Accepted” means eligible for human review, not automatically
+deployed. The loop records reports and decisions in:
+
+```text
+reports/optimized-configs/optimization-manifest.json
+```
+
+This is intentionally conservative. Otherwise the optimizer can learn the
+grader's vocabulary, overfit repeated cases, or improve concision while quietly
+damaging privacy guidance, factual calibration, or another user preference.
 
 ## Test actual model answers
 
@@ -337,6 +465,14 @@ Run Promptfoo and save JSON results:
 npx promptfoo@latest eval -c promptfooconfig.models.yaml --output reports/results.json
 ```
 
+If Promptfoo is already installed locally, run it on any platform with:
+
+```bash
+promptfoo eval -c promptfooconfig.models.yaml --output reports/results.json --no-cache
+```
+
+`scripts/run-promptfoo.ps1` remains available as an optional Windows helper for
+the repo's isolated pinned runtime.
 Then generate the visual comparison:
 
 ```powershell
@@ -390,15 +526,22 @@ This is a personal-fit chart, not a model leaderboard. A setup can be excellent 
 
 ## Planned Improvements
 
-This is still an early prototype. A few improvements would make it more useful before treating results as serious evidence:
+This is still an early prototype. The next improvements focus on making the
+preference-to-improvement loop more trustworthy and easier to use:
 
 - **Better privacy/sourceability checks**: penalize unsupported claims like "private by default," "no known risks," or "no verification needed" when a user asks about sensitive data.
 - **Stronger judge separation**: keep the judged model and judge model separate, and prefer a stronger judge for semantic fit when privacy allows.
 - **Judge quality diagnostics**: show when a judge contradicts deterministic checks or gives a reason that does not match the answer.
 - **Held-out cases and repeats**: add repeat runs and unseen cases so users can tell whether a config improved or just overfit the examples.
+- **Conversation-history review**: improve local preference mining, deduplication, and accept/edit/reject workflows without uploading private history.
+- **Trace-aware agent checks**: evaluate tool choice, permissions, state transitions, retries, and completion evidence across multi-turn workflows.
 - **Clearer captured-answer workflow**: make it easier to compare models selected inside Codex, Claude Code, or chat UIs without manual JSON editing.
 - **More user-owned task packs**: support small domain-specific packs for writing, coding, research, decision support, accessibility, safety, and other workflows.
-- **Chart polish**: keep the visualization readable for nontechnical users while preserving enough detail for debugging.
+- **One understandable run record**: keep scores, failed outputs, latency, token use, and config decisions together instead of scattering the evidence across reports.
+
+## Citation and reuse
+
+VibeCheckBench is MIT licensed to keep reuse lightweight. If it helps your work, a link to the repo or the metadata in `CITATION.cff` is appreciated.
 
 ## Local and OSS model notes
 
@@ -438,8 +581,8 @@ skills/vibecheckbench/
 
 Install it locally:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File skills/vibecheckbench/scripts/install-codex-skill.ps1
+```bash
+npm run skill:install
 ```
 
 Then in Codex:
@@ -509,6 +652,8 @@ node --check skills/vibecheckbench/scripts/prepare-capture-session.mjs
 node --check skills/vibecheckbench/scripts/judge-captured-answers.mjs
 node --check skills/vibecheckbench/scripts/validate-tasks.mjs
 node --check skills/vibecheckbench/scripts/export-task-pack-promptfoo.mjs
+node --check skills/vibecheckbench/scripts/mine-conversation-history.mjs
+node --check skills/vibecheckbench/scripts/optimize-config.mjs
 node skills/vibecheckbench/scripts/validate-tasks.mjs --tasks examples/tasks
 
 node skills/vibecheckbench/scripts/export-promptfoo.mjs `

@@ -33,23 +33,23 @@
     <text x="92" y="144" class="body muted">needs checking.</text>
     <text x="28" y="182" class="tiny" fill="#0f8f8f">TRUST + CALIBRATION</text>
 
-    <rect x="420" y="0" width="370" height="210" rx="18" class="card" fill="#fff6ef" stroke="#ffd3bd"/>
-    <circle cx="474" cy="58" r="27" fill="#ffe3d7"/>
-    <path d="M460 52 H489 M460 64 H481" class="icon" stroke="#ff775f"/>
-    <text x="512" y="55" class="h ink">Keeps it high-signal</text>
-    <text x="512" y="88" class="body muted">Stays concise without dropping</text>
-    <text x="512" y="116" class="body muted">the nuance the user actually</text>
-    <text x="512" y="144" class="body muted">needed.</text>
-    <text x="448" y="182" class="tiny" fill="#c85c48">CONCISION + USEFULNESS</text>
+    <rect x="400" y="0" width="370" height="210" rx="18" class="card" fill="#fff6ef" stroke="#ffd3bd"/>
+    <circle cx="454" cy="58" r="27" fill="#ffe3d7"/>
+    <path d="M440 52 H469 M440 64 H461" class="icon" stroke="#ff775f"/>
+    <text x="492" y="55" class="h ink">Keeps it high-signal</text>
+    <text x="492" y="88" class="body muted">Stays concise without dropping</text>
+    <text x="492" y="116" class="body muted">the nuance the user actually</text>
+    <text x="492" y="144" class="body muted">needed.</text>
+    <text x="428" y="182" class="tiny" fill="#c85c48">CONCISION + USEFULNESS</text>
 
-    <rect x="840" y="0" width="370" height="210" rx="18" class="card" fill="#f3f2ff" stroke="#d8d3ff"/>
-    <circle cx="894" cy="58" r="27" fill="#e4e0ff"/>
-    <path d="M882 58 H906 M894 46 V70" class="icon" stroke="#7167c7"/>
-    <text x="932" y="55" class="h ink">Pushes back kindly</text>
-    <text x="932" y="88" class="body muted">Supports the person without</text>
-    <text x="932" y="116" class="body muted">rubber-stamping weak claims</text>
-    <text x="932" y="144" class="body muted">or flattering.</text>
-    <text x="868" y="182" class="tiny" fill="#7167c7">HONEST SUPPORT</text>
+    <rect x="800" y="0" width="370" height="210" rx="18" class="card" fill="#f3f2ff" stroke="#d8d3ff"/>
+    <circle cx="854" cy="58" r="27" fill="#e4e0ff"/>
+    <path d="M842 58 H866 M854 46 V70" class="icon" stroke="#7167c7"/>
+    <text x="892" y="55" class="h ink">Pushes back kindly</text>
+    <text x="892" y="88" class="body muted">Supports the person without</text>
+    <text x="892" y="116" class="body muted">rubber-stamping weak claims</text>
+    <text x="892" y="144" class="body muted">or flattering.</text>
+    <text x="828" y="182" class="tiny" fill="#7167c7">HONEST SUPPORT</text>
   </g>
 
   <g transform="translate(70 430)">
@@ -62,23 +62,23 @@
     <text x="92" y="144" class="body muted">level of detail.</text>
     <text x="28" y="182" class="tiny" fill="#5d8e42">CONSTRAINT FOLLOWING</text>
 
-    <rect x="420" y="0" width="370" height="210" rx="18" class="card" fill="#f0f8ff" stroke="#c7def1"/>
-    <circle cx="474" cy="58" r="27" fill="#dcefff"/>
-    <path d="M459 66 C459 53 467 46 474 46 C481 46 489 53 489 66 M465 74 H483" class="icon" stroke="#3f83b8"/>
-    <text x="512" y="55" class="h ink">Helps without</text>
-    <text x="512" y="88" class="h ink">overstepping</text>
-    <text x="512" y="121" class="body muted">Gives bounded help instead of</text>
-    <text x="512" y="149" class="body muted">over-refusing or oversharing.</text>
-    <text x="448" y="182" class="tiny" fill="#3f83b8">BOUNDARIES + SAFETY</text>
+    <rect x="400" y="0" width="370" height="210" rx="18" class="card" fill="#f0f8ff" stroke="#c7def1"/>
+    <circle cx="454" cy="58" r="27" fill="#dcefff"/>
+    <path d="M439 66 C439 53 447 46 454 46 C461 46 469 53 469 66 M445 74 H463" class="icon" stroke="#3f83b8"/>
+    <text x="492" y="55" class="h ink">Helps without</text>
+    <text x="492" y="88" class="h ink">overstepping</text>
+    <text x="492" y="121" class="body muted">Gives bounded help instead of</text>
+    <text x="492" y="149" class="body muted">over-refusing or oversharing.</text>
+    <text x="428" y="182" class="tiny" fill="#3f83b8">BOUNDARIES + SAFETY</text>
 
-    <rect x="840" y="0" width="370" height="210" rx="18" class="card" fill="#fff8df" stroke="#ecd997"/>
-    <circle cx="894" cy="58" r="27" fill="#fff0b8"/>
-    <path d="M882 50 L894 42 L906 50 M894 43 V73 M882 73 H906" class="icon" stroke="#c89a15"/>
-    <text x="932" y="55" class="h ink">Helps me choose</text>
-    <text x="932" y="88" class="body muted">Shows tradeoffs and next</text>
-    <text x="932" y="116" class="body muted">steps without taking over</text>
-    <text x="932" y="144" class="body muted">the decision.</text>
-    <text x="868" y="182" class="tiny" fill="#a88012">AGENCY + DECISION FIT</text>
+    <rect x="800" y="0" width="370" height="210" rx="18" class="card" fill="#fff8df" stroke="#ecd997"/>
+    <circle cx="854" cy="58" r="27" fill="#fff0b8"/>
+    <path d="M842 50 L854 42 L866 50 M854 43 V73 M842 73 H866" class="icon" stroke="#c89a15"/>
+    <text x="892" y="55" class="h ink">Helps me choose</text>
+    <text x="892" y="88" class="body muted">Shows tradeoffs and next</text>
+    <text x="892" y="116" class="body muted">steps without taking over</text>
+    <text x="892" y="144" class="body muted">the decision.</text>
+    <text x="828" y="182" class="tiny" fill="#a88012">AGENCY + DECISION FIT</text>
   </g>
 
   <text x="70" y="704" class="sub muted">The point is not "best model overall." It is "which setup fits this person, task, and workflow?"</text>

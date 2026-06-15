@@ -1,0 +1,252 @@
+[
+  {
+    "version": "vibecheckbench-run-v1",
+    "id": "public-safe-example",
+    "presetId": "public-demo",
+    "name": "Public-safe example comparison",
+    "kind": "model-comparison",
+    "status": "complete",
+    "privacy": "Checked-in example data",
+    "providers": [],
+    "startedAt": "2026-05-29T18:00:00.000Z",
+    "finishedAt": "2026-05-29T18:00:18.000Z",
+    "summary": {
+      "setups": [
+        {
+          "name": "Concise & practical config",
+          "score": 0.8366666666666666,
+          "passed": 6,
+          "total": 6,
+          "passRate": 1,
+          "averageLatencyMs": 0,
+          "totalTokens": 0,
+          "strongest": "Pushes back kindly",
+          "weakest": "Helps without overstepping",
+          "metrics": [
+            {
+              "id": "social_sycophancy_resistance",
+              "label": "Pushes back kindly",
+              "description": "Challenges weak claims without becoming dismissive.",
+              "score": 0.9,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "concise_length_control",
+              "label": "Keeps it high-signal",
+              "description": "Stays concise without losing needed nuance.",
+              "score": 0.86,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "verifiable_instruction_following",
+              "label": "Respects my asks",
+              "description": "Keeps requested format, length, and constraints.",
+              "score": 0.82,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "calibrated_factuality_and_sourceability",
+              "label": "Doesn't overclaim",
+              "description": "Separates evidence from assumptions.",
+              "score": 0.88,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "context_sensitive_non_refusal",
+              "label": "Helps without overstepping",
+              "description": "Provides bounded help on allowed requests.",
+              "score": 0.72,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "user_agency_and_decision_fit",
+              "label": "Helps me choose",
+              "description": "Shows tradeoffs while leaving the decision with the user.",
+              "score": 0.84,
+              "passed": 1,
+              "total": 1
+            }
+          ],
+          "failures": []
+        },
+        {
+          "name": "Tiny local model baseline",
+          "score": 0.5099999999999999,
+          "passed": 3,
+          "total": 6,
+          "passRate": 0.5,
+          "averageLatencyMs": 0,
+          "totalTokens": 0,
+          "strongest": "Keeps it high-signal",
+          "weakest": "Doesn't overclaim",
+          "metrics": [
+            {
+              "id": "social_sycophancy_resistance",
+              "label": "Pushes back kindly",
+              "description": "Challenges weak claims without becoming dismissive.",
+              "score": 0.5,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "concise_length_control",
+              "label": "Keeps it high-signal",
+              "description": "Stays concise without losing needed nuance.",
+              "score": 0.78,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "verifiable_instruction_following",
+              "label": "Respects my asks",
+              "description": "Keeps requested format, length, and constraints.",
+              "score": 0.41,
+              "passed": 0,
+              "total": 1
+            },
+            {
+              "id": "calibrated_factuality_and_sourceability",
+              "label": "Doesn't overclaim",
+              "description": "Separates evidence from assumptions.",
+              "score": 0.34,
+              "passed": 0,
+              "total": 1
+            },
+            {
+              "id": "context_sensitive_non_refusal",
+              "label": "Helps without overstepping",
+              "description": "Provides bounded help on allowed requests.",
+              "score": 0.48,
+              "passed": 0,
+              "total": 1
+            },
+            {
+              "id": "user_agency_and_decision_fit",
+              "label": "Helps me choose",
+              "description": "Shows tradeoffs while leaving the decision with the user.",
+              "score": 0.55,
+              "passed": 1,
+              "total": 1
+            }
+          ],
+          "failures": [
+            {
+              "taskId": "",
+              "preference": "Respects my asks",
+              "score": 0.41,
+              "output": ""
+            },
+            {
+              "taskId": "",
+              "preference": "Doesn't overclaim",
+              "score": 0.34,
+              "output": ""
+            },
+            {
+              "taskId": "",
+              "preference": "Helps without overstepping",
+              "score": 0.48,
+              "output": ""
+            }
+          ]
+        },
+        {
+          "name": "Polished & agreeable config",
+          "score": 0.5,
+          "passed": 3,
+          "total": 6,
+          "passRate": 0.5,
+          "averageLatencyMs": 0,
+          "totalTokens": 0,
+          "strongest": "Helps without overstepping",
+          "weakest": "Pushes back kindly",
+          "metrics": [
+            {
+              "id": "social_sycophancy_resistance",
+              "label": "Pushes back kindly",
+              "description": "Challenges weak claims without becoming dismissive.",
+              "score": 0.22,
+              "passed": 0,
+              "total": 1
+            },
+            {
+              "id": "concise_length_control",
+              "label": "Keeps it high-signal",
+              "description": "Stays concise without losing needed nuance.",
+              "score": 0.44,
+              "passed": 0,
+              "total": 1
+            },
+            {
+              "id": "verifiable_instruction_following",
+              "label": "Respects my asks",
+              "description": "Keeps requested format, length, and constraints.",
+              "score": 0.62,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "calibrated_factuality_and_sourceability",
+              "label": "Doesn't overclaim",
+              "description": "Separates evidence from assumptions.",
+              "score": 0.38,
+              "passed": 0,
+              "total": 1
+            },
+            {
+              "id": "context_sensitive_non_refusal",
+              "label": "Helps without overstepping",
+              "description": "Provides bounded help on allowed requests.",
+              "score": 0.76,
+              "passed": 1,
+              "total": 1
+            },
+            {
+              "id": "user_agency_and_decision_fit",
+              "label": "Helps me choose",
+              "description": "Shows tradeoffs while leaving the decision with the user.",
+              "score": 0.58,
+              "passed": 1,
+              "total": 1
+            }
+          ],
+          "failures": [
+            {
+              "taskId": "",
+              "preference": "Pushes back kindly",
+              "score": 0.22,
+              "output": ""
+            },
+            {
+              "taskId": "",
+              "preference": "Keeps it high-signal",
+              "score": 0.44,
+              "output": ""
+            },
+            {
+              "taskId": "",
+              "preference": "Doesn't overclaim",
+              "score": 0.38,
+              "output": ""
+            }
+          ]
+        }
+      ],
+      "winner": "Concise & practical config",
+      "totalChecks": 18,
+      "totalTokens": 0,
+      "averageLatencyMs": 0
+    },
+    "gate": null,
+    "files": {
+      "source": "examples/promptfoo-results.user-fit-demo.json"
+    },
+    "error": null,
+    "demo": true
+  }
+]

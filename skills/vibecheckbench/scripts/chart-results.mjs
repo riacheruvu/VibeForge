@@ -59,10 +59,13 @@ export function readInput(inputPath) {
 
 function providerOf(row) {
   const provider = row.provider || row.providerId || row.providerResponse?.provider;
-  if (typeof provider === "string") return provider;
-  if (provider?.id) return provider.id;
-  if (provider?.label) return provider.label;
-  return "unknown-provider";
+  const providerName = typeof provider === "string"
+    ? provider
+    : provider?.label || provider?.id || "unknown-provider";
+  const configLabel = varsOf(row).config_label;
+  return configLabel && configLabel !== "default"
+    ? `${providerName} / ${configLabel}`
+    : providerName;
 }
 
 function varsOf(row) {
@@ -256,20 +259,43 @@ function radarPolygon(points) {
   return points.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
 }
 
+function radarLabel(label, x, y, anchor) {
+  const words = label.split(/\s+/);
+  if (label.length <= 21 || words.length < 3) {
+    return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" class="radar-label">${htmlEscape(label)}</text>`;
+  }
+
+  let splitAt = 1;
+  let smallestDifference = Infinity;
+  for (let index = 1; index < words.length; index++) {
+    const first = words.slice(0, index).join(" ");
+    const second = words.slice(index).join(" ");
+    const difference = Math.abs(first.length - second.length);
+    if (difference < smallestDifference) {
+      smallestDifference = difference;
+      splitAt = index;
+    }
+  }
+
+  const first = htmlEscape(words.slice(0, splitAt).join(" "));
+  const second = htmlEscape(words.slice(splitAt).join(" "));
+  return `<text x="${x.toFixed(1)}" y="${(y - 10).toFixed(1)}" text-anchor="${anchor}" class="radar-label"><tspan x="${x.toFixed(1)}">${first}</tspan><tspan x="${x.toFixed(1)}" dy="22">${second}</tspan></text>`;
+}
+
 function renderRadar({ providers, metrics, summary }) {
   if (metrics.length < 3 || providers.length === 0) return "";
 
-  const centerX = 380;
+  const centerX = 450;
   const centerY = 260;
   const radius = 150;
   const rings = [0.25, 0.5, 0.75, 1];
   const axes = metrics.map((metric, index) => {
     const end = polarPoint(centerX, centerY, radius, index, metrics.length);
-    const labelPoint = polarPoint(centerX, centerY, radius + 62, index, metrics.length);
+    const labelPoint = polarPoint(centerX, centerY, radius + 58, index, metrics.length);
     const anchor = labelPoint.x < centerX - 20 ? "end" : labelPoint.x > centerX + 20 ? "start" : "middle";
     return `
           <line x1="${centerX}" y1="${centerY}" x2="${end.x.toFixed(1)}" y2="${end.y.toFixed(1)}" class="axis"></line>
-          <text x="${labelPoint.x.toFixed(1)}" y="${labelPoint.y.toFixed(1)}" text-anchor="${anchor}" class="radar-label">${htmlEscape(metricInfo(metric).label)}</text>`;
+          ${radarLabel(metricInfo(metric).label, labelPoint.x, labelPoint.y, anchor)}`;
   }).join("");
 
   const ringShapes = rings.map(level => {
@@ -297,7 +323,7 @@ function renderRadar({ providers, metrics, summary }) {
       <h2>Fit Shape</h2>
       <p class="section-note">The shape shows where each setup is strong or thin across this user's preference areas. A wider shape means stronger fit on that preference; uneven shapes are useful because they show tradeoffs.</p>
       <div class="radar-wrap">
-        <svg viewBox="0 0 760 520" role="img" aria-label="Radar chart comparing model fit across preference areas">
+        <svg viewBox="0 0 900 520" role="img" aria-label="Radar chart comparing model fit across preference areas">
           ${ringShapes}
           ${axes}
           ${providerShapes}

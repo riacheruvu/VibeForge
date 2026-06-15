@@ -39,6 +39,26 @@ function requireString(task, key, errors) {
   if (!task[key] || typeof task[key] !== "string") errors.push(`missing string: ${key}`);
 }
 
+function validateTurns(turns, errors) {
+  if (!Array.isArray(turns) || turns.length === 0) {
+    errors.push("input.turns must be a non-empty array");
+    return;
+  }
+
+  for (const [index, turn] of turns.entries()) {
+    if (!["user", "assistant", "system", "tool"].includes(turn?.role)) {
+      errors.push(`input.turns[${index}].role must be user, assistant, system, or tool`);
+    }
+    if (!turn?.content || typeof turn.content !== "string") {
+      errors.push(`input.turns[${index}].content must be a string`);
+    }
+  }
+
+  if (turns.at(-1)?.role !== "user") {
+    errors.push("input.turns must end with a user turn so the tested setup produces the next response");
+  }
+}
+
 function validateTask(task, file) {
   const errors = [];
   requireString(task, "id", errors);
@@ -50,12 +70,22 @@ function validateTask(task, file) {
     errors.push("grading.mode must be deterministic, llm_judge, or hybrid");
   }
 
-  if (!task.input?.prompt || typeof task.input.prompt !== "string") {
-    errors.push("input.prompt must be a string");
-  }
+  const hasPrompt = typeof task.input?.prompt === "string" && task.input.prompt.trim();
+  const hasTurns = Array.isArray(task.input?.turns);
+  if (!hasPrompt && !hasTurns) errors.push("input.prompt or input.turns is required");
+  if (hasTurns) validateTurns(task.input.turns, errors);
 
   if (!task.input?.user_profile || typeof task.input.user_profile !== "string") {
     errors.push("input.user_profile must be a string");
+  }
+
+  if (task.workflow) {
+    if (task.workflow.expected_tool_calls && !Array.isArray(task.workflow.expected_tool_calls)) {
+      errors.push("workflow.expected_tool_calls must be an array");
+    }
+    if (task.workflow.forbidden_tool_calls && !Array.isArray(task.workflow.forbidden_tool_calls)) {
+      errors.push("workflow.forbidden_tool_calls must be an array");
+    }
   }
 
   const hardChecks = task.expected_behavior?.hard_checks;

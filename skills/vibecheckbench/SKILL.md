@@ -30,6 +30,11 @@ Promptfoo handles execution, UI, reports, and CI. VibeCheckBench owns the prefer
 
 For benchmark-design work, prefer the task-pack format in `examples/tasks`. It makes each case explicit: category, user profile, prompt, hard checks, judge rubric, and scoring mix.
 
+Task packs may use `input.turns` for multi-turn chat context. The final turn must
+be from the user. Use optional `workflow` expectations only as metadata until a
+trace-aware provider or agent grader is configured; do not claim final-answer
+scoring verifies tool execution.
+
 Validate and export task packs:
 
 ```bash
@@ -39,10 +44,59 @@ node "{baseDir}/scripts/export-task-pack-promptfoo.mjs" --tasks examples/tasks -
 
 Use `--include-judge --judge-provider <provider-id>` only when the user has approved any provider/API implications. LLM judges are useful for nuance but should be treated as fallible.
 
+## Conversation History
+
+When the user wants new tests derived from past conversations, keep the first
+pass local and deterministic:
+
+```bash
+node "{baseDir}/scripts/mine-conversation-history.mjs" --input conversations.json
+```
+
+This writes a gitignored review queue and draft tasks under `captures/`. Treat
+every result as a candidate. Do not automatically merge inferred preferences
+into a public profile or send raw history to a hosted model. Ask the user to
+accept, edit, or reject candidates before using them as benchmark evidence.
+
+Prefer public-safe rewrites over replaying raw personal conversations. Preserve
+an evidence hash and provenance so the source can be audited without exposing
+the original text.
+
+## Config Improvement
+
+Use the optimizer only with a separate held-out case file:
+
+```bash
+node "{baseDir}/scripts/optimize-config.mjs" --profile preferences.yaml --case-file train-cases.json --validation-case-file held-out-cases.json --prompt-file system-prompt.txt
+```
+
+An accepted iteration is a candidate for human review, not permission to deploy.
+Inspect the manifest, preference-level regressions, judge disagreements, and
+failed outputs before replacing a prompt, memory file, or skill.
+
 ## Workflow
 
 1. Identify the profile, case file, and system prompt.
-2. Run the exporter yourself. Do not merely tell the user to run `node` for local export/chart steps:
+2. When the user wants one place to run and review local evaluations, start the
+skill-owned dashboard:
+
+```bash
+node "{baseDir}/dashboard/server.mjs"
+```
+
+Open `http://127.0.0.1:4173`. The dashboard only exposes allowlisted local
+presets and stores one canonical `run.json` under the gitignored
+`captures/dashboard-runs/<run-id>/` directory. Do not add arbitrary shell
+commands or hosted providers to its HTTP API.
+
+Build the read-only GitHub Pages demo from checked-in public-safe results with:
+
+```bash
+node "{baseDir}/scripts/build-dashboard-demo.mjs"
+```
+
+The static demo is illustrative and cannot trigger evaluations.
+3. Run the exporter yourself. Do not merely tell the user to run `node` for local export/chart steps:
 
 ```bash
 node "{baseDir}/scripts/export-promptfoo.mjs" --provider openai:chat:gpt-4.1-mini --out promptfooconfig.yaml
@@ -50,7 +104,7 @@ node "{baseDir}/scripts/export-promptfoo.mjs" --provider openai:chat:gpt-4.1-min
 
 Use `--example complex` when the user wants the richer, public-safe preference suite for sycophancy resistance, concise answers, instruction following, "knows what it knows" behavior, non-refusal, and decision fit.
 
-3. If the user asked for a real model comparison, check whether Promptfoo is already available before running or installing anything:
+4. If the user asked for a real model comparison, check whether Promptfoo is already available before running or installing anything:
 
 ```bash
 promptfoo --version
@@ -63,9 +117,21 @@ If Promptfoo is available and the configured providers are local/offline, run it
 promptfoo eval -c promptfooconfig.yaml --output reports/results.json
 ```
 
+When this repo's isolated pinned runtime is installed on Windows, the optional
+privacy-safe wrapper is:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run-promptfoo.ps1 eval -c promptfooconfig.yaml --output reports/results.json --no-cache
+```
+
+The wrapper uses `.promptfoo-runtime`, stores Promptfoo state under the ignored
+`.promptfoo/` directory, and disables telemetry, update checks, WAL mode, and
+disk caching. On macOS or Linux, use an already installed `promptfoo` command,
+or install the pinned version into a local project runtime after user approval.
+
 If Promptfoo is not available, or if running it would download packages or call hosted providers, ask the user for explicit approval before using `npx promptfoo@latest` or any provider API. Explain that `npx promptfoo@latest` may download code and hosted providers may receive prompts/outputs.
 
-4. Summarize pass/fail patterns by preference id and call out brittle rubric edges.
+5. Summarize pass/fail patterns by preference id and call out brittle rubric edges.
 
 Use a local provider id such as `ollama:chat:qwen3:8b` when the user wants offline testing.
 
@@ -80,6 +146,17 @@ After a Promptfoo run with JSON output, summarize it as a personal skill chart:
 ```bash
 node "{baseDir}/scripts/chart-results.mjs" --input reports/results.json --out reports/skill-chart.html
 ```
+
+When comparing a baseline and candidate config, export development and held-out
+suites with repeatable `--config label=path` arguments. Gate the real Promptfoo
+results before recommending a replacement:
+
+```bash
+node "{baseDir}/scripts/gate-config-results.mjs" --train reports/results.train.json --heldout reports/results.heldout.json --out reports/config-gate.json
+```
+
+The gate reports fit-score, pass-rate, latency, and token changes. A passing
+decision means eligible for human review, never automatic deployment.
 
 For an offline demo, use the bundled example Promptfoo-shaped results:
 
@@ -196,6 +273,12 @@ node --check "{baseDir}/scripts/prepare-capture-session.mjs"
 node --check "{baseDir}/scripts/judge-captured-answers.mjs"
 node --check "{baseDir}/scripts/validate-tasks.mjs"
 node --check "{baseDir}/scripts/export-task-pack-promptfoo.mjs"
+node --check "{baseDir}/scripts/mine-conversation-history.mjs"
+node --check "{baseDir}/scripts/optimize-config.mjs"
+node --check "{baseDir}/scripts/gate-config-results.mjs"
+node --check "{baseDir}/dashboard/server.mjs"
+node --check "{baseDir}/dashboard/public/app.js"
+node --check "{baseDir}/scripts/build-dashboard-demo.mjs"
 node "{baseDir}/scripts/validate-tasks.mjs" --tasks examples/tasks
 node "{baseDir}/scripts/export-promptfoo.mjs" --example complex --provider echo --out promptfooconfig.yaml
 node "{baseDir}/scripts/chart-results.mjs" --input "{baseDir}/examples/promptfoo-results.models.example.json" --stdout

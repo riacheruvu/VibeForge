@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VibeCheckBench</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">VC</span>
+        <div><b>VibeCheckBench</b><span>Personal fit evaluations</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="overview"><span>O</span>Overview</button>
+        <button class="nav-item" data-view="runs"><span>R</span>Past runs</button>
+      </nav>
+      <div class="privacy-note"><span class="status-dot"></span><div><b>Local mode</b><small>Nothing leaves this computer.</small></div></div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">YOUR AI, YOUR PREFERENCES</p>
+          <h1>Which setup fits you?</h1>
+          <p class="subtitle">Compare behavior that creates or removes real work, not abstract leaderboard performance.</p>
+        </div>
+        <button id="new-run-button" class="primary-button">New evaluation</button>
+      </header>
+
+      <section id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">VC</div>
+        <h2>No evaluations yet</h2>
+        <p>Run a private local comparison to see which setup best matches the selected preferences.</p>
+        <button class="primary-button open-run-sheet">Start an evaluation</button>
+      </section>
+
+      <section id="dashboard" class="hidden">
+        <div class="run-heading">
+          <div>
+            <span id="run-status" class="status-pill">Complete</span>
+            <h2 id="run-name"></h2>
+            <p id="run-meta"></p>
+          </div>
+          <label class="run-picker">Run
+            <select id="run-select"></select>
+          </label>
+        </div>
+
+        <div id="decision-banner" class="decision-banner hidden"></div>
+
+        <div id="summary-cards" class="summary-grid"></div>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">THE USEFUL PART</p><h2>Where each setup fits</h2></div>
+            <p>Higher means closer to the behavior this evaluation asked for.</p>
+          </div>
+          <div id="preference-matrix" class="matrix-wrap"></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">REVIEW BEFORE TRUST</p><h2>What needs attention</h2></div>
+            <p>Failed cases are more useful than a single overall score.</p>
+          </div>
+          <div id="failures" class="failure-list"></div>
+        </section>
+      </section>
+
+      <section id="runs-view" class="hidden">
+        <div class="section-heading"><div><p class="eyebrow">HISTORY</p><h2>Past evaluations</h2></div></div>
+        <div id="runs-list" class="runs-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="run-sheet" class="modal-backdrop hidden">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-header">
+        <div><p class="eyebrow">NEW EVALUATION</p><h2 id="sheet-title">What should we compare?</h2></div>
+        <button id="close-sheet" class="icon-button" aria-label="Close">x</button>
+      </div>
+      <div id="preset-list" class="preset-list"></div>
+      <div class="sheet-footer">
+        <div id="preflight-status" class="local-assurance"><span class="status-dot"></span>Checking the local runner...</div>
+        <button id="run-button" class="primary-button" disabled>Run evaluation</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

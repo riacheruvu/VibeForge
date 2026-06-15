@@ -1,0 +1,10 @@
+{
+  "name": "vibecheckbench",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dashboard": "node skills/vibecheckbench/dashboard/server.mjs",
+    "dashboard:demo": "node skills/vibecheckbench/scripts/build-dashboard-demo.mjs",
+    "skill:install": "node skills/vibecheckbench/scripts/install-codex-skill.mjs"
+  }
+}

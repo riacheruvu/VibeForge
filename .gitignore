@@ -7,6 +7,8 @@ tools/
 downloads/
 reports/
 captures/
+captures/dashboard-runs/
+generated-history/
 .promptfoo/
 promptfoo-output.*
 /promptfooconfig*.yaml
@@ -14,3 +16,5 @@ tmp-codex-skills/
 __pycache__/
 *.pyc
 npm-debug.log*
+node_modules/
+.promptfoo-runtime/

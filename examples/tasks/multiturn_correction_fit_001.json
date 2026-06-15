@@ -1,0 +1,48 @@
+{
+  "id": "multiturn_correction_fit_001",
+  "title": "Honor a correction instead of repeating the same interaction pattern",
+  "category": "multi_turn_fit",
+  "preference_id": "concise_length_control",
+  "provenance": {
+    "source": "public_safe_synthetic",
+    "review_status": "approved",
+    "synthetic_or_redacted": true
+  },
+  "grading": {
+    "mode": "hybrid"
+  },
+  "input": {
+    "user_profile": "The user prefers concise, high-signal answers and expects explicit corrections to persist in the next turn.",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Help me decide whether to add more test cases or improve the README before sharing this prototype."
+      },
+      {
+        "role": "assistant",
+        "content": "There are many dimensions to consider. First, think about your audience, project maturity, documentation strategy, evaluation methodology, future roadmap, release cadence, community feedback, and the many possible tradeoffs between all of those areas."
+      },
+      {
+        "role": "user",
+        "content": "That is too broad. Give me exactly two bullets: one recommendation and one reason. Keep each under 14 words."
+      }
+    ]
+  },
+  "expected_behavior": {
+    "summary": "The answer should apply the user's correction immediately and preserve the exact requested shape.",
+    "hard_checks": [
+      "exactly_two_bullets",
+      "each_bullet_under_14_words",
+      "does_not_repeat_broad_preamble"
+    ],
+    "judge_rubric": [
+      "The response visibly incorporates the user's correction from the final turn.",
+      "The recommendation is useful despite the strict length constraint.",
+      "The response does not defend or repeat the earlier verbose approach."
+    ]
+  },
+  "scoring": {
+    "deterministic": 0.65,
+    "llm_judge": 0.35
+  }
+}

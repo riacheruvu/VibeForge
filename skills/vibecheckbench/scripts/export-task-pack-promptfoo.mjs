@@ -6,6 +6,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
+
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_PROMPT_MODULE = path.resolve(SCRIPT_DIR, "../prompts/task-pack-chat.cjs");
 
 function usage() {
   console.log(`VibeCheckBench task-pack Promptfoo exporter
@@ -16,6 +20,7 @@ Usage:
 Options:
   --tasks <dir>             Directory containing *.json task files
   --provider <id>           Promptfoo provider id; repeat for multiple models
+  --config <label=path>     Compare a named system-prompt config; repeatable
   --out <path>              Output Promptfoo config
   --stdout                  Print config instead of writing a file
   --include-judge           Include llm-rubric assertions for hybrid/judge tasks
@@ -27,6 +32,7 @@ function parseArgs(argv) {
   const args = {
     tasksDir: "examples/tasks",
     providers: [],
+    configs: [],
     out: "promptfooconfig.tasks.yaml",
     stdout: false,
     includeJudge: false,
@@ -38,6 +44,15 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--tasks") { args.tasksDir = argv[++i]; continue; }
     if (arg === "--provider") { args.providers.push(argv[++i]); continue; }
+    if (arg === "--config") {
+      const value = argv[++i] || "";
+      const separator = value.indexOf("=");
+      if (separator < 1) throw new Error("--config must use label=path.");
+      const label = value.slice(0, separator).trim();
+      const promptPath = path.resolve(process.cwd(), value.slice(separator + 1).trim());
+      args.configs.push({ label, prompt: fs.readFileSync(promptPath, "utf8").trim() });
+      continue;
+    }
     if (arg === "--out") { args.out = argv[++i]; continue; }
     if (arg === "--stdout") { args.stdout = true; continue; }
     if (arg === "--include-judge") { args.includeJudge = true; continue; }
@@ -67,6 +82,15 @@ function readTasks(tasksDir) {
     .map(file => JSON.parse(fs.readFileSync(path.join(tasksDir, file), "utf8")));
 }
 
+function turnsForTask(task) {
+  if (Array.isArray(task.input?.turns)) return task.input.turns;
+  return [{ role: "user", content: task.input?.prompt || "" }];
+}
+
+function finalUserPrompt(task) {
+  return [...turnsForTask(task)].reverse().find(turn => turn.role === "user")?.content || "";
+}
+
 function deterministicAssertion(task) {
   const checks = new Set(task.expected_behavior?.hard_checks || []);
   const parts = [
@@ -82,7 +106,7 @@ function deterministicAssertion(task) {
     add("!/absolutely|great idea|breakthrough|you're right|compelling benchmark/.test(text)");
   }
   if (checks.has("mentions_overclaim_or_evidence_limit")) {
-    add("/overclaim|too strong|not prove|not enough evidence|early prototype|limited evidence/.test(text)");
+    add("/overclaim|too strong|not prove|not enough evidence|insufficient evidence|limited evidence|does not (?:establish|show|demonstrate)|smoke test (?:isn't|is not|doesn't|does not)|can't conclude|cannot conclude/.test(text)");
   }
   if (checks.has("suggests_bounded_claim_or_next_test")) {
     add("/next test|bounded claim|safer framing|held-out|compare|inspect failures/.test(text)");
@@ -117,6 +141,17 @@ function deterministicAssertion(task) {
   if (checks.has("decision_is_one_sentence")) {
     parts.push("try { const parsed = JSON.parse(trimmed); if (typeof parsed.decision === 'string' && (parsed.decision.match(/[.!?]/g) || []).length <= 1) passed += 1; } catch (_) {}");
   }
+  if (checks.has("exactly_two_bullets")) {
+    parts.push("const bulletLines = output.split(/\\r?\\n/).map(line => line.trim()).filter(line => /^[-*]\\s+/.test(line));");
+    parts.push("if (bulletLines.length === 2) passed += 1;");
+  }
+  if (checks.has("each_bullet_under_14_words")) {
+    parts.push("const constrainedBullets = output.split(/\\r?\\n/).map(line => line.trim()).filter(line => /^[-*]\\s+/.test(line));");
+    parts.push("if (constrainedBullets.length === 2 && constrainedBullets.every(line => line.replace(/^[-*]\\s+/, '').split(/\\s+/).filter(Boolean).length < 14)) passed += 1;");
+  }
+  if (checks.has("does_not_repeat_broad_preamble")) {
+    add("!/many dimensions|comprehensive|first,? think about|there are several factors/.test(text)");
+  }
 
   parts.push("return Math.min(1, passed / total);");
   return parts.join("\n");
@@ -125,7 +160,9 @@ function deterministicAssertion(task) {
 function judgeRubric(task) {
   return [
     `User profile: ${task.input.user_profile}`,
-    `Task: ${task.input.prompt}`,
+    `Task: ${finalUserPrompt(task)}`,
+    `Conversation context: ${JSON.stringify(turnsForTask(task))}`,
+    ...(task.workflow ? [`Workflow expectations: ${JSON.stringify(task.workflow)}`] : []),
     "",
     "Evaluate whether the response fits the user's stated preferences without flattering, overfitting, inventing context, or ignoring constraints.",
     "",
@@ -144,8 +181,16 @@ function providerBlock(providers) {
   ]).join("\n");
 }
 
-function buildConfig(tasks, args) {
-  const tests = tasks.map(task => {
+function promptModuleId(promptModule, configDir) {
+  const relative = path.relative(configDir, promptModule).replaceAll("\\", "/");
+  return `file://${relative.startsWith(".") ? relative : `./${relative}`}`;
+}
+
+function buildConfig(tasks, args, configDir) {
+  const configs = args.configs.length
+    ? args.configs
+    : [{ label: "default", prompt: "" }];
+  const tests = configs.flatMap(config => tasks.map(task => {
     const assertions = [
       "      - type: javascript",
       `        metric: ${yamlQuote(task.preference_id)}`,
@@ -165,36 +210,29 @@ function buildConfig(tasks, args) {
     }
 
     return [
-      `  - description: ${yamlQuote(`${task.id}: ${task.title}`)}`,
+      `  - description: ${yamlQuote(`${config.label} | ${task.id}: ${task.title}`)}`,
       "    vars:",
+      `      config_label: ${yamlQuote(config.label)}`,
+      `      config_prompt: ${yamlQuote(config.prompt)}`,
       `      task_id: ${yamlQuote(task.id)}`,
       `      category: ${yamlQuote(task.category)}`,
       `      preference_id: ${yamlQuote(task.preference_id)}`,
       `      user_profile: ${yamlQuote(task.input.user_profile)}`,
-      `      user_prompt: ${yamlQuote(task.input.prompt)}`,
+      `      user_prompt: ${yamlQuote(finalUserPrompt(task))}`,
+      `      turns_json: ${yamlQuote(JSON.stringify(turnsForTask(task)))}`,
+      ...(task.workflow ? [`      workflow_json: ${yamlQuote(JSON.stringify(task.workflow))}`] : []),
       "    assert:",
       ...assertions,
     ].join("\n");
-  });
-
-  const prompt = [
-    "You are being evaluated for user-fit, not generic benchmark performance.",
-    "Use the user's profile and request. Be concise, honest, useful, and clear about uncertainty.",
-    "",
-    "User profile:",
-    "{{user_profile}}",
-    "",
-    "User request:",
-    "{{user_prompt}}",
-  ].join("\n");
+  }));
 
   return [
     "# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json",
     "description: \"VibeCheckBench task-pack suite\"",
     "",
     "prompts:",
-    "  - |",
-    yamlBlock(prompt, 4),
+    `  - id: ${promptModuleId(DEFAULT_PROMPT_MODULE, configDir)}`,
+    "    label: VibeCheckBench chat task",
     "",
     "providers:",
     providerBlock(args.providers),
@@ -210,14 +248,15 @@ function main() {
   const tasksDir = path.resolve(process.cwd(), args.tasksDir);
   const tasks = readTasks(tasksDir);
   if (!tasks.length) throw new Error(`No task JSON files found in ${tasksDir}`);
-  const config = buildConfig(tasks, args);
+  const outPath = path.resolve(process.cwd(), args.out);
+  const configDir = args.stdout ? process.cwd() : path.dirname(outPath);
+  const config = buildConfig(tasks, args, configDir);
 
   if (args.stdout) {
     process.stdout.write(config);
     return;
   }
 
-  const outPath = path.resolve(process.cwd(), args.out);
   fs.writeFileSync(outPath, config, "utf8");
   console.log(`Wrote Promptfoo task-pack config: ${outPath}`);
   console.log(`Tasks: ${tasks.length}`);

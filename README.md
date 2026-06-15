@@ -2,7 +2,7 @@
 
 VibeCheckBench is a small prototype for turning "this AI feels off" into repeatable checks.
 
-[**Open the live dashboard demo**](https://riacheruvu.github.io/MyBench/)
+[**Open the live dashboard demo**](https://riacheruvu.github.io/VibeCheckBench/)
 
 ![VibeCheckBench social preview](assets/vibecheckbench-social-preview.png)
 
@@ -15,6 +15,32 @@ Most AI benchmarks ask which model is best overall. VibeCheckBench asks a more p
 It focuses on everyday interaction failures that standard benchmarks often miss: answers that are too long, too agreeable, too vague, too hesitant, too confident, or too poor at following exact instructions.
 
 The goal is practical and user-owned: define preferences, run public-safe cases, compare setups, and visualize where each one fits or misses.
+
+## The core loop
+
+The project's first priority is a closed personal-fit loop:
+
+```text
+private interaction evidence
+  -> reviewable preference candidates
+  -> public-safe development and held-out cases
+  -> compare complete AI setups
+  -> recommend the smallest supported next experiment
+  -> rerun before changing anything
+```
+
+Conversation corrections, explicit preferences, repeated workarounds, and other
+user feedback can become evaluation evidence without treating an inferred
+profile as truth. The user reviews every candidate, raw conversation content
+stays local, and approved cases preserve provenance through hashes rather than
+copied private text.
+
+The improvement loop evaluates complete setups: model, system prompt, memory,
+skills, tools, routing, and settings. Its output is not "automatically optimize
+the user." It recommends a controlled next experiment: hold the model fixed and
+test one config change, switch models when the gain is meaningful, route
+different workflows to different setups, or collect more evidence when the
+current result is too thin.
 
 ## What this project is exploring
 
@@ -46,7 +72,7 @@ npm run dashboard
 Open `http://127.0.0.1:4173`.
 
 The local app can trigger evaluations. The
-[GitHub Pages demo](https://riacheruvu.github.io/MyBench/) is read-only and uses
+[GitHub Pages demo](https://riacheruvu.github.io/VibeCheckBench/) is read-only and uses
 clearly labeled, checked-in example data.
 
 ## What it helps test
@@ -248,6 +274,22 @@ suite:
 3. Confirm that it reflects a durable preference, not a one-off mood or task.
 4. Put some accepted cases in a held-out validation set.
 
+Record those decisions in a local JSON file, then promote only the accepted
+public-safe rewrites:
+
+```powershell
+node skills/vibecheckbench/scripts/promote-history-candidates.mjs `
+  --review captures/history-review.json `
+  --decisions examples/history-review-decisions.public-safe.example.json `
+  --out captures/personal-fit/project.json `
+  --tasks-dir captures/personal-fit/tasks
+```
+
+The resulting `project.json` is the source of truth for the personal eval:
+review provenance, evidence counts, development and held-out task roots, and
+the policy that prevents automatic deployment. It does not contain the original
+conversation excerpts.
+
 ### Multi-turn preference checks
 
 Task packs may use `input.turns` instead of a single `input.prompt`. Promptfoo
@@ -304,6 +346,21 @@ reports/optimized-configs/optimization-manifest.json
 This is intentionally conservative. Otherwise the optimizer can learn the
 grader's vocabulary, overfit repeated cases, or improve concision while quietly
 damaging privacy guidance, factual calibration, or another user preference.
+
+After a Promptfoo or local comparison, turn the result into an explicit next
+experiment:
+
+```powershell
+node skills/vibecheckbench/scripts/recommend-next-experiment.mjs `
+  --input reports/results.json `
+  --project captures/personal-fit/project.json `
+  --out reports/next-experiment.json
+```
+
+The recommendation distinguishes model choice from configuration problems and
+can surface mixed-fit results where workflow routing is a better hypothesis than
+choosing one global winner. The dashboard stores this recommendation beside the
+canonical `run.json` and displays it as **What to try next**.
 
 ## Test actual model answers
 

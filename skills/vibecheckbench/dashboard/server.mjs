@@ -6,6 +6,7 @@ import http from "node:http";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { recommend } from "../scripts/recommend-next-experiment.mjs";
 
 const APP_DIR = path.dirname(fileURLToPath(import.meta.url));
 const BUNDLED_ROOT = path.resolve(APP_DIR, "..", "..", "..");
@@ -318,6 +319,7 @@ function createRun(preset) {
     finishedAt: null,
     summary: null,
     gate: null,
+    recommendation: null,
     files: {},
     error: null,
   };
@@ -345,7 +347,13 @@ async function executeModelComparison(record, dir) {
   const results = path.relative(ROOT, path.join(dir, "results.json"));
   writeJson(path.join(ROOT, results), payload);
   record.summary = summarizeResults(payload);
-  record.files = { results };
+  record.recommendation = recommend({
+    rows,
+    args: { minCases: 3, minPreferenceCases: 2, meaningfulDelta: 0.08 },
+  });
+  const recommendation = path.relative(ROOT, path.join(dir, "next-experiment.json"));
+  writeJson(path.join(ROOT, recommendation), record.recommendation);
+  record.files = { results, recommendation };
 }
 
 async function executeConfigGate(record, dir) {
@@ -411,7 +419,30 @@ async function executeConfigGate(record, dir) {
       results: [...runRows(trainPayload), ...runRows(heldoutPayload)],
     },
   });
-  record.files = { trainResults, heldoutResults, gate: gateFile };
+  record.recommendation = {
+    version: "vibecheckbench-next-experiment-v1",
+    generatedAt: new Date().toISOString(),
+    evidence: {
+      developmentCases: trainRows.length,
+      heldOutCases: heldoutRows.length,
+      gate: gateFile,
+    },
+    decision: {
+      action: eligible ? "validate_config_change" : "keep_baseline_and_revise",
+      headline: eligible
+        ? "The config change earned a closer human review"
+        : "Keep the baseline and revise the hypothesis",
+      rationale: record.gate.decision.reasons[0],
+      nextExperiment: eligible
+        ? "Inspect every held-out output and regression, then repeat before changing the active configuration."
+        : "Use the failed preference area to make one smaller prompt, memory, or skill change and rerun the held-out gate.",
+      automaticDeployment: false,
+      humanReviewRequired: true,
+    },
+  };
+  const recommendationFile = relative("next-experiment.json");
+  writeJson(path.join(ROOT, recommendationFile), record.recommendation);
+  record.files = { trainResults, heldoutResults, gate: gateFile, recommendation: recommendationFile };
 }
 
 async function executeRun(preset, record, dir) {

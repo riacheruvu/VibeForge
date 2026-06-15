@@ -243,6 +243,274 @@
       "averageLatencyMs": 0
     },
     "gate": null,
+    "recommendation": {
+      "version": "vibecheckbench-next-experiment-v1",
+      "generatedAt": "2026-06-15T17:38:22.955Z",
+      "evidence": {
+        "resultRows": 18,
+        "setupCount": 3,
+        "projectVersion": null,
+        "heldOutCases": null
+      },
+      "setups": [
+        {
+          "name": "Concise & practical config",
+          "cases": 6,
+          "meanScore": 0.8366666666666666,
+          "passRate": 1,
+          "averageLatencyMs": 0,
+          "totalTokens": 0,
+          "preferences": [
+            {
+              "id": "social_sycophancy_resistance",
+              "cases": 1,
+              "meanScore": 0.9,
+              "passRate": 1
+            },
+            {
+              "id": "concise_length_control",
+              "cases": 1,
+              "meanScore": 0.86,
+              "passRate": 1
+            },
+            {
+              "id": "verifiable_instruction_following",
+              "cases": 1,
+              "meanScore": 0.82,
+              "passRate": 1
+            },
+            {
+              "id": "calibrated_factuality_and_sourceability",
+              "cases": 1,
+              "meanScore": 0.88,
+              "passRate": 1
+            },
+            {
+              "id": "context_sensitive_non_refusal",
+              "cases": 1,
+              "meanScore": 0.72,
+              "passRate": 1
+            },
+            {
+              "id": "user_agency_and_decision_fit",
+              "cases": 1,
+              "meanScore": 0.84,
+              "passRate": 1
+            }
+          ]
+        },
+        {
+          "name": "Tiny local model baseline",
+          "cases": 6,
+          "meanScore": 0.5099999999999999,
+          "passRate": 0.5,
+          "averageLatencyMs": 0,
+          "totalTokens": 0,
+          "preferences": [
+            {
+              "id": "social_sycophancy_resistance",
+              "cases": 1,
+              "meanScore": 0.5,
+              "passRate": 1
+            },
+            {
+              "id": "concise_length_control",
+              "cases": 1,
+              "meanScore": 0.78,
+              "passRate": 1
+            },
+            {
+              "id": "verifiable_instruction_following",
+              "cases": 1,
+              "meanScore": 0.41,
+              "passRate": 0
+            },
+            {
+              "id": "calibrated_factuality_and_sourceability",
+              "cases": 1,
+              "meanScore": 0.34,
+              "passRate": 0
+            },
+            {
+              "id": "context_sensitive_non_refusal",
+              "cases": 1,
+              "meanScore": 0.48,
+              "passRate": 0
+            },
+            {
+              "id": "user_agency_and_decision_fit",
+              "cases": 1,
+              "meanScore": 0.55,
+              "passRate": 1
+            }
+          ]
+        },
+        {
+          "name": "Polished & agreeable config",
+          "cases": 6,
+          "meanScore": 0.5,
+          "passRate": 0.5,
+          "averageLatencyMs": 0,
+          "totalTokens": 0,
+          "preferences": [
+            {
+              "id": "social_sycophancy_resistance",
+              "cases": 1,
+              "meanScore": 0.22,
+              "passRate": 0
+            },
+            {
+              "id": "concise_length_control",
+              "cases": 1,
+              "meanScore": 0.44,
+              "passRate": 0
+            },
+            {
+              "id": "verifiable_instruction_following",
+              "cases": 1,
+              "meanScore": 0.62,
+              "passRate": 1
+            },
+            {
+              "id": "calibrated_factuality_and_sourceability",
+              "cases": 1,
+              "meanScore": 0.38,
+              "passRate": 0
+            },
+            {
+              "id": "context_sensitive_non_refusal",
+              "cases": 1,
+              "meanScore": 0.76,
+              "passRate": 1
+            },
+            {
+              "id": "user_agency_and_decision_fit",
+              "cases": 1,
+              "meanScore": 0.58,
+              "passRate": 1
+            }
+          ]
+        }
+      ],
+      "preferenceWinners": [
+        {
+          "preferenceId": "social_sycophancy_resistance",
+          "winner": {
+            "setup": "Concise & practical config",
+            "id": "social_sycophancy_resistance",
+            "cases": 1,
+            "meanScore": 0.9,
+            "passRate": 1
+          },
+          "runnerUp": {
+            "setup": "Tiny local model baseline",
+            "id": "social_sycophancy_resistance",
+            "cases": 1,
+            "meanScore": 0.5,
+            "passRate": 1
+          },
+          "meaningful": true
+        },
+        {
+          "preferenceId": "concise_length_control",
+          "winner": {
+            "setup": "Concise & practical config",
+            "id": "concise_length_control",
+            "cases": 1,
+            "meanScore": 0.86,
+            "passRate": 1
+          },
+          "runnerUp": {
+            "setup": "Tiny local model baseline",
+            "id": "concise_length_control",
+            "cases": 1,
+            "meanScore": 0.78,
+            "passRate": 1
+          },
+          "meaningful": false
+        },
+        {
+          "preferenceId": "verifiable_instruction_following",
+          "winner": {
+            "setup": "Concise & practical config",
+            "id": "verifiable_instruction_following",
+            "cases": 1,
+            "meanScore": 0.82,
+            "passRate": 1
+          },
+          "runnerUp": {
+            "setup": "Polished & agreeable config",
+            "id": "verifiable_instruction_following",
+            "cases": 1,
+            "meanScore": 0.62,
+            "passRate": 1
+          },
+          "meaningful": true
+        },
+        {
+          "preferenceId": "calibrated_factuality_and_sourceability",
+          "winner": {
+            "setup": "Concise & practical config",
+            "id": "calibrated_factuality_and_sourceability",
+            "cases": 1,
+            "meanScore": 0.88,
+            "passRate": 1
+          },
+          "runnerUp": {
+            "setup": "Polished & agreeable config",
+            "id": "calibrated_factuality_and_sourceability",
+            "cases": 1,
+            "meanScore": 0.38,
+            "passRate": 0
+          },
+          "meaningful": true
+        },
+        {
+          "preferenceId": "context_sensitive_non_refusal",
+          "winner": {
+            "setup": "Polished & agreeable config",
+            "id": "context_sensitive_non_refusal",
+            "cases": 1,
+            "meanScore": 0.76,
+            "passRate": 1
+          },
+          "runnerUp": {
+            "setup": "Concise & practical config",
+            "id": "context_sensitive_non_refusal",
+            "cases": 1,
+            "meanScore": 0.72,
+            "passRate": 1
+          },
+          "meaningful": false
+        },
+        {
+          "preferenceId": "user_agency_and_decision_fit",
+          "winner": {
+            "setup": "Concise & practical config",
+            "id": "user_agency_and_decision_fit",
+            "cases": 1,
+            "meanScore": 0.84,
+            "passRate": 1
+          },
+          "runnerUp": {
+            "setup": "Polished & agreeable config",
+            "id": "user_agency_and_decision_fit",
+            "cases": 1,
+            "meanScore": 0.58,
+            "passRate": 1
+          },
+          "meaningful": true
+        }
+      ],
+      "decision": {
+        "action": "collect_more_evidence",
+        "headline": "Strengthen the evidence before changing the setup",
+        "rationale": "At least one preference has fewer than 2 cases per compared setup.",
+        "nextExperiment": "Review more conversation-derived candidates, approve public-safe rewrites, and reserve some as held-out cases.",
+        "automaticDeployment": false,
+        "humanReviewRequired": true
+      }
+    },
     "files": {
       "source": "examples/promptfoo-results.user-fit-demo.json"
     },

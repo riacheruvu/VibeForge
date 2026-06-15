@@ -62,6 +62,17 @@ Prefer public-safe rewrites over replaying raw personal conversations. Preserve
 an evidence hash and provenance so the source can be audited without exposing
 the original text.
 
+After the user reviews candidates, promote only explicitly accepted public-safe
+rewrites into a canonical personal-fit project:
+
+```bash
+node "{baseDir}/scripts/promote-history-candidates.mjs" --review captures/history-review.json --decisions review-decisions.json --out captures/personal-fit/project.json --tasks-dir captures/personal-fit/tasks
+```
+
+Require some accepted cases to use the `held_out` split before recommending a
+configuration replacement. The project manifest is the local source of truth;
+it stores hashes and review decisions, not raw conversation excerpts.
+
 ## Config Improvement
 
 Use the optimizer only with a separate held-out case file:
@@ -73,6 +84,17 @@ node "{baseDir}/scripts/optimize-config.mjs" --profile preferences.yaml --case-f
 An accepted iteration is a candidate for human review, not permission to deploy.
 Inspect the manifest, preference-level regressions, judge disagreements, and
 failed outputs before replacing a prompt, memory file, or skill.
+
+For model/config comparisons, produce an explicit next-experiment decision:
+
+```bash
+node "{baseDir}/scripts/recommend-next-experiment.mjs" --input reports/results.json --project captures/personal-fit/project.json --out reports/next-experiment.json
+```
+
+Prefer the smallest supported intervention. Distinguish among collecting more
+evidence, changing a prompt/memory/skill while holding the model fixed, choosing
+a different model, or routing different workflows to different setups. Never
+present the recommendation as automatic deployment.
 
 ## Workflow
 
@@ -274,8 +296,10 @@ node --check "{baseDir}/scripts/judge-captured-answers.mjs"
 node --check "{baseDir}/scripts/validate-tasks.mjs"
 node --check "{baseDir}/scripts/export-task-pack-promptfoo.mjs"
 node --check "{baseDir}/scripts/mine-conversation-history.mjs"
+node --check "{baseDir}/scripts/promote-history-candidates.mjs"
 node --check "{baseDir}/scripts/optimize-config.mjs"
 node --check "{baseDir}/scripts/gate-config-results.mjs"
+node --check "{baseDir}/scripts/recommend-next-experiment.mjs"
 node --check "{baseDir}/dashboard/server.mjs"
 node --check "{baseDir}/dashboard/public/app.js"
 node --check "{baseDir}/scripts/build-dashboard-demo.mjs"

@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { recommend } from "./recommend-next-experiment.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const SKILL_DIR = path.resolve(SCRIPT_DIR, "..");
@@ -110,6 +111,7 @@ function summarize(payload) {
 
 function main() {
   const payload = JSON.parse(fs.readFileSync(SOURCE, "utf8"));
+  const rows = rowsFrom(payload);
   const record = {
     version: "vibecheckbench-run-v1",
     id: "public-safe-example",
@@ -123,6 +125,10 @@ function main() {
     finishedAt: "2026-05-29T18:00:18.000Z",
     summary: summarize(payload),
     gate: null,
+    recommendation: recommend({
+      rows,
+      args: { minCases: 3, minPreferenceCases: 2, meaningfulDelta: 0.08 },
+    }),
     files: { source: "examples/promptfoo-results.user-fit-demo.json" },
     error: null,
     demo: true,

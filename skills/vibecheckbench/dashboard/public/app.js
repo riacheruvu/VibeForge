@@ -112,6 +112,20 @@ function renderDecision(run) {
   banner.innerHTML = `<b>${accepted ? "Candidate is ready for human review" : "Keep the current configuration"}</b>${escapeHtml(run.gate.decision?.reasons?.[0] || "")}`;
 }
 
+function renderRecommendation(run) {
+  const block = $("#recommendation-block");
+  const decision = run.recommendation?.decision;
+  if (!decision) return block.classList.add("hidden");
+  block.classList.remove("hidden");
+  $("#recommendation").innerHTML = `
+    <div>
+      <span class="recommendation-action">${escapeHtml(String(decision.action || "next experiment").replaceAll("_", " "))}</span>
+      <h3>${escapeHtml(decision.headline)}</h3>
+      <p>${escapeHtml(decision.rationale)}</p>
+    </div>
+    <div class="next-experiment"><b>Next experiment</b><span>${escapeHtml(decision.nextExperiment)}</span><small>Nothing changes automatically. Review the outputs and tradeoffs first.</small></div>`;
+}
+
 function renderRun(run) {
   if (!run) return;
   state.selectedRun = run.id;
@@ -121,6 +135,7 @@ function renderRun(run) {
   $("#run-status").className = `status-pill ${run.status}`;
   $("#run-select").value = run.id;
   renderDecision(run);
+  renderRecommendation(run);
   setupSummary(run);
   renderMatrix(run);
   renderFailures(run);

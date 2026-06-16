@@ -47,7 +47,7 @@ const PREFERENCE_RULES = [
   },
   {
     id: "user_agency_and_decision_fit",
-    pattern: /\b(tradeoff|help me (?:choose|decide)|decision|don't decide for me|taking over|options)\b/i,
+    pattern: /\b(tradeoff|tradeoffs|help me (?:choose|decide)|decision|don't decide for me|do not decide for me|taking over|options)\b/i,
     profile: "The user wants decision support that explains tradeoffs while preserving their agency.",
     title: "Help with a constrained choice without taking over",
     publicSafePrompt: "I only have one evening. Should I improve the README, add more eval cases, or test more models before sharing this prototype?",

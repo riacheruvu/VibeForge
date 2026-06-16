@@ -53,6 +53,17 @@ pass local and deterministic:
 node "{baseDir}/scripts/mine-conversation-history.mjs" --input conversations.json
 ```
 
+When the user only has a plain-language preference and does not know what test
+prompt to write, draft a starter case locally:
+
+```bash
+node "{baseDir}/scripts/draft-test-case.mjs" --preference "The user prefers concise, high-signal answers that preserve necessary nuance." --stdout
+```
+
+Treat the result as a review draft. The user should still edit or approve the
+preference, public-safe prompt, expected behavior, and development/held-out
+split before it becomes benchmark evidence.
+
 This writes a gitignored review queue and draft tasks under `captures/`. Treat
 every result as a candidate. Do not automatically merge inferred preferences
 into a public profile or send raw history to a hosted model. Ask the user to
@@ -111,6 +122,18 @@ node "{baseDir}/scripts/plan-setup-experiment.mjs" --baseline baseline-setup.jso
 Setup surfaces are model, instructions, memory, skills, tools/access, inference
 settings, context/retrieval, and routing/orchestration. Only claim execution for
 surfaces supported by the active provider or trace adapter.
+
+For public-safe demonstrations of the full loop, prefer checked-in case studies:
+
+```bash
+node "{baseDir}/scripts/run-case-study.mjs" --list
+node "{baseDir}/scripts/run-case-study.mjs" --case feedback-friction-loop
+```
+
+Case studies start from synthetic conversation exports, promote reviewed
+public-safe rewrites, score captured baseline/candidate setup outputs, and run a
+guarded config gate. Treat the generated reports as examples of workflow shape,
+not broad model evidence.
 
 ## Workflow
 
@@ -305,11 +328,13 @@ node --check "{baseDir}/scripts/judge-captured-answers.mjs"
 node --check "{baseDir}/scripts/validate-tasks.mjs"
 node --check "{baseDir}/scripts/export-task-pack-promptfoo.mjs"
 node --check "{baseDir}/scripts/mine-conversation-history.mjs"
+node --check "{baseDir}/scripts/draft-test-case.mjs"
 node --check "{baseDir}/scripts/promote-history-candidates.mjs"
 node --check "{baseDir}/scripts/optimize-config.mjs"
 node --check "{baseDir}/scripts/gate-config-results.mjs"
 node --check "{baseDir}/scripts/recommend-next-experiment.mjs"
 node --check "{baseDir}/scripts/plan-setup-experiment.mjs"
+node --check "{baseDir}/scripts/run-case-study.mjs"
 node --check "{baseDir}/dashboard/server.mjs"
 node --check "{baseDir}/dashboard/public/app.js"
 node --check "{baseDir}/scripts/build-dashboard-demo.mjs"

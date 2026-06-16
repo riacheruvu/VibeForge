@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "case_study": "format-decision-loop",
+    "split": "development"
+  },
+  "results": [
+    {
+      "provider": "local setup",
+      "config_label": "baseline",
+      "task_id": "personal_verifiable_instruction_following",
+      "split": "development",
+      "preference_id": "verifiable_instruction_following",
+      "user_prompt": "Return only valid JSON with exactly these keys: decision, risk, and next_test. Do not use markdown.",
+      "output": "Sure, here is the JSON:\n\n```json\n{\"decision\":\"continue\",\"risk\":\"low\",\"next_test\":\"try it\"}\n```"
+    },
+    {
+      "provider": "local setup",
+      "config_label": "candidate",
+      "task_id": "personal_verifiable_instruction_following",
+      "split": "development",
+      "preference_id": "verifiable_instruction_following",
+      "user_prompt": "Return only valid JSON with exactly these keys: decision, risk, and next_test. Do not use markdown.",
+      "output": "{\"decision\":\"Use this as a smoke test, not proof.\",\"risk\":\"The result may overfit one example.\",\"next_test\":\"Run the same check on a held-out prompt.\"}"
+    }
+  ]
+}

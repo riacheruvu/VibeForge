@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "case_study": "feedback-friction-loop",
+    "split": "development",
+    "note": "Public-safe captured outputs representing a baseline instruction setup and a concise evidence-aware instruction setup."
+  },
+  "results": [
+    {
+      "provider": "local setup",
+      "config_label": "baseline",
+      "task_id": "personal_concise_length_control_07fa8a15a4ff",
+      "split": "development",
+      "preference_id": "concise_length_control",
+      "user_prompt": "I am sharing a small open-source prototype tomorrow. Give me only the two changes that would most improve a new user's first experience.",
+      "output": "There are many dimensions to consider: landing page, README, examples, screenshots, positioning, issue templates, roadmap, package setup, model coverage, evaluation methodology, and community outreach. A comprehensive plan would start by improving all of those areas before launch."
+    },
+    {
+      "provider": "local setup",
+      "config_label": "candidate",
+      "task_id": "personal_concise_length_control_07fa8a15a4ff",
+      "split": "development",
+      "preference_id": "concise_length_control",
+      "user_prompt": "I am sharing a small open-source prototype tomorrow. Give me only the two changes that would most improve a new user's first experience.",
+      "output": "- Add one runnable quickstart that ends in a visible chart.\n- Move the clearest example failure earlier so the value is specific."
+    }
+  ]
+}

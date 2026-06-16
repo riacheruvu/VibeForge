@@ -167,13 +167,52 @@ function renderSetupSurfaces() {
     </article>`).join("");
 }
 
+function renderCaseStudies() {
+  const studies = state.evidence?.caseStudies || [];
+  $("#case-study-list").innerHTML = studies.length ? studies.map(study => `
+    <article class="case-study-card">
+      <div>
+        <span class="preference-chip">Case study</span>
+        <h3>${escapeHtml(study.title)}</h3>
+        <p>${escapeHtml(study.summary)}</p>
+      </div>
+      <div class="case-study-meta">
+        <b>What it shows</b>
+        <ol>${(study.workflow || []).slice(0, 4).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
+        <details>
+          <summary>How to run this</summary>
+          <code>${escapeHtml(study.runCommand || "")}</code>
+        </details>
+        <small>${escapeHtml(study.expectedTakeaway || study.privacy || "")}</small>
+      </div>
+    </article>`).join("") : `<div class="gentle-empty"><b>No case studies found</b><span>Add a case-study.json under examples/case-studies.</span></div>`;
+}
+
 function renderEvidence() {
   renderEvidenceSummary();
   renderCandidates();
   renderSampleLibrary();
   renderSetupSurfaces();
+  renderCaseStudies();
   const preferenceSelect = $("#manual-case-form select[name='preferenceId']");
   if (preferenceSelect && !preferenceSelect.options.length) preferenceSelect.innerHTML = preferenceOptions();
+}
+
+function fillManualCase(draft) {
+  const form = $("#manual-case-form");
+  const set = (name, value) => {
+    const field = form.querySelector(`[name='${name}']`);
+    if (field) field.value = value || "";
+  };
+  set("preferenceId", draft.preferenceId);
+  set("preferenceName", draft.preferenceName);
+  set("title", draft.title);
+  set("userProfile", draft.userProfile);
+  set("publicSafePrompt", draft.publicSafePrompt);
+  set("expectedBehavior", draft.expectedBehavior);
+  set("split", draft.split || "development");
+  $("#draft-preview").classList.remove("hidden");
+  document.querySelector(".direct-case-editor")?.setAttribute("open", "");
 }
 
 async function refreshEvidence() {
@@ -368,6 +407,9 @@ async function init() {
     $("#import-conversations").disabled = true;
     $("#mine-example").disabled = true;
     $("#promote-evidence").disabled = true;
+    $("#draft-test").disabled = true;
+    $("#draft-preview").classList.remove("hidden");
+    $("#draft-preview").innerHTML = "<b>Read-only demo</b><span>Run the dashboard locally or ask Codex to use VibeCheckBench to draft tests from your own preferences.</span>";
     $("#manual-case-form").querySelectorAll("input, textarea, select, button").forEach(control => { control.disabled = true; });
     $("#candidate-list").querySelectorAll("textarea, select, button").forEach(control => { control.disabled = true; });
     $("#empty-state").classList.add("hidden");
@@ -394,6 +436,7 @@ async function init() {
   $("#run-button").addEventListener("click", startRun);
   $("#run-select").addEventListener("change", event => renderRun(state.runs.find(run => run.id === event.target.value)));
   document.querySelectorAll(".nav-item").forEach(button => button.addEventListener("click", () => showView(button.dataset.view)));
+  document.querySelectorAll("[data-jump-view]").forEach(button => button.addEventListener("click", () => showView(button.dataset.jumpView)));
   $("#run-sheet").addEventListener("click", event => {
     if (event.target === $("#run-sheet")) $("#run-sheet").classList.add("hidden");
   });
@@ -444,6 +487,23 @@ async function init() {
       renderEvidence();
     } catch (error) {
       alert(error.message);
+    }
+  });
+  $("#draft-test").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+      const preference = $("#plain-preference").value;
+      const result = await api("/api/evidence/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preference }),
+      });
+      fillManualCase(result.draft);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      button.disabled = false;
     }
   });
 }

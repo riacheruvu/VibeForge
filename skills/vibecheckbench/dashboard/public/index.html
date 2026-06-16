@@ -99,10 +99,17 @@
             <button id="promote-evidence" class="primary-button">Create test set</button>
           </div>
         </div>
-        <div class="workflow-steps" aria-label="How test creation works">
-          <div><span>1</span><b>Import</b><small>Choose a conversation export. It stays on this computer.</small></div>
-          <div><span>2</span><b>Review</b><small>Edit, keep, save for later, or reject each suggestion.</small></div>
-          <div><span>3</span><b>Create</b><small>Build only the public-safe test cases you approved.</small></div>
+        <div class="local-mode-panel">
+          <div>
+            <b>Local review first</b>
+            <span>Conversation imports are mined on this machine. Suggested tests stay drafts until you approve them.</span>
+          </div>
+          <small>No hosted model call is made by the test generator.</small>
+        </div>
+        <div class="workflow-strip" aria-label="How test creation works">
+          <span><b>1</b> Import</span>
+          <span><b>2</b> Review and rewrite</span>
+          <span><b>3</b> Create test set</span>
         </div>
         <div id="evidence-summary" class="summary-grid compact"></div>
         <section class="section-block">
@@ -114,18 +121,34 @@
         </section>
         <section class="section-block">
           <div class="section-heading">
-            <div><p class="eyebrow">ADD YOUR OWN</p><h2>Create a test directly</h2></div>
-            <p>Use this when you already know what behavior you want to check.</p>
+            <div><p class="eyebrow">MAKE A TEST</p><h2>Start with one preference</h2></div>
+            <p>Describe the behavior you want. VibeCheckBench drafts a public-safe test for you to review.</p>
           </div>
-          <form id="manual-case-form" class="case-form">
-            <label>Preference area<select name="preferenceId" required></select></label>
-            <label>Custom name (optional)<input name="preferenceName" placeholder="e.g. Explains code top-down"></label>
-            <label>Preference in plain language<input name="userProfile" required placeholder="I want answers that..."></label>
-            <label class="wide">Test prompt without private details<textarea name="publicSafePrompt" required rows="3"></textarea></label>
-            <label class="wide">A good answer should<textarea name="expectedBehavior" required rows="2"></textarea></label>
-            <label>When to use it<select name="split"><option value="development">While improving the setup</option><option value="held_out">For a final, unseen check</option></select></label>
-            <div class="form-submit"><button class="primary-button" type="submit">Add to test set</button></div>
-          </form>
+          <div class="guided-builder">
+            <div class="builder-prompt">
+              <label>Preference in plain language
+                <textarea id="plain-preference" rows="3">The user prefers concise, high-signal answers that preserve necessary nuance.</textarea>
+              </label>
+              <button id="draft-test" class="primary-button" type="button">Draft a test</button>
+            </div>
+            <div id="draft-preview" class="draft-preview hidden">
+              <b>Draft ready for review</b>
+              <span>Edit anything below, then add it to your test set.</span>
+            </div>
+          </div>
+          <details class="direct-case-editor" open>
+            <summary>Review or edit the test details</summary>
+            <form id="manual-case-form" class="case-form">
+              <label>Preference area<select name="preferenceId" required></select></label>
+              <label>Custom area name (optional)<input name="preferenceName" placeholder="e.g. Explains code top-down"></label>
+              <label>Test name<input name="title" placeholder="e.g. Concise answer with needed nuance"></label>
+              <label class="wide">Preference in plain language<input name="userProfile" required placeholder="I want answers that..."></label>
+              <label class="wide">Test prompt without private details<textarea name="publicSafePrompt" required rows="3"></textarea></label>
+              <label class="wide">A good answer should<textarea name="expectedBehavior" required rows="2"></textarea></label>
+              <label>When to use it<select name="split"><option value="development">While improving the setup</option><option value="held_out">For a final, unseen check</option></select></label>
+              <div class="form-submit"><button class="primary-button" type="submit">Add to test set</button></div>
+            </form>
+          </details>
         </section>
         <section class="section-block">
           <div class="section-heading">
@@ -139,12 +162,41 @@
       <section id="setups-view" class="hidden">
         <div class="workspace-heading">
           <div>
-            <p class="eyebrow">WHAT TO IMPROVE</p>
-            <h2>What can you change in an AI setup?</h2>
-            <p>Start with the smallest likely cause of the problem. Change one thing, rerun the same tests, and keep it only if it helps.</p>
+            <p class="eyebrow">SELF-IMPROVEMENT LOOP</p>
+            <h2>Improve one part of the setup at a time</h2>
+            <p>Use real friction to create tests, compare one focused change, and keep it only when the same checks improve.</p>
           </div>
         </div>
+        <div class="loop-panel">
+          <ol>
+            <li><b>Find friction</b><span>Import conversations or add a public-safe example.</span></li>
+            <li><b>Make tests</b><span>Approve only rewrites that capture the actual preference.</span></li>
+            <li><b>Change one thing</b><span>Try a model, prompt, memory, skill, tool, or routing change.</span></li>
+            <li><b>Gate the result</b><span>Use final-check cases before treating the setup as better.</span></li>
+          </ol>
+          <div>
+            <b>Keep the loop humble</b>
+            <span>A better score is a reason to inspect the outputs, not permission to deploy a change automatically.</span>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <button class="secondary-button" data-jump-view="evidence">Build tests from interactions</button>
+          <button class="secondary-button open-run-sheet">Run a local comparison</button>
+        </div>
         <div class="plain-note"><b>What VibeCheckBench can do today</b><span>It can directly compare models and system prompts. It can also track planned changes to memory, skills, tools, context, and routing while their execution adapters are added.</span></div>
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">CASE STUDIES</p><h2>What the loop looks like</h2></div>
+            <p>Public-safe examples that start from interaction data and end with a guarded setup decision.</p>
+          </div>
+          <div id="case-study-list" class="case-study-list"></div>
+        </section>
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">SETUP SURFACES</p><h2>What can change?</h2></div>
+            <p>Choose the smallest likely cause, then compare before and after.</p>
+          </div>
+        </section>
         <div id="setup-surfaces" class="surface-grid"></div>
       </section>
     </main>

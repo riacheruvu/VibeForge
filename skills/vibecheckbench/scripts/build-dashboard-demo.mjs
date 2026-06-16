@@ -11,6 +11,7 @@ const SKILL_DIR = path.resolve(SCRIPT_DIR, "..");
 const ROOT = path.resolve(SKILL_DIR, "..", "..");
 const SOURCE = path.join(ROOT, "examples", "promptfoo-results.user-fit-demo.json");
 const SETUP_SURFACES = path.join(ROOT, "examples", "setup-surfaces.json");
+const CASE_STUDIES_DIR = path.join(ROOT, "examples", "case-studies");
 const PUBLIC = path.join(SKILL_DIR, "dashboard", "public");
 const DOCS = path.join(ROOT, "docs");
 
@@ -195,6 +196,16 @@ function main() {
       split: task.provenance?.split || "development",
     })),
     setupSurfaces: JSON.parse(fs.readFileSync(SETUP_SURFACES, "utf8")).surfaces,
+    caseStudies: fs.readdirSync(CASE_STUDIES_DIR, { withFileTypes: true })
+      .filter(entry => entry.isDirectory())
+      .map(entry => {
+        const payload = JSON.parse(fs.readFileSync(path.join(CASE_STUDIES_DIR, entry.name, "case-study.json"), "utf8"));
+        return {
+          ...payload,
+          path: `examples/case-studies/${entry.name}/README.md`,
+          runCommand: `node skills/vibecheckbench/scripts/run-case-study.mjs --case ${entry.name}`,
+        };
+      }),
   };
   fs.writeFileSync(path.join(DOCS, "demo-evidence.json"), `${JSON.stringify(demoEvidence, null, 2)}\n`, "utf8");
   fs.writeFileSync(path.join(DOCS, ".nojekyll"), "", "utf8");

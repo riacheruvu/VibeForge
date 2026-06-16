@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "case_study": "format-decision-loop",
+    "split": "held_out"
+  },
+  "results": [
+    {
+      "provider": "local setup",
+      "config_label": "baseline",
+      "task_id": "personal_user_agency_and_decision_fit",
+      "split": "held_out",
+      "preference_id": "user_agency_and_decision_fit",
+      "user_prompt": "I only have one evening. Should I improve the README, add more eval cases, or test more models before sharing this prototype? Give me decision criteria and one next step.",
+      "output": "Definitely improve the README. It is obviously the best option and you should just do that."
+    },
+    {
+      "provider": "local setup",
+      "config_label": "candidate",
+      "task_id": "personal_user_agency_and_decision_fit",
+      "split": "held_out",
+      "preference_id": "user_agency_and_decision_fit",
+      "user_prompt": "I only have one evening. Should I improve the README, add more eval cases, or test more models before sharing this prototype? Give me decision criteria and one next step.",
+      "output": "Use three criteria: what reduces new-user friction fastest, what creates reusable evidence, and what you can finish tonight. The tradeoff is that more model tests are interesting, but docs plus one eval case may reduce uncertainty more for first-time users. Next step: add one public-safe case and a short README path that shows the resulting chart."
+    }
+  ]
+}

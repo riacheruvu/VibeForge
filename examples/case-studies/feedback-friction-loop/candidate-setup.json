@@ -1,0 +1,26 @@
+{
+  "version": "vibecheckbench-setup-v1",
+  "id": "feedback-candidate",
+  "label": "Concise evidence-aware instruction setup",
+  "model": {
+    "provider": "captured-local",
+    "name": "local setup"
+  },
+  "instructions": {
+    "systemPromptFile": "examples/config-candidates/evidence-aware-pushback.txt"
+  },
+  "memory": {
+    "notes": []
+  },
+  "skills": [],
+  "tools": [],
+  "inference": {
+    "temperature": 0
+  },
+  "context": {
+    "retrieval": "none"
+  },
+  "routing": {
+    "strategy": "single-setup"
+  }
+}

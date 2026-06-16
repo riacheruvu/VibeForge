@@ -75,16 +75,59 @@ The local app can trigger evaluations. The
 [GitHub Pages demo](https://riacheruvu.github.io/VibeCheckBench/) is read-only and uses
 clearly labeled, checked-in example data.
 
+Local mode is a design goal, not a blanket privacy claim. The built-in mining,
+review, case-study, and mock-provider demos run on local files. Real model
+evaluations depend on the provider you choose: Ollama and file-based mocks keep
+the run local, while hosted Promptfoo providers may receive prompts and outputs.
+
 The dashboard also has two supporting workspaces:
 
-- **Build tests** imports local conversation exports, finds suggested preferences,
-  lets the user accept/edit/reject public-safe rewrites, creates manual cases,
-  and builds improvement plus final-check task packs.
-- **Improve setup** explains which part of the AI setup an improvement targets and
-  what evidence would show whether it helped.
+- **Build tests** imports local conversation exports, drafts tests from
+  plain-language preferences, lets the user accept/edit/reject public-safe
+  rewrites, and builds improvement plus final-check task packs.
+- **Improve setup** shows the self-improvement loop, links public-safe case
+  studies, and explains which part of the AI setup an improvement targets.
 
 Automatic mining creates review candidates, not trusted benchmark truth. Raw
 imports and review decisions stay under gitignored `captures/`.
+
+If someone does not know what prompt to test, they can start with a sentence
+like:
+
+> The user prefers concise, high-signal answers that preserve necessary nuance.
+
+The dashboard and CLI can turn that into a starter test prompt and expected
+behavior locally. The draft is intentionally editable; it is a starting point
+for review, not an automatic claim about what the user wants.
+
+## Case studies
+
+The checked-in case studies show the loop without private data or hosted APIs:
+
+- **Feedback friction loop** turns "too broad" and "too agreeable" corrections
+  into tests, then checks whether a concise evidence-aware instruction setup
+  improves on a final-check pushback case.
+- **Format and decision loop** turns exact-format and decision-agency
+  corrections into tests, then checks whether a constraint-aware setup reduces
+  cleanup work.
+
+Run both:
+
+```bash
+npm run case:studies
+```
+
+Or run one:
+
+```bash
+node skills/vibecheckbench/scripts/run-case-study.mjs --case feedback-friction-loop
+node skills/vibecheckbench/scripts/run-case-study.mjs --case format-decision-loop
+```
+
+Each case study writes local reports under `reports/case-studies/<case-id>/`.
+The output includes mined review candidates, approved task packs, scored
+baseline/candidate results, a guarded config gate, and a chart. A passing gate
+means "eligible for human review," not automatic deployment.
 
 ## What can be changed
 
@@ -301,6 +344,17 @@ This writes:
 captures/history-review.json
 captures/history-tasks/
 ```
+
+You can also draft one starter case from a plain-language preference:
+
+```bash
+node skills/vibecheckbench/scripts/draft-test-case.mjs \
+  --preference "The user prefers concise, high-signal answers that preserve necessary nuance." \
+  --stdout
+```
+
+In normal Codex use, the skill should run this for the user. The command is
+documented so the workflow stays reproducible outside Codex.
 
 Both stay local because `captures/` is gitignored. The output is a review queue,
 not an automatically trusted profile. Each candidate includes a redacted excerpt,
@@ -655,6 +709,7 @@ preference-to-improvement loop more trustworthy and easier to use:
 - **Conversation-history review**: improve local preference mining, deduplication, and accept/edit/reject workflows without uploading private history.
 - **Trace-aware agent checks**: evaluate tool choice, permissions, state transitions, retries, and completion evidence across multi-turn workflows.
 - **Clearer captured-answer workflow**: make it easier to compare models selected inside Codex, Claude Code, or chat UIs without manual JSON editing.
+- **Less technical dashboard flow**: keep commands available for reproducibility while making the main interface feel like a guided review workspace.
 - **More user-owned task packs**: support small domain-specific packs for writing, coding, research, decision support, accessibility, safety, and other workflows.
 - **One understandable run record**: keep scores, failed outputs, latency, token use, and config decisions together instead of scattering the evidence across reports.
 

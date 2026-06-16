@@ -1,0 +1,40 @@
+{
+  "conversations": [
+    {
+      "id": "format-decision-1",
+      "title": "Strict output contract",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please return only JSON with the exact keys decision, risk, and next_test."
+        },
+        {
+          "role": "assistant",
+          "content": "Sure — here is the JSON you asked for:\n\n```json\n{\"decision\":\"continue\",\"risk\":\"low\",\"next_test\":\"try it\"}\n```"
+        },
+        {
+          "role": "user",
+          "content": "I asked for only JSON, exactly. No markdown, no preface, no extra wording."
+        }
+      ]
+    },
+    {
+      "id": "format-decision-2",
+      "title": "Decision support",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Help me choose whether to polish docs or add test cases tonight."
+        },
+        {
+          "role": "assistant",
+          "content": "Definitely polish the docs. That is obviously the best choice."
+        },
+        {
+          "role": "user",
+          "content": "Do not decide for me. I want tradeoffs, uncertainty, and a next step."
+        }
+      ]
+    }
+  ]
+}

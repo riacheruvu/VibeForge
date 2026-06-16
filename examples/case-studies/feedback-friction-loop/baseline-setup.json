@@ -1,0 +1,26 @@
+{
+  "version": "vibecheckbench-setup-v1",
+  "id": "feedback-baseline",
+  "label": "Baseline local instruction setup",
+  "model": {
+    "provider": "captured-local",
+    "name": "local setup"
+  },
+  "instructions": {
+    "systemPromptFile": "examples/config-candidates/baseline-user-fit.txt"
+  },
+  "memory": {
+    "notes": []
+  },
+  "skills": [],
+  "tools": [],
+  "inference": {
+    "temperature": 0
+  },
+  "context": {
+    "retrieval": "none"
+  },
+  "routing": {
+    "strategy": "single-setup"
+  }
+}

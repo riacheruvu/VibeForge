@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { recommend } from "../scripts/recommend-next-experiment.mjs";
 import { mineConversationFile } from "../scripts/mine-conversation-history.mjs";
 import { promoteReview } from "../scripts/promote-history-candidates.mjs";
+import { draftTestCaseFromPreference } from "../scripts/draft-test-case.mjs";
 
 const APP_DIR = path.dirname(fileURLToPath(import.meta.url));
 const BUNDLED_ROOT = path.resolve(APP_DIR, "..", "..", "..");
@@ -34,6 +35,7 @@ const REVIEW_DECISIONS = path.join(FIT_DIR, "review-decisions.json");
 const FIT_PROJECT = path.join(FIT_DIR, "project.json");
 const FIT_TASKS = path.join(FIT_DIR, "tasks");
 const SETUP_SURFACES = path.join(ROOT, "examples", "setup-surfaces.json");
+const CASE_STUDIES_DIR = path.join(ROOT, "examples", "case-studies");
 const portArgIndex = process.argv.indexOf("--port");
 const PORT = Number(
   portArgIndex >= 0 ? process.argv[portArgIndex + 1] : process.env.VIBECHECKBENCH_PORT || 4173
@@ -142,6 +144,25 @@ function reviewedSamples() {
   }));
 }
 
+function caseStudies() {
+  if (!fs.existsSync(CASE_STUDIES_DIR)) return [];
+  return fs.readdirSync(CASE_STUDIES_DIR, { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => {
+      const file = path.join(CASE_STUDIES_DIR, entry.name, "case-study.json");
+      if (!fs.existsSync(file)) return null;
+      const payload = safeReadJson(file);
+      if (!payload) return null;
+      return {
+        ...payload,
+        path: path.relative(ROOT, path.join(CASE_STUDIES_DIR, entry.name, "README.md")).replaceAll("\\", "/"),
+        runCommand: `Ask Codex: Use VibeCheckBench to run the "${payload.title || entry.name}" case study and summarize what changed.`,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => String(a.title).localeCompare(String(b.title)));
+}
+
 function defaultReview() {
   return {
     version: "vibecheckbench-history-review-v1",
@@ -170,6 +191,7 @@ function evidenceState() {
     project: safeReadJson(FIT_PROJECT),
     samples: reviewedSamples(),
     setupSurfaces: safeReadJson(SETUP_SURFACES)?.surfaces || [],
+    caseStudies: caseStudies(),
   };
 }
 
@@ -261,6 +283,10 @@ function createManualCandidate(input) {
     status: "accepted",
   });
   return candidate;
+}
+
+function draftManualCandidate(input) {
+  return draftTestCaseFromPreference(input.preference || input.userProfile || "");
 }
 
 function promoteEvidence() {
@@ -707,6 +733,12 @@ const server = http.createServer((request, response) => {
   if (request.method === "POST" && url.pathname === "/api/evidence/manual") {
     readBody(request, 256 * 1024)
       .then(input => json(response, 200, { candidate: createManualCandidate(input), evidence: evidenceState() }))
+      .catch(error => json(response, 400, { error: error.message }));
+    return;
+  }
+  if (request.method === "POST" && url.pathname === "/api/evidence/draft") {
+    readBody(request, 256 * 1024)
+      .then(input => json(response, 200, { draft: draftManualCandidate(input) }))
       .catch(error => json(response, 400, { error: error.message }));
     return;
   }

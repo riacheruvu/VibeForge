@@ -1,0 +1,29 @@
+{
+  "version": "vibecheckbench-setup-v1",
+  "id": "format-candidate",
+  "label": "Constraint-aware setup",
+  "model": {
+    "provider": "captured-local",
+    "name": "local setup"
+  },
+  "instructions": {
+    "systemPromptFile": "examples/config-candidates/evidence-aware-pushback.txt"
+  },
+  "memory": {
+    "notes": [
+      "Respect exact output contracts before adding helpful context.",
+      "Give decision criteria before recommending a path."
+    ]
+  },
+  "skills": [],
+  "tools": [],
+  "inference": {
+    "temperature": 0
+  },
+  "context": {
+    "retrieval": "none"
+  },
+  "routing": {
+    "strategy": "single-setup"
+  }
+}

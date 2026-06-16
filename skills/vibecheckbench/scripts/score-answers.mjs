@@ -137,12 +137,18 @@ export function toPromptfooRows(rows) {
       provider,
       vars: {
         preference_id: preferenceId,
+        config_label: row.config_label || row.configLabel || row.setup || "default",
+        task_id: row.task_id || row.taskId || "",
+        split: row.split || "development",
         user_prompt: row.user_prompt || row.prompt || "",
       },
       response: {
         output: row.output || row.answer || "",
       },
+      latencyMs: Number(row.latencyMs || 0),
+      tokenUsage: { total: Number(row.tokens || row.totalTokens || row.tokenUsage?.total || 0) },
       score,
+      success: score >= 0.5,
       pass: score >= 0.5,
       gradingResult: {
         pass: score >= 0.5,

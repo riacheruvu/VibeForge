@@ -286,5 +286,52 @@
       ],
       "support": "experiment"
     }
+  ],
+  "caseStudies": [
+    {
+      "id": "feedback-friction-loop",
+      "title": "From feedback friction to a better local instruction setup",
+      "summary": "A user repeatedly corrected the assistant for being too broad and too agreeable. The case study turns those corrections into public-safe tests, compares a baseline instruction setup against a concise evidence-aware candidate, and gates the candidate on a held-out pushback case.",
+      "privacy": "Uses public-safe synthetic conversation exports. No private conversation text or hosted API is required.",
+      "workflow": [
+        "Mine local conversation exports for review candidates.",
+        "Approve public-safe rewrites into development and final-check tasks.",
+        "Score captured baseline and candidate local outputs.",
+        "Gate the candidate before treating it as an improvement."
+      ],
+      "commands": [
+        "node skills/vibecheckbench/scripts/mine-conversation-history.mjs --input examples/case-studies/feedback-friction-loop/conversation-export.json --out reports/case-studies/feedback-friction-loop/history-review.json --tasks-dir reports/case-studies/feedback-friction-loop/draft-tasks",
+        "node skills/vibecheckbench/scripts/promote-history-candidates.mjs --review reports/case-studies/feedback-friction-loop/history-review.json --decisions examples/case-studies/feedback-friction-loop/review-decisions.json --out reports/case-studies/feedback-friction-loop/project.json --tasks-dir reports/case-studies/feedback-friction-loop/tasks --name \"Feedback friction fit\"",
+        "node skills/vibecheckbench/scripts/score-answers.mjs --input examples/case-studies/feedback-friction-loop/captured-answers.train.json --out reports/case-studies/feedback-friction-loop/results.train.json",
+        "node skills/vibecheckbench/scripts/score-answers.mjs --input examples/case-studies/feedback-friction-loop/captured-answers.heldout.json --out reports/case-studies/feedback-friction-loop/results.heldout.json",
+        "node skills/vibecheckbench/scripts/gate-config-results.mjs --train reports/case-studies/feedback-friction-loop/results.train.json --heldout reports/case-studies/feedback-friction-loop/results.heldout.json --out reports/case-studies/feedback-friction-loop/config-gate.json",
+        "node skills/vibecheckbench/scripts/chart-results.mjs --input reports/case-studies/feedback-friction-loop/results.heldout.json --out reports/case-studies/feedback-friction-loop/heldout-chart.html"
+      ],
+      "expectedTakeaway": "The candidate is not automatically deployed. It becomes eligible for human review only if it improves the held-out case without regressing the development case.",
+      "path": "examples/case-studies/feedback-friction-loop/README.md",
+      "runCommand": "node skills/vibecheckbench/scripts/run-case-study.mjs --case feedback-friction-loop"
+    },
+    {
+      "id": "format-decision-loop",
+      "title": "From format corrections to a constraint-aware setup",
+      "summary": "A user corrected the assistant for adding markdown around JSON and for deciding too quickly. The case study turns those corrections into tests, then checks whether a constraint-aware setup better preserves exact asks and decision agency.",
+      "privacy": "Uses public-safe synthetic conversation exports and captured local outputs. No hosted API is required.",
+      "workflow": [
+        "Mine corrections about formatting and decision support.",
+        "Approve one development case and one final-check case.",
+        "Score captured baseline and candidate outputs.",
+        "Gate the candidate before recommending review."
+      ],
+      "commands": [
+        "node skills/vibecheckbench/scripts/mine-conversation-history.mjs --input examples/case-studies/format-decision-loop/conversation-export.json --out reports/case-studies/format-decision-loop/history-review.json --tasks-dir reports/case-studies/format-decision-loop/draft-tasks",
+        "node skills/vibecheckbench/scripts/promote-history-candidates.mjs --review reports/case-studies/format-decision-loop/history-review.json --decisions examples/case-studies/format-decision-loop/review-decisions.json --out reports/case-studies/format-decision-loop/project.json --tasks-dir reports/case-studies/format-decision-loop/tasks --name \"Format and decision fit\"",
+        "node skills/vibecheckbench/scripts/score-answers.mjs --input examples/case-studies/format-decision-loop/captured-answers.train.json --out reports/case-studies/format-decision-loop/results.train.json",
+        "node skills/vibecheckbench/scripts/score-answers.mjs --input examples/case-studies/format-decision-loop/captured-answers.heldout.json --out reports/case-studies/format-decision-loop/results.heldout.json",
+        "node skills/vibecheckbench/scripts/gate-config-results.mjs --train reports/case-studies/format-decision-loop/results.train.json --heldout reports/case-studies/format-decision-loop/results.heldout.json --out reports/case-studies/format-decision-loop/config-gate.json"
+      ],
+      "expectedTakeaway": "A setup can be capable but still create cleanup work. Exact formatting and decision agency are testable personal-fit behaviors.",
+      "path": "examples/case-studies/format-decision-loop/README.md",
+      "runCommand": "node skills/vibecheckbench/scripts/run-case-study.mjs --case format-decision-loop"
+    }
   ]
 }

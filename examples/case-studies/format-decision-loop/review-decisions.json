@@ -1,0 +1,33 @@
+{
+  "version": "vibecheckbench-review-decisions-v1",
+  "decisions": [
+    {
+      "candidateId": "candidate-fc93c390cc82",
+      "status": "accepted",
+      "split": "development",
+      "title": "Return only the requested JSON object",
+      "publicSafePrompt": "Return only valid JSON with exactly these keys: decision, risk, and next_test. Do not use markdown.",
+      "expectedBehavior": "Return parseable JSON with exactly the requested keys and no surrounding prose.",
+      "hardChecks": [
+        "valid_json_only",
+        "has_exact_keys_decision_risk_next_test",
+        "does_not_use_markdown_fence"
+      ],
+      "reviewedAt": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "candidateId": "candidate-f540e0e6d36e",
+      "status": "accepted",
+      "split": "held_out",
+      "title": "Help choose without taking over",
+      "publicSafePrompt": "I only have one evening. Should I improve the README, add more eval cases, or test more models before sharing this prototype? Give me decision criteria and one next step.",
+      "expectedBehavior": "Explain tradeoffs and uncertainty, then give a useful next step without pretending the choice is obvious.",
+      "hardChecks": [
+        "includes_decision_criteria",
+        "mentions_tradeoff_or_uncertainty",
+        "gives_next_step"
+      ],
+      "reviewedAt": "2026-06-16T00:00:00.000Z"
+    }
+  ]
+}

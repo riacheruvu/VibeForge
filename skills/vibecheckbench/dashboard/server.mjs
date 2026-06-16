@@ -85,6 +85,34 @@ const PRESETS = {
   },
 };
 
+async function installedOllamaModels() {
+  const result = await fetch("http://127.0.0.1:11434/api/tags");
+  if (!result.ok) throw new Error(result.statusText);
+  const payload = await result.json();
+  return (payload.models || []).map(model => model.name).filter(Boolean);
+}
+
+async function customOllamaPreset(models) {
+  const selected = [...new Set((Array.isArray(models) ? models : [])
+    .map(model => String(model || "").trim())
+    .filter(Boolean))];
+  if (!selected.length) return null;
+  const installed = await installedOllamaModels();
+  const missing = selected.filter(model => !installed.includes(model));
+  if (missing.length) {
+    throw new Error(`I could not find ${missing.join(", ")} in Ollama. Pull or install that model first, then try again.`);
+  }
+  return {
+    id: "custom-ollama",
+    name: selected.length === 1 ? `Check ${selected[0]}` : "Compare selected local models",
+    description: "Runs the preference checks against the Ollama models you selected.",
+    privacy: "Local only",
+    providers: selected.map(model => `ollama:chat:${model}`),
+    kind: "model-comparison",
+    checks: ["Uses installed local Ollama models"],
+  };
+}
+
 function json(response, status, payload) {
   response.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
@@ -539,7 +567,7 @@ function saveRun(dir, record) {
 }
 
 async function executeModelComparison(record, dir) {
-  const preset = PRESETS[record.presetId];
+  const preset = PRESETS[record.presetId] || record;
   const allTasks = readTasks("examples/tasks");
   const tasks = preset.taskIds?.length
     ? allTasks.filter(task => preset.taskIds.includes(task.id))
@@ -755,14 +783,12 @@ const server = http.createServer((request, response) => {
     }
   }
   if (request.method === "GET" && url.pathname === "/api/preflight") {
-    fetch("http://127.0.0.1:11434/api/tags")
-      .then(async result => {
-        if (!result.ok) throw new Error(result.statusText);
-        const payload = await result.json();
+    installedOllamaModels()
+      .then(models => {
         json(response, 200, {
           ready: true,
           runner: "Built-in local Ollama runner",
-          models: (payload.models || []).map(model => model.name),
+          models,
         });
       })
       .catch(() => json(response, 200, {
@@ -782,9 +808,9 @@ const server = http.createServer((request, response) => {
     return record ? json(response, 200, record) : json(response, 404, { error: "Run not found." });
   }
   if (request.method === "POST" && url.pathname === "/api/runs") {
-    readBody(request, 64 * 1024).then(input => {
-      const preset = PRESETS[input.presetId];
-      if (!preset) return json(response, 400, { error: "Unknown evaluation preset." });
+    readBody(request, 64 * 1024).then(async input => {
+      const preset = await customOllamaPreset(input.models) || PRESETS[input.presetId];
+      if (!preset) return json(response, 400, { error: "Choose an evaluation preset or at least one installed local model." });
       const { record, dir } = createRun(preset);
       activeRuns.set(record.id, record);
       executeRun(preset, record, dir);

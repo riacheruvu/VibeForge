@@ -1,5 +1,5 @@
 const STATIC_DEMO = !["127.0.0.1", "localhost"].includes(location.hostname);
-const state = { presets: [], runs: [], selectedPreset: "", selectedRun: "", evidence: null };
+const state = { presets: [], runs: [], selectedPreset: "", selectedRun: "", evidence: null, preflight: null, selectedModels: [] };
 const $ = selector => document.querySelector(selector);
 const PREFERENCES = {
   calibrated_factuality_and_sourceability: "Doesn't overclaim",
@@ -43,6 +43,7 @@ function showView(view) {
   $("#runs-view").classList.toggle("hidden", view !== "runs");
   $("#evidence-view").classList.toggle("hidden", view !== "evidence");
   $("#setups-view").classList.toggle("hidden", view !== "setups");
+  $("#changes-view").classList.toggle("hidden", view !== "changes");
   const hasRuns = state.runs.length > 0;
   $("#dashboard").classList.toggle("hidden", view !== "overview" || !hasRuns);
   $("#empty-state").classList.toggle("hidden", view !== "overview" || hasRuns);
@@ -83,6 +84,8 @@ function preferenceLabel(candidate) {
 
 function renderCandidates() {
   const candidates = state.evidence?.review?.candidates || [];
+  $("#review-count").textContent = String(candidates.length);
+  $("#review-queue").open = candidates.length > 0;
   $("#candidate-list").innerHTML = candidates.length ? candidates.map(candidate => {
     const decision = decisionFor(candidate.id);
     const status = decision.status || "deferred";
@@ -188,6 +191,73 @@ function renderCaseStudies() {
     </article>`).join("") : `<div class="gentle-empty"><b>No case studies found</b><span>Add a case-study.json under examples/case-studies.</span></div>`;
 }
 
+function changeSuggestionTemplates(run) {
+  const decision = run?.recommendation?.decision;
+  if (!decision) return [];
+  const target = decision.targetSurface || "instructions";
+  const weak = run.summary?.setups?.[0]?.weakest || "the weakest preference area";
+  const base = {
+    source: run.name,
+    headline: decision.headline,
+    rationale: decision.rationale,
+    nextExperiment: decision.nextExperiment,
+  };
+  const cards = [
+    {
+      surface: "Instructions",
+      status: target === "instructions" ? "Recommended next" : "Possible follow-up",
+      suggestion: target === "instructions"
+        ? decision.nextExperiment
+        : `If ${weak} keeps failing, make the system prompt more explicit about that behavior.`,
+      review: "Check whether this wording improves the weak behavior without making answers longer, more rigid, or more agreeable.",
+    },
+    {
+      surface: "Memory",
+      status: target === "memory" ? "Recommended next" : "Watch for stale preference",
+      suggestion: "Store only durable preferences, not one-off requests. Prefer short memory like: 'User prefers concise, high-signal answers with necessary nuance.'",
+      review: "Confirm the preference appeared repeatedly or was explicitly stated before adding it to memory.",
+    },
+    {
+      surface: "Skill",
+      status: target === "skills" ? "Recommended next" : "Useful when a workflow repeats",
+      suggestion: "If this is a repeatable workflow, add skill guidance for how to answer, what to avoid, and what evidence to check.",
+      review: "A skill should improve a specific recurring workflow, not become a dumping ground for preferences.",
+    },
+    {
+      surface: "Model or routing",
+      status: target === "model" || target === "routing" ? "Recommended next" : "Compare only if needed",
+      suggestion: "Compare another local model or route this task type to the setup that scored best on the relevant preference.",
+      review: "Only switch models if the improvement is meaningful on held-out checks, not just one lucky answer.",
+    },
+    {
+      surface: "Tools and access",
+      status: target === "tools" ? "Recommended next" : "Needs trace-aware checks",
+      suggestion: "If the miss came from missing context or tool use, evaluate whether the setup needs different file, search, or connector access.",
+      review: "Tool changes should be checked with run traces, not only final-answer scoring.",
+    },
+  ];
+  return cards.map(card => ({ ...base, ...card }));
+}
+
+function renderChangeSuggestions() {
+  const latest = state.runs[0];
+  const suggestions = changeSuggestionTemplates(latest);
+  $("#change-suggestions").innerHTML = suggestions.length ? suggestions.map(item => `
+    <article class="change-card">
+      <div>
+        <span class="preference-chip">${escapeHtml(item.status)}</span>
+        <h3>${escapeHtml(item.surface)}</h3>
+        <p>${escapeHtml(item.suggestion)}</p>
+      </div>
+      <div>
+        <b>Why this came up</b>
+        <span>${escapeHtml(item.rationale || item.headline)}</span>
+        <b>Before keeping it</b>
+        <span>${escapeHtml(item.review)}</span>
+      </div>
+    </article>`).join("") : `<div class="gentle-empty"><b>No suggested changes yet</b><span>Run an evaluation first. VibeCheckBench will turn the result into review notes here.</span></div>`;
+}
+
 function renderEvidence() {
   renderEvidenceSummary();
   renderCandidates();
@@ -228,11 +298,41 @@ function renderPresets() {
       <span class="radio" aria-hidden="true"></span>
       <span><b>${escapeHtml(preset.name)}</b><span>${escapeHtml(preset.description)}</span><ul>${(preset.checks || []).map(check => `<li>${escapeHtml(check)}</li>`).join("")}</ul><small>${escapeHtml(preset.privacy)}</small></span>
     </button>`).join("");
-  $("#run-button").disabled = !state.selectedPreset;
+  $("#run-button").disabled = !state.selectedPreset && !state.selectedModels.length;
   document.querySelectorAll(".preset").forEach(button => button.addEventListener("click", () => {
     state.selectedPreset = button.dataset.preset;
+    state.selectedModels = [];
     renderPresets();
+    renderLocalModelPicker();
   }));
+}
+
+function renderLocalModelPicker() {
+  const models = state.preflight?.models || [];
+  const choices = [...new Set([...models, ...state.selectedModels])];
+  $("#local-model-list").innerHTML = choices.length ? choices.map(model => `
+    <label class="model-choice">
+      <input type="checkbox" value="${escapeHtml(model)}" ${state.selectedModels.includes(model) ? "checked" : ""}>
+      <span>${escapeHtml(model)}${models.includes(model) ? "" : " (not found yet)"}</span>
+    </label>`).join("") : `<p class="all-clear">No local Ollama models were found. Install or pull a model, then refresh the dashboard.</p>`;
+  document.querySelectorAll("#local-model-list input").forEach(input => input.addEventListener("change", () => {
+    state.selectedModels = [...document.querySelectorAll("#local-model-list input:checked")].map(item => item.value);
+    if (state.selectedModels.length) state.selectedPreset = "";
+    renderPresets();
+    renderLocalModelPicker();
+  }));
+  $("#run-button").disabled = !state.selectedPreset && !state.selectedModels.length;
+}
+
+function addCustomModelChoice() {
+  const input = $("#custom-model-name");
+  const model = input.value.trim();
+  if (!model) return;
+  if (!state.selectedModels.includes(model)) state.selectedModels.push(model);
+  state.selectedPreset = "";
+  input.value = "";
+  renderPresets();
+  renderLocalModelPicker();
 }
 
 function setupSummary(run) {
@@ -345,6 +445,7 @@ function renderRuns() {
     showView("overview");
     renderRun(state.runs.find(run => run.id === button.dataset.openRun));
   }));
+  renderChangeSuggestions();
 }
 
 async function refreshRuns(preferredId = "") {
@@ -375,7 +476,7 @@ async function startRun() {
     const run = await api("/api/runs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ presetId: state.selectedPreset }),
+      body: JSON.stringify({ presetId: state.selectedPreset, models: state.selectedModels }),
     });
     $("#run-sheet").classList.add("hidden");
     await refreshRuns(run.id);
@@ -384,7 +485,7 @@ async function startRun() {
     alert(error.message);
   } finally {
     button.textContent = "Run evaluation";
-    button.disabled = !state.selectedPreset;
+    button.disabled = !state.selectedPreset && !state.selectedModels.length;
   }
 }
 
@@ -423,17 +524,26 @@ async function init() {
   state.presets = await api("/api/presets");
   await refreshEvidence();
   const preflight = await api("/api/preflight");
+  state.preflight = preflight;
   const status = $("#preflight-status");
   status.innerHTML = `<span class="status-dot"></span>${escapeHtml(preflight.ready
     ? `${preflight.runner} ready. ${preflight.models.length} model(s) available.`
     : preflight.error)}`;
   if (!preflight.ready) status.querySelector(".status-dot").style.background = "#ff9f0a";
   renderPresets();
+  renderLocalModelPicker();
   await refreshRuns();
   document.querySelectorAll(".open-run-sheet").forEach(button => button.addEventListener("click", openSheet));
   $("#new-run-button").addEventListener("click", openSheet);
   $("#close-sheet").addEventListener("click", () => $("#run-sheet").classList.add("hidden"));
   $("#run-button").addEventListener("click", startRun);
+  $("#add-custom-model").addEventListener("click", addCustomModelChoice);
+  $("#custom-model-name").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addCustomModelChoice();
+    }
+  });
   $("#run-select").addEventListener("change", event => renderRun(state.runs.find(run => run.id === event.target.value)));
   document.querySelectorAll(".nav-item").forEach(button => button.addEventListener("click", () => showView(button.dataset.view)));
   document.querySelectorAll("[data-jump-view]").forEach(button => button.addEventListener("click", () => showView(button.dataset.jumpView)));

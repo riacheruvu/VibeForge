@@ -17,6 +17,7 @@
         <button class="nav-item active" data-view="overview"><span>O</span>Overview</button>
         <button class="nav-item" data-view="evidence"><span>T</span>Build tests</button>
         <button class="nav-item" data-view="setups"><span>I</span>Improve setup</button>
+        <button class="nav-item" data-view="changes"><span>C</span>Suggested changes</button>
         <button class="nav-item" data-view="runs"><span>R</span>Past runs</button>
       </nav>
       <div class="privacy-note"><span class="status-dot"></span><div><b>Local mode</b><small>Nothing leaves this computer.</small></div></div>
@@ -85,6 +86,21 @@
         <div id="runs-list" class="runs-list"></div>
       </section>
 
+      <section id="changes-view" class="hidden">
+        <div class="workspace-heading">
+          <div>
+            <p class="eyebrow">REVIEW BEFORE CHANGING</p>
+            <h2>Suggested setup changes</h2>
+            <p>Inspect what the skill thinks should change in the model setup, prompt, memory, skills, tools, or routing.</p>
+          </div>
+          <div class="workspace-actions">
+            <button class="secondary-button open-run-sheet">Run another evaluation</button>
+          </div>
+        </div>
+        <div class="plain-note"><b>Nothing changes automatically</b><span>Use these as review notes. Keep, edit, or ignore them after checking the actual missed answers.</span></div>
+        <div id="change-suggestions" class="change-suggestions"></div>
+      </section>
+
       <section id="evidence-view" class="hidden">
         <div class="workspace-heading">
           <div>
@@ -113,11 +129,13 @@
         </div>
         <div id="evidence-summary" class="summary-grid compact"></div>
         <section class="section-block">
-          <div class="section-heading">
-            <div><p class="eyebrow">YOUR REVIEW</p><h2>Suggested tests</h2></div>
-            <p>Nothing is added until you approve it.</p>
-          </div>
-          <div id="candidate-list" class="candidate-list"></div>
+          <details id="review-queue" class="review-queue" open>
+            <summary>
+              <span><b>Suggested tests to review</b><small>Approve, edit, save for later, or reject. Nothing is added automatically.</small></span>
+              <span id="review-count" class="review-count">0</span>
+            </summary>
+            <div id="candidate-list" class="candidate-list"></div>
+          </details>
         </section>
         <section class="section-block">
           <div class="section-heading">
@@ -181,7 +199,7 @@
         </div>
         <div class="quick-actions">
           <button class="secondary-button" data-jump-view="evidence">Build tests from interactions</button>
-          <button class="secondary-button open-run-sheet">Run a local comparison</button>
+          <button class="secondary-button open-run-sheet">Open evaluation picker</button>
         </div>
         <div class="plain-note"><b>What VibeCheckBench can do today</b><span>It can directly compare models and system prompts. It can also track planned changes to memory, skills, tools, context, and routing while their execution adapters are added.</span></div>
         <section class="section-block">
@@ -205,10 +223,19 @@
   <div id="run-sheet" class="modal-backdrop hidden">
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
       <div class="sheet-header">
-        <div><p class="eyebrow">NEW EVALUATION</p><h2 id="sheet-title">What should we compare?</h2></div>
+        <div><p class="eyebrow">NEW EVALUATION</p><h2 id="sheet-title">Choose what to compare</h2></div>
         <button id="close-sheet" class="icon-button" aria-label="Close">x</button>
       </div>
       <div id="preset-list" class="preset-list"></div>
+      <details id="local-model-picker" class="local-model-picker">
+        <summary>Choose installed local models</summary>
+        <p>Use this when you want to compare specific Ollama models already on this machine.</p>
+        <div class="manual-model-entry">
+          <input id="custom-model-name" placeholder="e.g. hermes3:8b or llama3.2:1b">
+          <button id="add-custom-model" class="secondary-button" type="button">Add model</button>
+        </div>
+        <div id="local-model-list" class="local-model-list"></div>
+      </details>
       <div class="sheet-footer">
         <div id="preflight-status" class="local-assurance"><span class="status-dot"></span>Checking the local runner...</div>
         <button id="run-button" class="primary-button" disabled>Run evaluation</button>

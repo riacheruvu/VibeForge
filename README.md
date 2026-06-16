@@ -87,6 +87,9 @@ The dashboard also has two supporting workspaces:
   rewrites, and builds improvement plus final-check task packs.
 - **Improve setup** shows the self-improvement loop, links public-safe case
   studies, and explains which part of the AI setup an improvement targets.
+- **Suggested changes** turns the latest evaluation into review notes for
+  possible instruction, memory, skill, model/routing, or tool changes. It does
+  not edit files automatically.
 
 Automatic mining creates review candidates, not trusted benchmark truth. Raw
 imports and review decisions stay under gitignored `captures/`.
@@ -244,6 +247,31 @@ node skills/vibecheckbench/scripts/chart-results.mjs \
 ```
 
 Tiny local models are useful for plumbing and privacy-friendly experiments. They are not strong judges or strong assistants, so treat the output as a smoke test rather than evidence about model quality.
+
+### Local provider options
+
+The dashboard's built-in runner currently calls **Ollama** directly because it
+has a small local API and works well for no-key demos. You can select installed
+Ollama models in the dashboard, or type a model name to check. If the model is
+not installed, the dashboard should fail with a plain-language message instead
+of a raw stack trace. This is not meant to say Ollama is the only possible local
+path.
+
+Other local or self-hosted options can fit through the CLI/Promptfoo paths:
+
+| Option | How it can fit | Status |
+|---|---|---|
+| Ollama | Direct dashboard runner and CLI provider ids like `ollama:chat:qwen3:0.6b` | Supported today |
+| llama.cpp server | OpenAI-compatible local endpoint or Promptfoo provider | Supported through config/export paths |
+| LM Studio | OpenAI-compatible local endpoint | Supported through config/export paths |
+| vLLM, TGI, SGLang | Self-hosted OpenAI-compatible or HTTP providers | Supported through config/export paths |
+| Hugging Face Transformers | Local Python/Node adapter around a downloaded model | Planned adapter |
+| File/mock providers | Offline positive and negative controls | Supported today |
+
+Hermes, Qwen, Gemma, SmolLM, Llama, Phi, Mistral, and similar names are model
+families, not runners by themselves. VibeCheckBench can evaluate them when they
+are exposed through a runner such as Ollama, llama.cpp, LM Studio, vLLM, or a
+future local Hugging Face adapter.
 
 ### What The Example Caught
 

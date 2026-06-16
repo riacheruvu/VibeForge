@@ -245,7 +245,7 @@
     "gate": null,
     "recommendation": {
       "version": "vibecheckbench-next-experiment-v1",
-      "generatedAt": "2026-06-16T02:46:56.958Z",
+      "generatedAt": "2026-06-16T03:20:18.514Z",
       "evidence": {
         "resultRows": 18,
         "setupCount": 3,

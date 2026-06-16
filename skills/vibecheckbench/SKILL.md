@@ -313,6 +313,30 @@ node "{baseDir}/scripts/run-local-subjects.mjs" --provider ollama:chat:qwen3:8b 
 
 Before using Ollama, check whether `ollama` is installed and the requested models are present. Do not pull models unless the user approves the download. If Ollama is unavailable, offer the file/mock smoke test or captured-answer workflow.
 
+## Friendly Local Setup Behavior
+
+When a nontechnical user says "use VibeCheckBench" or asks whether a local model
+works, act like a setup guide:
+
+1. Check what is already installed before suggesting installation.
+2. Explain results in plain language: "Ollama is running and I found Qwen,
+   Gemma, and SmolLM" or "I cannot reach Ollama yet, so local model runs will
+   not work until it is started."
+3. Ask for permission before installing packages, downloading Promptfoo, pulling
+   model weights, or using a hosted provider.
+4. If a model fails, say what failed and the next practical fix. Prefer:
+   "This model is not installed locally; I can pull it if you approve the
+   download" over raw stack traces.
+5. If the user asks about non-Ollama local models, explain that the dashboard
+   direct runner currently supports Ollama. llama.cpp, LM Studio, vLLM, TGI,
+   SGLang, and hosted/self-hosted OpenAI-compatible routers can be used through
+   Promptfoo/export paths. Local Hugging Face Transformers support is a planned
+   adapter, not a built-in dashboard runner yet.
+6. Treat model names such as Hermes, Qwen, Gemma, SmolLM, Llama, Phi, and Mistral
+   as model families. They need a local runner such as Ollama, llama.cpp, LM
+   Studio, vLLM, or a future Hugging Face adapter before VibeCheckBench can run
+   them directly.
+
 ## Validation
 
 Before presenting a generated suite as ready:

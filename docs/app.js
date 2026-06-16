@@ -430,7 +430,7 @@ async function init() {
   if (!preflight.ready) status.querySelector(".status-dot").style.background = "#ff9f0a";
   renderPresets();
   await refreshRuns();
-  $(".open-run-sheet")?.addEventListener("click", openSheet);
+  document.querySelectorAll(".open-run-sheet").forEach(button => button.addEventListener("click", openSheet));
   $("#new-run-button").addEventListener("click", openSheet);
   $("#close-sheet").addEventListener("click", () => $("#run-sheet").classList.add("hidden"));
   $("#run-button").addEventListener("click", startRun);

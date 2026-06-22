@@ -162,11 +162,29 @@ The checked-in case studies show the loop without private data or hosted APIs:
 - **Format and decision loop** turns exact-format and decision-agency
   corrections into tests, then checks whether a constraint-aware setup reduces
   cleanup work.
+- **Concise high-signal loop** turns verbose advice into a scoped test and
+  validates whether the candidate preserves next-step guidance while trimming
+  unnecessary wording.
+- **Kind pushback loop** turns polite challenge into a review-worthy candidate
+  and validates whether the candidate improves held-out weak-claim pushback.
+- **Privacy/sourceability loop** turns source-aware and privacy-safe constraints
+  into runnable tests and validates whether the candidate improves held-out
+  sourcing behavior.
 
-Run both:
+Run all examples:
 
 ```bash
 npm run case:studies
+```
+
+Or individually:
+
+```bash
+node skills/vibecheckbench/scripts/run-case-study.mjs --case feedback-friction-loop
+node skills/vibecheckbench/scripts/run-case-study.mjs --case format-decision-loop
+node skills/vibecheckbench/scripts/run-case-study.mjs --case concise-high-signal-loop
+node skills/vibecheckbench/scripts/run-case-study.mjs --case kind-pushback-loop
+node skills/vibecheckbench/scripts/run-case-study.mjs --case privacy-sourceability-loop
 ```
 
 ---
@@ -183,6 +201,16 @@ node skills/vibecheckbench/scripts/run-local-subjects.mjs \
   --out reports/answers.json \
   --scored-out reports/results.json \
   --chart-out reports/skill-chart.html
+```
+
+Or use the direct benchmark judge flow with local Ollama or hosted APIs:
+
+```bash
+node scripts/direct-benchmark.mjs --gen
+# collect responses into answers.json, optionally with attachments
+node scripts/direct-benchmark.mjs --judge-score answers.json \
+  --judge-provider ollama:chat:qwen3:0.6b \
+  --ollama-url http://127.0.0.1:11434
 ```
 
 **With Promptfoo (broader provider support):**
@@ -284,19 +312,6 @@ The strongest path is hybrid: deterministic for crisp constraints, a separate ju
 - Small case counts are noisy — use repeats or held-out cases before trusting an apparent improvement.
 - The checked-in skill chart is demo data, not fresh model evidence.
 - `--improve` proposes prompt changes from observed losses; rerun the evaluation before trusting revisions.
-
----
-
-## Case studies
-
-Two end-to-end examples without private data or hosted APIs:
-
-```bash
-npm run case:studies
-# or individually:
-node skills/vibecheckbench/scripts/run-case-study.mjs --case feedback-friction-loop
-node skills/vibecheckbench/scripts/run-case-study.mjs --case format-decision-loop
-```
 
 ---
 

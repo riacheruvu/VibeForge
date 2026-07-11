@@ -1,8 +1,13 @@
 {
-  "name": "vibecheckbench",
+  "name": "vibeforge",
   "private": true,
   "type": "module",
-  "description": "VibeForge / VibeCheckBench — measure and improve personal AI setup fit",
+  "description": "VibeForge — measure and improve personal AI setup fit (formerly VibeCheckBench)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/riacheruvu/VibeForge.git"
+  },
+  "homepage": "https://github.com/riacheruvu/VibeForge",
   "bin": {
     "vibecheckbench": "bin/vibecheckbench.mjs",
     "vibeforge": "bin/vibecheckbench.mjs"

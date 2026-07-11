@@ -1,10 +1,10 @@
 cff-version: 1.2.0
-message: "If VibeCheckBench helps your work, please cite or link to the repository."
-title: "VibeCheckBench: Personal-fit checks for AI setups"
+message: "If VibeForge helps your work, please cite or link to the repository."
+title: "VibeForge: Personal-fit checks for AI setups"
 authors:
-  - name: "VibeCheckBench contributors"
+  - name: "VibeForge contributors"
 year: 2026
 license: MIT
-repository-code: "https://github.com/riacheruvu/VibeCheckBench"
-url: "https://github.com/riacheruvu/VibeCheckBench"
-abstract: "VibeCheckBench is an early prototype for turning user-specific AI interaction preferences into repeatable checks, model/config comparisons, and simple fit visualizations."
+repository-code: "https://github.com/riacheruvu/VibeForge"
+url: "https://github.com/riacheruvu/VibeForge"
+abstract: "VibeForge (formerly VibeCheckBench) is a prototype for turning user-specific AI interaction preferences into repeatable checks, setup comparisons, and simple fit visualizations."

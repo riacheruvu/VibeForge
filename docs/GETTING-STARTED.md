@@ -2,7 +2,7 @@
 
 **Goal:** measure and improve how well an **AI setup** fits *you* — not who wins a general model leaderboard.
 
-**Names:** product brand **VibeForge**; skill id / paths still accept **VibeCheckBench** / `vibecheckbench` until the full rename ships.
+**Names:** product + GitHub repo **VibeForge** (`github.com/riacheruvu/VibeForge`). Skill/path ids still accept **VibeCheckBench** / `vibecheckbench` during the transition.
 
 ---
 

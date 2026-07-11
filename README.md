@@ -1,18 +1,19 @@
-# VibeCheckBench
+# VibeForge
 
 **Measure and improve how well an AI *setup* fits you — not how “smart” a model is in general.**
 
 > Capability benchmarks answer: *what can this model do?*  
-> VibeCheckBench answers: *which combination of model, instructions, memory, tools, and workflows works for this person?*
+> VibeForge answers: *which combination of model, instructions, memory, tools, and workflows works for this person?*
 
 IQ-style tests measure capability. This project measures **fit**.
 
-![VibeCheckBench social preview](assets/vibecheckbench-social-preview.png)
+![VibeForge social preview](assets/vibecheckbench-social-preview.png)
 
+**Repo:** [github.com/riacheruvu/VibeForge](https://github.com/riacheruvu/VibeForge) (formerly *VibeCheckBench*)  
 **Primary UX:** the **agent skill** (Codex / Claude Code) — you talk in plain language; the skill runs local scripts. You should not need to type `npm` day to day.  
 **Getting started:** [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) · **Contributor scripts:** [docs/COMMANDS.md](docs/COMMANDS.md)  
 **Static demo:** open [`docs/index.html`](docs/index.html) locally, or enable GitHub Pages on the `docs/` folder.  
-**Names:** **VibeForge** is the product brand; skill id `vibecheckbench` / `vibeforge` both work during the rename.
+**Compatibility:** skill/CLI ids `vibecheckbench` and `vibeforge` both work during the transition.
 
 ---
 
@@ -26,7 +27,7 @@ Those are not always intelligence failures. They are **fit failures**.
 
 **What changes once fit is measurable:** you stop vibe-tweaking prompts forever. You can compare setups, catch regressions, and try the *smallest* improvement on purpose — then keep it only if a held-out check agrees.
 
-Complementary to public arenas (e.g. LMSYS): arenas tell you who wins popularity contests; VibeCheckBench helps you make a setup feel right **for you**.
+Complementary to public arenas (e.g. LMSYS): arenas tell you who wins popularity contests; VibeForge helps you make a setup feel right **for you**.
 
 ---
 

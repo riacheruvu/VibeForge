@@ -1,7 +1,7 @@
 # Local OSS Quickstart
 
 This path compares small local models as **subjects**: the models answer the
-VibeCheckBench cases, then the tool scores those answers and makes a chart.
+VibeForge cases, then the tool scores those answers and makes a chart.
 
 It does not require OpenAI, Anthropic, or other hosted API keys. It does require
 Ollama and whichever local models you choose to download.
@@ -20,7 +20,7 @@ ollama pull llama3.2:1b
 Suggested first comparison:
 
 ```bash
-node skills/vibecheckbench/scripts/run-local-subjects.mjs \
+node skills/vibeforge/scripts/run-local-subjects.mjs \
   --provider ollama:chat:gemma3:270m \
   --provider ollama:chat:qwen3:0.6b \
   --provider ollama:chat:llama3.2:1b \
@@ -47,7 +47,7 @@ ollama pull qwen3:8b
 Then run:
 
 ```bash
-node skills/vibecheckbench/scripts/run-local-subjects.mjs \
+node skills/vibeforge/scripts/run-local-subjects.mjs \
   --provider ollama:chat:gemma3:1b \
   --provider ollama:chat:llama3.2:3b \
   --provider ollama:chat:qwen3:8b \

@@ -11,7 +11,7 @@ Short version. Capability leaderboards are abundant; this project focuses on **p
 - Fit review artifacts and next-experiment recommendations (draft-only, not auto-deploy)
 - Promptfoo export as the primary regression path; legacy judge runner optional
 - **UX restructure:** pitch README, `docs/GETTING-STARTED.md`, command reference split, golden path npm scripts
-- **Dual branding:** VibeForge product name + `vibecheckbench` / `vibeforge` CLI and skill aliases
+- **Dual branding:** VibeForge product name + `vibeforge` / `vibeforge` CLI and skill aliases
 - Agent skill + Claude slash commands aligned to draft-first decision tree
 
 ## Next

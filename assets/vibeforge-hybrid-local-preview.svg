@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">VibeForge local hybrid example</title>
+  <desc id="desc">A local hybrid scoring example comparing three tiny Ollama models across six user preference areas.</desc>
+  <defs>
+    <linearGradient id="card" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f5fbfb"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#23304d" flood-opacity="0.12"/>
+    </filter>
+    <style>
+      .bg { fill: #f8faf8; }
+      .ink { fill: #1f2a44; }
+      .muted { fill: #5b667d; }
+      .tiny { fill: #7b8494; font-size: 20px; }
+      .title { font: 800 62px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; letter-spacing: 0; }
+      .subtitle { font: 400 28px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; letter-spacing: 0; }
+      .h2 { font: 800 28px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; letter-spacing: 0; }
+      .body { font: 500 22px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; letter-spacing: 0; }
+      .label { font: 700 22px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; letter-spacing: 0; }
+      .small { font: 600 18px Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; letter-spacing: 0; }
+      .axis { stroke: #d6dde6; stroke-width: 1; }
+      .pill { fill: #ffffff; stroke: #0f8f8f; stroke-width: 2; stroke-dasharray: 8 8; }
+      .panel { fill: url(#card); stroke: #d9ecec; stroke-width: 1.5; }
+      .teal { fill: #0f9f9b; }
+      .coral { fill: #ff775f; }
+      .navy { fill: #49617e; }
+      .tealStroke { stroke: #0f9f9b; }
+      .coralStroke { stroke: #ff775f; }
+      .navyStroke { stroke: #49617e; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1400" height="820"/>
+  <rect x="44" y="44" width="1312" height="732" rx="24" fill="#fffefb" filter="url(#softShadow)"/>
+
+  <g transform="translate(90 95)">
+    <circle cx="46" cy="46" r="42" fill="none" stroke="#0f8f8f" stroke-width="9"/>
+    <path d="M25 45 L43 63 L79 24" fill="none" stroke="#ff775f" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="0" y="144" class="title ink">VibeForge</text>
+    <text x="0" y="190" class="subtitle muted">Personal-fit checks for AI setups</text>
+    <line x1="0" y1="226" x2="104" y2="226" stroke="#0f8f8f" stroke-width="7" stroke-linecap="round"/>
+
+    <text x="0" y="286" class="h2 ink">A real local smoke test</text>
+    <text x="0" y="326" class="body muted">Hybrid scoring combines crisp checks</text>
+    <text x="0" y="358" class="body muted">with a lightweight judge pass.</text>
+
+    <rect x="0" y="414" width="390" height="178" rx="18" class="panel"/>
+    <text x="30" y="456" class="label ink">What this example shows</text>
+    <circle cx="42" cy="498" r="6" class="teal"/>
+    <text x="62" y="505" class="body ink">Actual tiny Ollama outputs</text>
+    <circle cx="42" cy="535" r="6" class="teal"/>
+    <text x="62" y="542" class="body ink">Local-only captured answers</text>
+    <circle cx="42" cy="572" r="6" class="teal"/>
+    <text x="62" y="579" class="body ink">Not a general leaderboard</text>
+
+    <text x="0" y="654" class="small muted">Best used to inspect fit, misses, and next tests.</text>
+  </g>
+
+  <g transform="translate(555 70)">
+    <rect x="580" y="0" width="210" height="54" rx="27" class="pill"/>
+    <text x="614" y="36" class="label" fill="#087b7b">local demo data</text>
+
+    <text x="0" y="56" class="h2 ink">Hybrid local result</text>
+    <text x="0" y="91" class="body muted">3 tiny OSS models, 6 user-fit checks</text>
+
+    <g transform="translate(0 128)">
+      <text x="0" y="0" class="label ink">Overall fit</text>
+      <text x="0" y="42" class="small muted">qwen3:0.6b</text>
+      <rect x="160" y="21" width="430" height="18" rx="9" fill="#e7eeee"/>
+      <rect x="160" y="21" width="288" height="18" rx="9" class="teal"/>
+      <text x="610" y="40" class="small ink">83% pass / 0.67 mean</text>
+
+      <text x="0" y="86" class="small muted">smollm2:360m</text>
+      <rect x="160" y="65" width="430" height="18" rx="9" fill="#e7eeee"/>
+      <rect x="160" y="65" width="224" height="18" rx="9" class="navy"/>
+      <text x="610" y="84" class="small ink">17% pass / 0.52 mean</text>
+
+      <text x="0" y="130" class="small muted">gemma3:270m</text>
+      <rect x="160" y="109" width="430" height="18" rx="9" fill="#e7eeee"/>
+      <rect x="160" y="109" width="202" height="18" rx="9" class="coral"/>
+      <text x="610" y="128" class="small ink">17% pass / 0.47 mean</text>
+    </g>
+
+    <g transform="translate(45 342)">
+      <polygon points="260,0 485,130 485,390 260,520 35,390 35,130" fill="none" class="axis"/>
+      <polygon points="260,55 437,158 437,362 260,465 83,362 83,158" fill="none" class="axis"/>
+      <polygon points="260,110 390,185 390,335 260,410 130,335 130,185" fill="none" class="axis"/>
+      <line x1="260" y1="260" x2="260" y2="0" stroke="#bcc7d4"/>
+      <line x1="260" y1="260" x2="485" y2="130" stroke="#bcc7d4"/>
+      <line x1="260" y1="260" x2="485" y2="390" stroke="#bcc7d4"/>
+      <line x1="260" y1="260" x2="260" y2="520" stroke="#bcc7d4"/>
+      <line x1="260" y1="260" x2="35" y2="390" stroke="#bcc7d4"/>
+      <line x1="260" y1="260" x2="35" y2="130" stroke="#bcc7d4"/>
+
+      <polygon points="260,94 425,165 398,340 260,51 159,318 163,204" fill="#0f9f9b" fill-opacity="0.19" stroke="#0f9f9b" stroke-width="4"/>
+      <polygon points="260,164 379,192 375,324 260,312 159,318 163,204" fill="#49617e" fill-opacity="0.18" stroke="#49617e" stroke-width="4"/>
+      <polygon points="260,164 388,187 408,355 260,312 148,325 163,204" fill="#ff775f" fill-opacity="0.15" stroke="#ff775f" stroke-width="4"/>
+
+      <text x="260" y="-24" text-anchor="middle" class="label ink">Doesn't overclaim</text>
+      <text x="512" y="123" class="label ink">Helps without</text>
+      <text x="512" y="151" class="label ink">overstepping</text>
+      <text x="512" y="386" class="label ink">Pushes back</text>
+      <text x="512" y="414" class="label ink">kindly</text>
+      <text x="260" y="570" text-anchor="middle" class="label ink">Respects my asks</text>
+      <text x="-18" y="386" text-anchor="end" class="label ink">Helps me</text>
+      <text x="-18" y="414" text-anchor="end" class="label ink">choose</text>
+      <text x="-18" y="123" text-anchor="end" class="label ink">Keeps it</text>
+      <text x="-18" y="151" text-anchor="end" class="label ink">high-signal</text>
+    </g>
+  </g>
+
+  <g transform="translate(1000 680)">
+    <circle cx="0" cy="0" r="7" class="teal"/>
+    <text x="18" y="7" class="small ink">qwen3:0.6b</text>
+    <circle cx="0" cy="34" r="7" class="navy"/>
+    <text x="18" y="41" class="small ink">smollm2:360m</text>
+    <circle cx="0" cy="68" r="7" class="coral"/>
+    <text x="18" y="75" class="small ink">gemma3:270m</text>
+  </g>
+</svg>

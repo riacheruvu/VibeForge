@@ -7,4 +7,4 @@ year: 2026
 license: MIT
 repository-code: "https://github.com/riacheruvu/VibeForge"
 url: "https://github.com/riacheruvu/VibeForge"
-abstract: "VibeForge (formerly VibeCheckBench) is a prototype for turning user-specific AI interaction preferences into repeatable checks, setup comparisons, and simple fit visualizations."
+abstract: "VibeForge is a prototype for turning user-specific AI interaction preferences into repeatable checks, setup comparisons, and simple fit visualizations."

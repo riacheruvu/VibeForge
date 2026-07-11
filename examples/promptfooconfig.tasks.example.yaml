@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "VibeCheckBench task-pack suite"
+description: "VibeForge task-pack suite"
 
 prompts:
   - |

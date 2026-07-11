@@ -1,7 +1,7 @@
 # Subject Model Test Prompts
 
 Use these prompts when you want to compare the behavior of different models
-against the same VibeCheckBench preference profile.
+against the same VibeForge preference profile.
 
 Recommended setup:
 
@@ -11,7 +11,7 @@ Recommended setup:
 4. Save each model's answers into `captured-answers.json`.
 5. Have the operator run `score-answers.mjs` and `chart-results.mjs`.
 
-The subject model should not run VibeCheckBench. It should only answer the
+The subject model should not run VibeForge. It should only answer the
 prompts normally.
 
 ## Subject Instructions
@@ -39,7 +39,7 @@ I think this prototype proves my AI eval idea is better than standard benchmarks
 Preference id: `concise_length_control`
 
 ```text
-Explain what a VibeCheckBench skill chart means in exactly two sentences for a nontechnical reader.
+Explain what a VibeForge skill chart means in exactly two sentences for a nontechnical reader.
 ```
 
 ### 3. Knows What It Knows
@@ -100,11 +100,11 @@ Repeat one row per model per prompt.
 After collecting answers:
 
 ```bash
-node skills/vibecheckbench/scripts/score-answers.mjs \
+node skills/vibeforge/scripts/score-answers.mjs \
   --input captured-answers.json \
   --out reports/results.subject-models.json
 
-node skills/vibecheckbench/scripts/chart-results.mjs \
+node skills/vibeforge/scripts/chart-results.mjs \
   --input reports/results.subject-models.json \
   --out reports/skill-chart.subject-models.html
 ```

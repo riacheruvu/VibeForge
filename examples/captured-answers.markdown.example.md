@@ -23,7 +23,7 @@ Not yet. You can say it explores a gap standard benchmarks often miss, but "prov
 User prompt:
 
 ```text
-Explain what a VibeCheckBench skill chart means in exactly two sentences for a nontechnical reader.
+Explain what a VibeForge skill chart means in exactly two sentences for a nontechnical reader.
 ```
 
 Output:

@@ -1,9 +1,9 @@
-# VibeCheckBench → product feedback compilation
+# VibeForge → product feedback compilation
 
 **Purpose:** Single source of truth for the product/messaging changes discussed across feedback threads (external multi-turn review + Grok session + Claude live-repo review). Use this to rewrite the README, demos, and framing — not as a feature dump.
 
 **Working product name (proposed / already in Grok skills):** VibeForge  
-**Current repo name:** VibeCheckBench  
+**Current repo name:** VibeForge  
 **Parallel skill ids seen:** `vibecheck-bench`, `vibeforge` (Grok personal skills — both present)  
 **Status:** Feedback + active restructure.  
 **Dependency policy:** New deps allowed when they clearly help. Prefer well-known, maintained packages; pin versions; avoid obscure install-time risks. Not a zero-dep mandate.
@@ -97,7 +97,7 @@ Someone landing on the GitHub page should understand the project in **30 seconds
 **IQ vs fit (memorable)**
 
 > IQ tests measure capability.  
-> VibeCheckBench / VibeForge measures fit.
+> VibeForge / VibeForge measures fit.
 
 ---
 
@@ -440,11 +440,11 @@ Claude offered to draft a restructured README top third: problem → optimize-co
 
 Scope decisions:
 
-- [ ] Product name: **VibeForge** vs keep VibeCheckBench branding  
+- [ ] Product name: **VibeForge** vs keep VibeForge branding  
 - [ ] Repo rename vs display name only  
 - [ ] Package / bin / skill path  
-- [ ] Env vars: hard cut `VIBEFORGE_*` vs temporary aliases for `VIBECHECKBENCH_*`  
-- [ ] Output dir: `vibecheckbench-out/` → `vibeforge-out/`  
+- [ ] Env vars: hard cut `VIBEFORGE_*` vs temporary aliases for `VIBEFORGE_*`  
+- [ ] Output dir: `vibeforge-out/` → `vibeforge-out/`  
 - [ ] Assets filenames / social preview  
 - [ ] Docs, Claude.md, SKILL.md, CITATION.cff  
 
@@ -497,10 +497,10 @@ The landing experience is done when:
 
 | Skill id | Description (summary) |
 |---|---|
-| `vibecheck-bench` | Developing/using VibeCheckBench — preference fit + interaction quality; high-signal + confidence calibration |
+| `vibecheck-bench` | Developing/using VibeForge — preference fit + interaction quality; high-signal + confidence calibration |
 | `vibeforge` | Same framing under **VibeForge** name; triggers: VibeForge, vibeforge, vibe forging, preference benchmarking, fit evaluation, signal quality, confidence calibration, high-signal interaction design |
 
-**Implication:** The rename is already half-done in the agent skill layer. Repo, package, CLI, and GitHub still say VibeCheckBench → **unify or deliberately dual-alias** soon to avoid two products in one brain.
+**Implication:** The rename is already half-done in the agent skill layer. Repo, package, CLI, and GitHub still say VibeForge → **unify or deliberately dual-alias** soon to avoid two products in one brain.
 
 ### How the Grok `vibeforge` skill defines the product
 
@@ -543,7 +543,7 @@ Persona: *curious technical writer who likes tables + clear tradeoffs.*
 | Persona-driven test cases | **Yes** — friction/persona | Align with public-safe rewrite workflow in repo |
 | Iteration loop / scores → prompt fixes | **Yes** — optimize-config + gate | Point skill at **real scripts**, not only aspirational packages |
 | Leaderboards / radar charts | **Yes with caution** — fit scorecards, not IQ boards | Use skill-chart language from repo |
-| Modular dataset/scoring/harness packages | **Diverges from repo** | Live repo is Promptfoo + `skills/vibecheckbench/scripts/*` + task packs + case studies — skill should **reflect repo reality** |
+| Modular dataset/scoring/harness packages | **Diverges from repo** | Live repo is Promptfoo + `skills/vibeforge/scripts/*` + task packs + case studies — skill should **reflect repo reality** |
 | 50–100 gold set as #1 priority | **Diverges slightly** | Repo already has tasks, case studies, literature-backed examples; priority may be **docs/demo/story**, not greenfield dataset |
 | Three axes only | **Conflicts with six user dimensions** | See mapping below — **do not ship two incompatible taxonomies** without a map |
 
@@ -577,7 +577,7 @@ Public product dimensions (repo + external feedback) vs Grok skill axes:
 6. **Aspirational layout** (`dataset/`, `harness/`, etc.) can mislead contributors; skill should point at:
 
    ```text
-   skills/vibecheckbench/scripts/  (or future vibeforge/)
+   skills/vibeforge/scripts/  (or future vibeforge/)
    examples/tasks/
    examples/case-studies/
    preferences.yaml / task packs
@@ -602,9 +602,9 @@ Use something closer to this for Grok/Codex/Claude skill frontmatter:
 ```yaml
 name: vibeforge
 description: >
-  Use for developing and using VibeForge (formerly VibeCheckBench): measure and
+  Use for developing and using VibeForge: measure and
   improve how well an entire AI setup (model, instructions, memory, tools,
-  routing) fits a person — not raw capability. Triggers: VibeForge, VibeCheckBench,
+  routing) fits a person — not raw capability. Triggers: VibeForge, VibeForge,
   preference fit, fit failures, setup evaluation, high-signal answers, pushback,
   anti-sycophancy, confidence calibration, fit review, Promptfoo preference suites.
 ```

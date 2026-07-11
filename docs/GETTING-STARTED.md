@@ -2,7 +2,7 @@
 
 **Goal:** measure and improve how well an **AI setup** fits *you* — not who wins a general model leaderboard.
 
-**Names:** product + GitHub repo **VibeForge** (`github.com/riacheruvu/VibeForge`). Skill/path ids still accept **VibeCheckBench** / `vibecheckbench` during the transition.
+**Names:** product + GitHub repo + skill + slash command are all **VibeForge** (`github.com/riacheruvu/VibeForge`, `/vibeforge`, `$vibeforge`).
 
 ---
 
@@ -15,7 +15,7 @@ Talk to an assistant that has the skill installed (Codex, Claude Code, etc.):
 | You say… | The skill does… | Network? |
 |---|---|---|
 | “Use VibeForge — show me a fit scorecard” | Builds the demo skill chart and explains it | No |
-| “Create a fit review: I want concise high-signal answers” | Writes `vibecheckbench-out/` draft artifacts | No |
+| “Create a fit review: I want concise high-signal answers” | Writes `vibeforge-out/` draft artifacts | No |
 | “Run the offline case studies / improve-setup loop” | Runs public-safe case studies, summarizes gate | No |
 | “Open the local dashboard” | Starts dashboard, gives you the URL | No |
 | “Smoke-test the tooling” | Mock fit eval on your cases (or plumbing smoke) | No |
@@ -30,7 +30,6 @@ Talk to an assistant that has the skill installed (Codex, Claude Code, etc.):
 
 ```text
 /vibeforge
-/vibecheckbench
 ```
 
 Or in natural language: *Use VibeForge. Create a fit review from: “…”*
@@ -38,7 +37,6 @@ Or in natural language: *Use VibeForge. Create a fit review from: “…”*
 **Codex**
 
 ```text
-$vibecheckbench
 $vibeforge
 ```
 
@@ -47,7 +45,7 @@ After install: `npm run skill:install` once (contributor/setup step), then stay 
 **Install skill once (setup only)**
 
 ```text
-Ask the agent: Install the VibeForge / VibeCheckBench skill for Codex.
+Ask the agent: Install the VibeForge skill for Codex.
 ```
 
 That runs the installer under the hood. Day-to-day work is skill utterances, not package scripts.
@@ -56,7 +54,7 @@ That runs the installer under the hood. Day-to-day work is skill utterances, not
 
 ## What “good skill UX” looks like
 
-When the user says “use VibeCheckBench” / “use VibeForge”:
+When the user says “use VibeForge” / “use VibeForge”:
 
 1. **Clarify intent** if needed: draft only, offline demo, or real model run?
 2. **Default to draft-only** unless they asked to evaluate models.
@@ -68,7 +66,7 @@ When the user says “use VibeCheckBench” / “use VibeForge”:
    *“Say: use VibeForge to run the offline case studies”*  
    not *“run `npm run case:studies`”*.
 
-Scripts under `skills/vibecheckbench/scripts/` are the **implementation** the skill calls.  
+Scripts under `skills/vibeforge/scripts/` are the **implementation** the skill calls.  
 `docs/COMMANDS.md` is a **contributor reference**, not the product UI.
 
 ---
@@ -82,7 +80,7 @@ Scripts print a short **VibeForge** block:
 3. **Next** — skill-phrased follow-ups  
 4. **Trust** — demo data? not auto-deploy? fit ≠ IQ?
 
-Shared helper: `skills/vibecheckbench/scripts/cli-ux.mjs`  
+Shared helper: `skills/vibeforge/scripts/cli-ux.mjs`  
 Quiet nested runs: `--quiet` / `VIBEFORGE_QUIET=1`
 
 ---

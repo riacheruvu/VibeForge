@@ -1,4 +1,4 @@
-# VibeCheckBench Skill Chart
+# VibeForge Skill Chart
 
 This is a personal-fit chart, not a general model leaderboard. Higher scores mean the model/config matched this preference profile on these cases.
 

@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: docker/gateway.Dockerfile
-    image: vibecheckbench-openclaw-gateway:local
+    image: vibeforge-openclaw-gateway:local
     user: "0:0"
     init: true
     restart: unless-stopped
@@ -19,19 +19,19 @@ services:
       OPENCLAW_GATEWAY_BIND: ${OPENCLAW_GATEWAY_BIND:-lan}
       OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-change-me}
       OPENCLAW_DISABLE_BONJOUR: ${OPENCLAW_DISABLE_BONJOUR:-1}
-      OPENCLAW_SANDBOX_IMAGE: ${OPENCLAW_SANDBOX_IMAGE:-vibecheckbench-openclaw-sandbox:local}
+      OPENCLAW_SANDBOX_IMAGE: ${OPENCLAW_SANDBOX_IMAGE:-vibeforge-openclaw-sandbox:local}
       OPENCLAW_SANDBOX_MODE: ${OPENCLAW_SANDBOX_MODE:-all}
       OPENCLAW_SANDBOX_SCOPE: ${OPENCLAW_SANDBOX_SCOPE:-session}
       OPENCLAW_SANDBOX_WORKSPACE_ACCESS: ${OPENCLAW_SANDBOX_WORKSPACE_ACCESS:-none}
       OPENCLAW_SANDBOX_NETWORK: ${OPENCLAW_SANDBOX_NETWORK:-bridge}
-      VIBECHECKBENCH_PROVIDER: ${VIBECHECKBENCH_PROVIDER:-llamacpp}
-      VIBECHECKBENCH_MODEL: ${VIBECHECKBENCH_MODEL:-}
-      VIBECHECKBENCH_JUDGE_PROVIDER: ${VIBECHECKBENCH_JUDGE_PROVIDER:-}
-      VIBECHECKBENCH_JUDGE_MODEL: ${VIBECHECKBENCH_JUDGE_MODEL:-}
-      VIBECHECKBENCH_LLAMACPP_URL: ${VIBECHECKBENCH_LLAMACPP_URL:-http://host.docker.internal:8080}
-      VIBECHECKBENCH_LLAMACPP_API_KEY: ${VIBECHECKBENCH_LLAMACPP_API_KEY:-}
-      VIBECHECKBENCH_REPEAT: ${VIBECHECKBENCH_REPEAT:-1}
-      VIBECHECKBENCH_LOCAL_FAST: ${VIBECHECKBENCH_LOCAL_FAST:-1}
+      VIBEFORGE_PROVIDER: ${VIBEFORGE_PROVIDER:-llamacpp}
+      VIBEFORGE_MODEL: ${VIBEFORGE_MODEL:-}
+      VIBEFORGE_JUDGE_PROVIDER: ${VIBEFORGE_JUDGE_PROVIDER:-}
+      VIBEFORGE_JUDGE_MODEL: ${VIBEFORGE_JUDGE_MODEL:-}
+      VIBEFORGE_LLAMACPP_URL: ${VIBEFORGE_LLAMACPP_URL:-http://host.docker.internal:8080}
+      VIBEFORGE_LLAMACPP_API_KEY: ${VIBEFORGE_LLAMACPP_API_KEY:-}
+      VIBEFORGE_REPEAT: ${VIBEFORGE_REPEAT:-1}
+      VIBEFORGE_LOCAL_FAST: ${VIBEFORGE_LOCAL_FAST:-1}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
@@ -52,7 +52,7 @@ services:
       start_period: 20s
 
   openclaw-cli:
-    image: vibecheckbench-openclaw-gateway:local
+    image: vibeforge-openclaw-gateway:local
     user: "0:0"
     network_mode: "service:openclaw-gateway"
     stdin_open: true
@@ -67,14 +67,14 @@ services:
       BROWSER: echo
       OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-change-me}
       OPENCLAW_DISABLE_BONJOUR: ${OPENCLAW_DISABLE_BONJOUR:-1}
-      VIBECHECKBENCH_PROVIDER: ${VIBECHECKBENCH_PROVIDER:-llamacpp}
-      VIBECHECKBENCH_MODEL: ${VIBECHECKBENCH_MODEL:-}
-      VIBECHECKBENCH_JUDGE_PROVIDER: ${VIBECHECKBENCH_JUDGE_PROVIDER:-}
-      VIBECHECKBENCH_JUDGE_MODEL: ${VIBECHECKBENCH_JUDGE_MODEL:-}
-      VIBECHECKBENCH_LLAMACPP_URL: ${VIBECHECKBENCH_LLAMACPP_URL:-http://host.docker.internal:8080}
-      VIBECHECKBENCH_LLAMACPP_API_KEY: ${VIBECHECKBENCH_LLAMACPP_API_KEY:-}
-      VIBECHECKBENCH_REPEAT: ${VIBECHECKBENCH_REPEAT:-1}
-      VIBECHECKBENCH_LOCAL_FAST: ${VIBECHECKBENCH_LOCAL_FAST:-1}
+      VIBEFORGE_PROVIDER: ${VIBEFORGE_PROVIDER:-llamacpp}
+      VIBEFORGE_MODEL: ${VIBEFORGE_MODEL:-}
+      VIBEFORGE_JUDGE_PROVIDER: ${VIBEFORGE_JUDGE_PROVIDER:-}
+      VIBEFORGE_JUDGE_MODEL: ${VIBEFORGE_JUDGE_MODEL:-}
+      VIBEFORGE_LLAMACPP_URL: ${VIBEFORGE_LLAMACPP_URL:-http://host.docker.internal:8080}
+      VIBEFORGE_LLAMACPP_API_KEY: ${VIBEFORGE_LLAMACPP_API_KEY:-}
+      VIBEFORGE_REPEAT: ${VIBEFORGE_REPEAT:-1}
+      VIBEFORGE_LOCAL_FAST: ${VIBEFORGE_LOCAL_FAST:-1}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
@@ -89,27 +89,27 @@ services:
   #
   # Runs llama-server inside Docker as an alternative to running it on the host.
   # The gateway and sandbox containers reach it via http://llama-server:8080
-  # (set VIBECHECKBENCH_LLAMACPP_URL=http://llama-server:8080 in .env when using this).
+  # (set VIBEFORGE_LLAMACPP_URL=http://llama-server:8080 in .env when using this).
   #
-  # Mount your models directory and set VIBECHECKBENCH_MODEL_FILE to the filename.
+  # Mount your models directory and set VIBEFORGE_MODEL_FILE to the filename.
   llama-server:
     image: ghcr.io/ggml-org/llama.cpp:server
     profiles: ["llama"]
     ports:
       - "${LLAMACPP_PORT:-8080}:8080"
     volumes:
-      - ${VIBECHECKBENCH_MODELS_DIR:-./models}:/models:ro
+      - ${VIBEFORGE_MODELS_DIR:-./models}:/models:ro
     command: >
-      -m /models/${VIBECHECKBENCH_MODEL_FILE:-model.gguf}
+      -m /models/${VIBEFORGE_MODEL_FILE:-model.gguf}
       --host 0.0.0.0
       --port 8080
-      --ctx-size ${VIBECHECKBENCH_CTX_SIZE:-2048}
-      --threads ${VIBECHECKBENCH_N_THREADS:-4}
-      --n-gpu-layers ${VIBECHECKBENCH_N_GPU_LAYERS:-0}
+      --ctx-size ${VIBEFORGE_CTX_SIZE:-2048}
+      --threads ${VIBEFORGE_N_THREADS:-4}
+      --n-gpu-layers ${VIBEFORGE_N_GPU_LAYERS:-0}
 
   openclaw-sandbox-image:
     build:
       context: .
       dockerfile: docker/sandbox.Dockerfile
-    image: vibecheckbench-openclaw-sandbox:local
+    image: vibeforge-openclaw-sandbox:local
     profiles: ["build-only"]

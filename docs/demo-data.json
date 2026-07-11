@@ -1,6 +1,6 @@
 [
   {
-    "version": "vibecheckbench-run-v1",
+    "version": "vibeforge-run-v1",
     "id": "public-safe-example",
     "presetId": "public-demo",
     "name": "Public-safe example comparison",
@@ -244,7 +244,7 @@
     },
     "gate": null,
     "recommendation": {
-      "version": "vibecheckbench-next-experiment-v1",
+      "version": "vibeforge-next-experiment-v1",
       "generatedAt": "2026-06-16T03:57:48.720Z",
       "evidence": {
         "resultRows": 18,

@@ -1,6 +1,6 @@
 # Docs
 
-Local documentation for VibeCheckBench (product name **VibeForge** under consideration).
+Local documentation for VibeForge (product name **VibeForge** under consideration).
 
 | Doc | What it is |
 |---|---|

@@ -1,0 +1,8 @@
+interface:
+  display_name: "VibeForge"
+  short_description: "Measure and improve how well an AI setup fits you — skill is the UI"
+  brand_color: "#2563EB"
+  default_prompt: "Use $vibeforge (VibeForge). You are the interface: run local scripts yourself and explain results. Do not ask me to run npm. Default to draft-only fit review unless I ask to run models."
+
+policy:
+  allow_implicit_invocation: true

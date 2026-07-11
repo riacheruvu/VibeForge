@@ -48,6 +48,6 @@
       "Qwen/Qwen3-32B",
       "deepseek-ai/DeepSeek-R1"
     ],
-    "notes": "For Together, Fireworks, Groq, vLLM, SGLang, TGI, LM Studio, or another OpenAI-compatible router. Set VIBECHECKBENCH_LLAMACPP_API_KEY if needed."
+    "notes": "For Together, Fireworks, Groq, vLLM, SGLang, TGI, LM Studio, or another OpenAI-compatible router. Set VIBEFORGE_LLAMACPP_API_KEY if needed."
   }
 }

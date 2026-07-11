@@ -11,17 +11,17 @@ const fs = require("node:fs");
 
 const configPath = process.env.CONFIG_PATH;
 const port = Number.parseInt(process.env.OPENCLAW_GATEWAY_PORT || "18789", 10);
-const useLocalProvider = (process.env.VIBECHECKBENCH_PROVIDER || "").trim().toLowerCase() === "local";
+const useLocalProvider = (process.env.VIBEFORGE_PROVIDER || "").trim().toLowerCase() === "local";
 
 const sandboxEnv = {
-  ...(process.env.VIBECHECKBENCH_PROVIDER
-    ? { VIBECHECKBENCH_PROVIDER: process.env.VIBECHECKBENCH_PROVIDER }
+  ...(process.env.VIBEFORGE_PROVIDER
+    ? { VIBEFORGE_PROVIDER: process.env.VIBEFORGE_PROVIDER }
     : {}),
-  ...(process.env.VIBECHECKBENCH_LOCAL_MODEL
-    ? { VIBECHECKBENCH_LOCAL_MODEL: process.env.VIBECHECKBENCH_LOCAL_MODEL }
+  ...(process.env.VIBEFORGE_LOCAL_MODEL
+    ? { VIBEFORGE_LOCAL_MODEL: process.env.VIBEFORGE_LOCAL_MODEL }
     : {}),
-  ...(process.env.VIBECHECKBENCH_LOCAL_FAST
-    ? { VIBECHECKBENCH_LOCAL_FAST: process.env.VIBECHECKBENCH_LOCAL_FAST }
+  ...(process.env.VIBEFORGE_LOCAL_FAST
+    ? { VIBEFORGE_LOCAL_FAST: process.env.VIBEFORGE_LOCAL_FAST }
     : {}),
   ...(!useLocalProvider && process.env.OPENAI_API_KEY
     ? { OPENAI_API_KEY: process.env.OPENAI_API_KEY }
@@ -85,7 +85,7 @@ const managed = {
         scope: process.env.OPENCLAW_SANDBOX_SCOPE || "session",
         workspaceAccess: process.env.OPENCLAW_SANDBOX_WORKSPACE_ACCESS || "none",
         docker: {
-          image: process.env.OPENCLAW_SANDBOX_IMAGE || "vibecheckbench-openclaw-sandbox:local",
+          image: process.env.OPENCLAW_SANDBOX_IMAGE || "vibeforge-openclaw-sandbox:local",
           network: process.env.OPENCLAW_SANDBOX_NETWORK || "bridge",
           readOnlyRoot: false,
           user: "0:0",
@@ -96,7 +96,7 @@ const managed = {
   },
   skills: {
     entries: {
-      VibeCheckBench: {
+      VibeForge: {
         enabled: true,
       },
     },

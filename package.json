@@ -2,33 +2,31 @@
   "name": "vibeforge",
   "private": true,
   "type": "module",
-  "description": "VibeForge — measure and improve personal AI setup fit (formerly VibeCheckBench)",
+  "description": "VibeForge — measure and improve personal AI setup fit",
   "repository": {
     "type": "git",
     "url": "https://github.com/riacheruvu/VibeForge.git"
   },
   "homepage": "https://github.com/riacheruvu/VibeForge",
   "bin": {
-    "vibecheckbench": "bin/vibecheckbench.mjs",
-    "vibeforge": "bin/vibecheckbench.mjs"
+    "vibeforge": "bin/vibeforge.mjs"
   },
   "scripts": {
-    "vibecheckbench": "node bin/vibecheckbench.mjs",
-    "vibeforge": "node bin/vibecheckbench.mjs",
-    "start": "node bin/vibecheckbench.mjs --help",
-    "dashboard": "node skills/vibecheckbench/dashboard/server.mjs",
-    "dashboard:demo": "node skills/vibecheckbench/scripts/build-dashboard-demo.mjs",
-    "chart:demo": "node skills/vibecheckbench/scripts/chart-results.mjs --input examples/promptfoo-results.user-fit-demo.json --out reports/skill-chart.html",
-    "skill:install": "node skills/vibecheckbench/scripts/install-codex-skill.mjs",
-    "promptfoo:check": "node skills/vibecheckbench/scripts/check-promptfoo.mjs",
-    "fit:mine": "node skills/vibecheckbench/scripts/mine-conversation-history.mjs",
-    "fit:promote": "node skills/vibecheckbench/scripts/promote-history-candidates.mjs",
-    "fit:draft": "node skills/vibecheckbench/scripts/draft-test-case.mjs",
-    "fit:review": "node skills/vibecheckbench/scripts/create-fit-review.mjs",
-    "fit:recommend": "node skills/vibecheckbench/scripts/recommend-next-experiment.mjs",
-    "fit:plan": "node skills/vibecheckbench/scripts/plan-setup-experiment.mjs",
-    "fit:optimize": "node skills/vibecheckbench/scripts/optimize-config.mjs",
-    "fit:eval": "node skills/vibecheckbench/scripts/run-fit-eval.mjs",
-    "case:studies": "node skills/vibecheckbench/scripts/run-case-study.mjs --all"
+    "vibeforge": "node bin/vibeforge.mjs",
+    "start": "node bin/vibeforge.mjs --help",
+    "dashboard": "node skills/vibeforge/dashboard/server.mjs",
+    "dashboard:demo": "node skills/vibeforge/scripts/build-dashboard-demo.mjs",
+    "chart:demo": "node skills/vibeforge/scripts/chart-results.mjs --input examples/promptfoo-results.user-fit-demo.json --out reports/skill-chart.html",
+    "skill:install": "node skills/vibeforge/scripts/install-codex-skill.mjs",
+    "promptfoo:check": "node skills/vibeforge/scripts/check-promptfoo.mjs",
+    "fit:mine": "node skills/vibeforge/scripts/mine-conversation-history.mjs",
+    "fit:promote": "node skills/vibeforge/scripts/promote-history-candidates.mjs",
+    "fit:draft": "node skills/vibeforge/scripts/draft-test-case.mjs",
+    "fit:review": "node skills/vibeforge/scripts/create-fit-review.mjs",
+    "fit:recommend": "node skills/vibeforge/scripts/recommend-next-experiment.mjs",
+    "fit:plan": "node skills/vibeforge/scripts/plan-setup-experiment.mjs",
+    "fit:optimize": "node skills/vibeforge/scripts/optimize-config.mjs",
+    "fit:eval": "node skills/vibeforge/scripts/run-fit-eval.mjs",
+    "case:studies": "node skills/vibeforge/scripts/run-case-study.mjs --all"
   }
 }

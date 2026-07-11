@@ -1,4 +1,4 @@
-# VibeCheckBench Task Pack
+# VibeForge Task Pack
 
 This folder contains public-safe task definitions for preference-fit evaluation.
 
@@ -28,6 +28,6 @@ Design principle:
 > Test whether the setup helps this kind of user, not whether the base model is
 > globally "best."
 
-For v0, VibeCheckBench can export these tasks to Promptfoo. Promptfoo handles
-provider execution and reports; VibeCheckBench owns the task taxonomy, public
+For v0, VibeForge can export these tasks to Promptfoo. Promptfoo handles
+provider execution and reports; VibeForge owns the task taxonomy, public
 examples, rubrics, and user-fit charting.

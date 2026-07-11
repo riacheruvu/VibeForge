@@ -1,12 +1,18 @@
-# VibeCheckBench - Claude Code Integration
+# VibeForge — Claude Code Integration
 
-This file teaches Claude Code how to work with VibeCheckBench.
+This file teaches Claude Code how to work with VibeForge.
 
 ## What this repo does
 
-VibeCheckBench measures and improves **personal AI setup fit** (model +
-instructions + memory + tools + routing), not raw model IQ. Working product
-name under consideration: **VibeForge**.
+VibeForge measures and improves **personal AI setup fit** (model +
+instructions + memory + tools + routing), not raw model IQ.
+
+**Primary UX:** slash command `/vibeforge` — the skill runs scripts; do not
+tell the user to run `npm` for normal flows.
+
+Golden path (you execute via skill): demo chart → fit review → offline case
+studies → optional fit eval. UX guide: `docs/GETTING-STARTED.md`. Contributor
+scripts: `docs/COMMANDS.md`. Product story: root `README.md`.
 
 Preferred regression path:
 
@@ -17,177 +23,60 @@ preferences.yaml + cases.json + system-prompt.txt
   -> promptfoo eval
 ```
 
-**Primary UX:** slash commands `/vibecheckbench` and `/vibeforge` (alias) — the
-skill runs scripts; do not tell the user to run `npm` for normal flows.
-
-Golden path (you execute via skill): demo chart → fit review → offline case
-studies. UX guide: `docs/GETTING-STARTED.md`. Contributor scripts:
-`docs/COMMANDS.md`. Product story: root `README.md`.
-
-The judge-based runner is still available for optional A/B prompt comparison,
-but it should not be treated as the default architecture.
-
 ## Project layout
 
 ```
-README.md                  # Product pitch + 60s path (not a command wall)
+README.md                  # Product pitch + skill-first path
 docs/
-  COMMANDS.md              # Full CLI / script reference
-  DIMENSIONS.md            # Preference dimensions with pass/fail
-  ROADMAP.md               # Current / Next / Future
+  GETTING-STARTED.md
+  COMMANDS.md
+  DIMENSIONS.md
+  ROADMAP.md
   index.html               # Static dashboard demo
-skills/vibecheckbench/scripts/
-  export-promptfoo.mjs     # Preferred: Promptfoo config exporter
-  create-fit-review.mjs    # One-preference local fit review
-  optimize-config.mjs      # Iterative setup improvement (held-out gated)
-  run-case-study.mjs       # Offline case-study loop
-  chart-results.mjs        # Fit scorecard HTML
-  run-vibecheckbench.mjs   # Node runner (llamacpp / openai / anthropic)
-  run-profile.mjs          # Full preference profile runner (legacy A/B)
-  run-vibecheckbench-local.py
+skills/vibeforge/scripts/
+  export-promptfoo.mjs
+  create-fit-review.mjs
+  run-fit-eval.mjs         # Unified model-side fit eval
+  optimize-config.mjs
+  run-case-study.mjs
+  chart-results.mjs
+  run-vibeforge.mjs
+  run-profile.mjs          # Legacy A/B (demoted)
   install-codex-skill.mjs
-.claude/commands/vibecheckbench.md
-skills/vibecheckbench/agents/openai.yaml
-bin/vibecheckbench.mjs     # Thin CLI dispatcher
+.claude/commands/vibeforge.md
+skills/vibeforge/agents/openai.yaml
+bin/vibeforge.mjs
 docker/
-  sandbox.Dockerfile
-  gateway.Dockerfile
 docker-compose.yml
 .env.example
 ```
 
-## Running a benchmark
-
-### Preferred Promptfoo export
-
-```bash
-node skills/vibecheckbench/scripts/export-promptfoo.mjs \
-  --profile examples/public-agent-profile.yaml \
-  --case-file examples/public-agent-cases.json \
-  --prompt-file examples/public-agent-system-prompt.txt \
-  --provider openai:chat:gpt-4.1-mini \
-  --out promptfooconfig.yaml
-npx promptfoo@latest eval -c promptfooconfig.yaml
-```
-
-This may download Promptfoo if it is not already installed or cached.
-
-### Legacy llama.cpp server on host
-
-```bash
-# Make sure llama-server is running on port 8080, then:
-VIBECHECKBENCH_PROVIDER=llamacpp node skills/vibecheckbench/scripts/run-vibecheckbench.mjs \
-  --intent "concise technical explanations"
-```
-
-### With a hosted API
-
-```bash
-ANTHROPIC_API_KEY=<your-anthropic-api-key> node skills/vibecheckbench/scripts/run-vibecheckbench.mjs \
-  --intent "warm and friendly email replies"
-```
-
-### With custom system prompt
-
-```bash
-node skills/vibecheckbench/scripts/run-vibecheckbench.mjs \
-  --intent "patient coding help" \
-  --prompt "You are a patient coding mentor who celebrates small wins."
-```
-
-### JSON output
-
-```bash
-node skills/vibecheckbench/scripts/run-vibecheckbench.mjs --intent "warm emails" --json
-```
-
-## Agent skill workflow
-
-### Claude Code
-
-Use the slash command:
+## Claude Code / Codex
 
 ```text
-/vibecheckbench "warm emails" --cases 5
-/vibecheckbench profile --cases 3 --repeat 3 --save-report
-/vibecheckbench validate
-/vibecheckbench smoke
+/vibeforge Create a fit review from: "…"
 ```
 
-The implementation lives in `.claude/commands/vibecheckbench.md`; keep that file pointed at the same runner scripts as the Codex skill.
-
-### Codex
-
-The reusable Codex skill lives in `skills/vibecheckbench/SKILL.md`, with UI metadata in `skills/vibecheckbench/agents/openai.yaml`.
-
-Install locally on Windows:
-
-```powershell
-npm run skill:install
-```
-
-After installation, invoke it as `$vibecheckbench` in Codex.
-
-## Docker workflow
-
-```bash
-# Build images
-docker compose build
-
-# Start OpenClaw only (inference on host)
-docker compose up -d openclaw-gateway
-
-# Start OpenClaw + llama-server in Docker
-docker compose --profile llama up -d
-```
+Codex: `npm run skill:install` then `$vibeforge`.
 
 ## Environment variables
 
-See `.env.example` for the full list. Key ones:
+See `.env.example`. Key ones:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `VIBECHECKBENCH_PROVIDER` | `llamacpp` | Provider: llamacpp / openai / anthropic |
-| `VIBECHECKBENCH_MODEL` | blank | Model override |
-| `VIBECHECKBENCH_JUDGE_PROVIDER` | blank | Optional separate judge provider |
-| `VIBECHECKBENCH_JUDGE_MODEL` | blank | Optional separate judge model |
-| `VIBECHECKBENCH_LLAMACPP_URL` | `http://host.docker.internal:8080` | llama.cpp server URL |
-| `VIBECHECKBENCH_NUM_CASES` | `10` | Number of test cases per benchmark |
-| `VIBECHECKBENCH_REPEAT` | `1` | Repeat count for profile runs |
-| `VIBECHECKBENCH_LOCAL_FAST` | `1` | Shorter outputs for speed (set 0 for quality) |
+| `VIBEFORGE_PROVIDER` | `llamacpp` | Subject provider |
+| `VIBEFORGE_MODEL` | blank | Model override |
+| `VIBEFORGE_JUDGE_PROVIDER` | blank | Optional separate judge |
+| `VIBEFORGE_JUDGE_MODEL` | blank | Optional separate judge model |
+| `VIBEFORGE_LLAMACPP_URL` | `http://host.docker.internal:8080` | llama.cpp URL |
+| `VIBEFORGE_NUM_CASES` | `10` | Cases per profile run |
+| `VIBEFORGE_REPEAT` | `1` | Repeat count |
+| `VIBEFORGE_LOCAL_FAST` | `1` | Shorter outputs |
 
-## Common tasks for Claude Code
+## Profile runner (legacy)
 
-- **Add a new provider**: edit `resolveProvider()` and provider call helpers in `run-vibecheckbench.mjs` and `run-profile.mjs`
-- **Change judge behavior**: edit the `scoreOutputs()` system prompt
-- **Add a CLI flag**: edit `parseArgs()` in the relevant runner and document it in `.claude/commands/vibecheckbench.md` plus `skills/vibecheckbench/SKILL.md`
-- **Tune Docker sandbox**: edit `docker/sandbox.Dockerfile`
-- **Add inference knobs**: add env vars to `docker-compose.yml` and `.env.example`
-
-## Preference profile
-
-Your behavioral preferences live in `preferences.yaml` at the repo root.
-Current preferences: factuality, pushback, initiative, anti_sycophancy.
-
-### Run the full profile
 ```bash
-node skills/vibecheckbench/scripts/run-profile.mjs
-node skills/vibecheckbench/scripts/run-profile.mjs --prompt-file my-prompt.txt --cases 3
-node skills/vibecheckbench/scripts/run-profile.mjs --validate-profile
-node skills/vibecheckbench/scripts/run-profile.mjs --smoke-test
-node skills/vibecheckbench/scripts/run-profile.mjs --cases 3 --repeat 3 --judge-provider openai --judge-model gpt-4.1-mini --save-report
+node skills/vibeforge/scripts/run-profile.mjs
+node skills/vibeforge/scripts/run-profile.mjs --cases 3 --repeat 3 --save-report
 ```
-
-### Profile schema
-Each preference has: `id`, `type`, `weight`, `description`, `good_behaviors`, `bad_behaviors`.
-Types map to behavioral rubrics in `run-profile.mjs` -> `RUBRICS` object.
-
-To add a new preference type:
-1. Add it to `preferences.yaml`
-2. Add a matching entry to `RUBRICS` in `run-profile.mjs` with `criteria` and `testCaseInstruction`
-
-### Scoring
-- Each test case is scored on a per-criterion rubric (0/1 per criterion) rather than a free-text comparison
-- Win rate excludes ties (B wins / (A wins + B wins))
-- Aggregate score is weight-normalized across all preferences
-- Weakest preference = lowest win rate, used to target prompt improvements

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "VibeCheckBench regression suite: literature-backed-complex-user-preferences"
+description: "VibeForge regression suite: literature-backed-complex-user-preferences"
 
 prompts:
   - |
@@ -307,7 +307,7 @@ tests:
           return Math.min(1, score);
   - description: "user_agency_and_decision_fit 1"
     vars:
-      user_prompt: "Should I invest a month in this VibeCheckBench direction? Give criteria, uncertainty, and what evidence would change your answer."
+      user_prompt: "Should I invest a month in this VibeForge direction? Give criteria, uncertainty, and what evidence would change your answer."
       preference_id: "user_agency_and_decision_fit"
       preference_type: "initiative"
     assert:

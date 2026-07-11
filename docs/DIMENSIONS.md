@@ -1,6 +1,6 @@
 # Preference dimensions
 
-VibeCheckBench measures **fit failures**, not generic “IQ.”  
+VibeForge measures **fit failures**, not generic “IQ.”  
 These six areas are what users usually notice day to day.
 
 Optional short umbrella (for pitches only):

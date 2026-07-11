@@ -18,7 +18,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
 const DEFAULT_PROFILE_PATH = path.join(REPO_ROOT, "preferences.yaml");
 const DEFAULT_CASES_PER_PREFERENCE = 3;
-const DEFAULT_OLLAMA_URL = process.env.VIBECHECKBENCH_OLLAMA_URL || "http://127.0.0.1:11434";
+const DEFAULT_OLLAMA_URL = process.env.VIBEFORGE_OLLAMA_URL || "http://127.0.0.1:11434";
 
 function stripYamlScalar(value) {
   return String(value || "").trim().replace(/^['"]|['"]$/g, "").trim();
@@ -118,7 +118,7 @@ function generateTests(profilePath, casesPerPreference) {
 
 function formatGeneratedCases(data) {
   const lines = [
-    "# VibeCheckBench Direct Benchmark",
+    "# VibeForge Direct Benchmark",
     `# Profile: ${data.profile.name}`,
     `# Generated: ${new Date().toISOString()}`,
     "#",
@@ -166,9 +166,9 @@ function parseArgs(argv) {
     judgeScore: null,
     profile: DEFAULT_PROFILE_PATH,
     cases: DEFAULT_CASES_PER_PREFERENCE,
-    judgeProvider: process.env.VIBECHECKBENCH_JUDGE_PROVIDER || "anthropic",
-    judgeModel: process.env.VIBECHECKBENCH_JUDGE_MODEL || "claude-sonnet-4-20250514",
-    ollamaUrl: process.env.VIBECHECKBENCH_OLLAMA_URL || DEFAULT_OLLAMA_URL,
+    judgeProvider: process.env.VIBEFORGE_JUDGE_PROVIDER || "anthropic",
+    judgeModel: process.env.VIBEFORGE_JUDGE_MODEL || "claude-sonnet-4-20250514",
+    ollamaUrl: process.env.VIBEFORGE_OLLAMA_URL || DEFAULT_OLLAMA_URL,
     multimodal: false,
     verbose: false,
   };
@@ -345,9 +345,9 @@ function printUsage() {
   console.log("Environment variables for LLM judge:");
   console.log("  ANTHROPIC_API_KEY");
   console.log("  OPENAI_API_KEY");
-  console.log("  VIBECHECKBENCH_JUDGE_PROVIDER (default: anthropic)");
-  console.log("  VIBECHECKBENCH_JUDGE_MODEL (default: claude-sonnet-4-20250514)");
-  console.log("  VIBECHECKBENCH_OLLAMA_URL (default: http://127.0.0.1:11434)");
+  console.log("  VIBEFORGE_JUDGE_PROVIDER (default: anthropic)");
+  console.log("  VIBEFORGE_JUDGE_MODEL (default: claude-sonnet-4-20250514)");
+  console.log("  VIBEFORGE_OLLAMA_URL (default: http://127.0.0.1:11434)");
   console.log("Flags:");
   console.log("  --multimodal   Send image URLs to Ollama as actual multimodal inputs when available.");
 }

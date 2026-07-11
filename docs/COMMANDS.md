@@ -5,7 +5,7 @@
 > This file maps scripts the skill runs under the hood (and for debugging).
 
 Product story: root [README.md](../README.md).  
-**CLI names:** `vibecheckbench` and `vibeforge` are the same dispatcher (`bin/vibecheckbench.mjs`).
+**CLI names:** `vibeforge` and `vibeforge` are the same dispatcher (`bin/vibeforge.mjs`).
 
 **Shells:** examples in **bash**. On **PowerShell**, continue lines with a backtick (`` ` ``) instead of `\`.
 
@@ -28,7 +28,7 @@ Paths below assume the repo root as the working directory.
 | Create a fit review from “…” | `create-fit-review.mjs` |
 | Run offline case studies | `run-case-study.mjs --all` |
 | **Run a fit eval / test models** | **`run-fit-eval.mjs`** (`--mode mock\|auto\|ollama\|openai\|anthropic`) |
-| Smoke plumbing only | `bin/vibecheckbench.mjs run` |
+| Smoke plumbing only | `bin/vibeforge.mjs run` |
 | Open the dashboard | `dashboard/server.mjs` |
 | Install Codex skill | `install-codex-skill.mjs` |
 
@@ -41,8 +41,8 @@ Paths below assume the repo root as the working directory.
 | Fit-review dual pack | Auto baseline vs candidate if `suggested-config.md` has Candidate Wording |
 
 ```bash
-node skills/vibecheckbench/scripts/run-fit-eval.mjs --fit-review vibecheckbench-out --mode mock
-node bin/vibecheckbench.mjs eval --mode auto
+node skills/vibeforge/scripts/run-fit-eval.mjs --fit-review vibeforge-out --mode mock
+node bin/vibeforge.mjs eval --mode auto
 ```
 
 Optional npm aliases (`npm run chart:demo`, etc.) exist only as shortcuts for contributors.  
@@ -57,7 +57,7 @@ Nested runs: `--quiet` / `VIBEFORGE_QUIET=1`.
 
 | Script | What it runs |
 |---|---|
-| `npm run vibecheckbench -- <cmd>` | `bin/vibecheckbench.mjs` |
+| `npm run vibeforge -- <cmd>` | `bin/vibeforge.mjs` |
 | `npm run vibeforge -- <cmd>` | Same dispatcher (VibeForge alias) |
 | `npm start` | Print golden-path help |
 | `npm run dashboard` | Local dashboard server (`127.0.0.1:4173`) |
@@ -76,21 +76,21 @@ Nested runs: `--quiet` / `VIBEFORGE_QUIET=1`.
 
 ---
 
-## Dispatcher (`bin/vibecheckbench.mjs`)
+## Dispatcher (`bin/vibeforge.mjs`)
 
 ```bash
-node bin/vibecheckbench.mjs draft "I want concise, honest answers"
-node bin/vibecheckbench.mjs demo pushback
-node bin/vibecheckbench.mjs run
-node bin/vibecheckbench.mjs capture --setup codex
-node bin/vibecheckbench.mjs report
-node bin/vibecheckbench.mjs recommend
+node bin/vibeforge.mjs draft "I want concise, honest answers"
+node bin/vibeforge.mjs demo pushback
+node bin/vibeforge.mjs run
+node bin/vibeforge.mjs capture --setup codex
+node bin/vibeforge.mjs report
+node bin/vibeforge.mjs recommend
 ```
 
 | Command | Effect |
 |---|---|
 | `draft` | Public-safe starter case from one preference sentence |
-| `demo pushback` / `concise` / `privacy` | Fit-review folder under `vibecheckbench-out/` |
+| `demo pushback` / `concise` / `privacy` | Fit-review folder under `vibeforge-out/` |
 | `run` | No-key smoke compare (aligned mock provider vs echo) |
 | `capture --setup codex` | Local answer-capture session for model-picker flows |
 | `report` | Rebuild fit chart from local results |
@@ -101,7 +101,7 @@ node bin/vibecheckbench.mjs recommend
 ## Fit review & drafting
 
 ```bash
-# One preference → review artifacts in vibecheckbench-out/
+# One preference → review artifacts in vibeforge-out/
 npm run fit:review -- "The user prefers concise, high-signal answers that preserve necessary nuance."
 
 # Draft a single public-safe case to stdout
@@ -129,14 +129,14 @@ npm run fit:optimize -- \
   --iterations 2
 ```
 
-This path may call model/judge providers depending on env (`VIBECHECKBENCH_PROVIDER`, `VIBECHECKBENCH_JUDGE_*`). Use a reliable separate judge for real claims.
+This path may call model/judge providers depending on env (`VIBEFORGE_PROVIDER`, `VIBEFORGE_JUDGE_*`). Use a reliable separate judge for real claims.
 
 Offline alternative that demonstrates the same *story* without the optimizer:
 
 ```bash
 npm run case:studies
 # or one study:
-node skills/vibecheckbench/scripts/run-case-study.mjs --case feedback-friction-loop
+node skills/vibeforge/scripts/run-case-study.mjs --case feedback-friction-loop
 ```
 
 ---
@@ -145,9 +145,9 @@ node skills/vibecheckbench/scripts/run-case-study.mjs --case feedback-friction-l
 
 ```bash
 npm run case:studies
-node skills/vibecheckbench/scripts/run-case-study.mjs --list
-node skills/vibecheckbench/scripts/run-case-study.mjs --case feedback-friction-loop
-node skills/vibecheckbench/scripts/run-case-study.mjs --case format-decision-loop
+node skills/vibeforge/scripts/run-case-study.mjs --list
+node skills/vibeforge/scripts/run-case-study.mjs --case feedback-friction-loop
+node skills/vibeforge/scripts/run-case-study.mjs --case format-decision-loop
 ```
 
 ---
@@ -190,12 +190,12 @@ Surfaces: model, instructions, memory, skills, tools, generation settings, conte
 npm run chart:demo
 
 # Or explicit paths
-node skills/vibecheckbench/scripts/chart-results.mjs \
+node skills/vibeforge/scripts/chart-results.mjs \
   --input examples/promptfoo-results.user-fit-demo.json \
   --out reports/skill-chart.html
 
 # Local Ollama subjects (only if Ollama is installed and models are already present)
-node skills/vibecheckbench/scripts/run-local-subjects.mjs \
+node skills/vibeforge/scripts/run-local-subjects.mjs \
   --provider ollama:chat:qwen3:0.6b \
   --out reports/answers.json \
   --scored-out reports/results.json \
@@ -207,7 +207,7 @@ Do **not** `ollama pull` or download weights unless the user approved the downlo
 Smoke test without models:
 
 ```bash
-node skills/vibecheckbench/scripts/run-local-subjects.mjs \
+node skills/vibeforge/scripts/run-local-subjects.mjs \
   --provider "file://examples/promptfoo-aligned-provider.mjs" \
   --provider echo \
   --limit 1 \
@@ -226,7 +226,7 @@ Preferred for CI and multi-provider regression. Promptfoo is **not** a required 
 # Check availability without installing
 npm run promptfoo:check
 
-node skills/vibecheckbench/scripts/export-promptfoo.mjs \
+node skills/vibeforge/scripts/export-promptfoo.mjs \
   --example complex \
   --provider ollama:chat:qwen3:0.6b \
   --out promptfooconfig.yaml
@@ -239,7 +239,7 @@ promptfoo eval -c promptfooconfig.yaml --output reports/results.json
 # or, with explicit approval to download:
 # npx promptfoo@latest eval -c promptfooconfig.yaml --output reports/results.json
 
-node skills/vibecheckbench/scripts/chart-results.mjs \
+node skills/vibeforge/scripts/chart-results.mjs \
   --input reports/results.json \
   --out reports/skill-chart.html
 ```
@@ -247,7 +247,7 @@ node skills/vibecheckbench/scripts/chart-results.mjs \
 Gate train vs held-out before treating a config as improved:
 
 ```bash
-node skills/vibecheckbench/scripts/gate-config-results.mjs \
+node skills/vibeforge/scripts/gate-config-results.mjs \
   --train reports/results.train.json \
   --heldout reports/results.heldout.json \
   --out reports/config-gate.json
@@ -260,21 +260,21 @@ node skills/vibecheckbench/scripts/gate-config-results.mjs \
 When the model is not callable from Promptfoo (e.g. in-app picker):
 
 ```bash
-node skills/vibecheckbench/scripts/prepare-capture-session.mjs \
+node skills/vibeforge/scripts/prepare-capture-session.mjs \
   --name codex-model-sweep \
   --model "GPT 5.5 Codex" \
   --model "Claude Sonnet" \
   --limit 4
 
-node skills/vibecheckbench/scripts/ingest-captured-markdown.mjs \
+node skills/vibeforge/scripts/ingest-captured-markdown.mjs \
   --input captures/codex-model-sweep/answers.md \
   --out reports/captured-answers.json
 
-node skills/vibecheckbench/scripts/score-answers.mjs \
+node skills/vibeforge/scripts/score-answers.mjs \
   --input reports/captured-answers.json \
   --out reports/results.captured.json
 
-node skills/vibecheckbench/scripts/chart-results.mjs \
+node skills/vibeforge/scripts/chart-results.mjs \
   --input reports/results.captured.json \
   --out reports/skill-chart.captured.html
 ```
@@ -282,7 +282,7 @@ node skills/vibecheckbench/scripts/chart-results.mjs \
 Optional LLM judge over captured answers (provider approval required):
 
 ```bash
-node skills/vibecheckbench/scripts/judge-captured-answers.mjs \
+node skills/vibeforge/scripts/judge-captured-answers.mjs \
   --input reports/answers.ollama.json \
   --tasks examples/tasks \
   --judge-provider ollama:chat:qwen3:0.6b \
@@ -296,9 +296,9 @@ Tiny local models are weak judges — plumbing and rough signal only.
 ## Task packs
 
 ```bash
-node skills/vibecheckbench/scripts/validate-tasks.mjs --tasks examples/tasks
+node skills/vibeforge/scripts/validate-tasks.mjs --tasks examples/tasks
 
-node skills/vibecheckbench/scripts/export-task-pack-promptfoo.mjs \
+node skills/vibeforge/scripts/export-task-pack-promptfoo.mjs \
   --tasks examples/tasks \
   --provider ollama:chat:qwen3:0.6b \
   --out promptfooconfig.tasks.yaml
@@ -311,7 +311,7 @@ node skills/vibecheckbench/scripts/export-task-pack-promptfoo.mjs \
 Use only when you explicitly want default-vs-custom prompt comparison with a judge:
 
 ```bash
-node skills/vibecheckbench/scripts/run-profile.mjs \
+node skills/vibeforge/scripts/run-profile.mjs \
   --profile examples/public-agent-profile.yaml \
   --case-file examples/public-agent-cases.json \
   --prompt-file examples/public-agent-system-prompt.txt \
@@ -355,13 +355,13 @@ See `.env.example` when present. Common ones:
 
 | Variable | Purpose |
 |---|---|
-| `VIBECHECKBENCH_PROVIDER` | Subject provider (`llamacpp` / `openai` / `anthropic` / …) |
-| `VIBECHECKBENCH_MODEL` | Model override |
-| `VIBECHECKBENCH_JUDGE_PROVIDER` | Separate judge provider |
-| `VIBECHECKBENCH_JUDGE_MODEL` | Separate judge model |
-| `VIBECHECKBENCH_LLAMACPP_URL` | llama.cpp server URL |
-| `VIBECHECKBENCH_NUM_CASES` | Case count defaults |
-| `VIBECHECKBENCH_REPEAT` | Repeat count for profile runs |
+| `VIBEFORGE_PROVIDER` | Subject provider (`llamacpp` / `openai` / `anthropic` / …) |
+| `VIBEFORGE_MODEL` | Model override |
+| `VIBEFORGE_JUDGE_PROVIDER` | Separate judge provider |
+| `VIBEFORGE_JUDGE_MODEL` | Separate judge model |
+| `VIBEFORGE_LLAMACPP_URL` | llama.cpp server URL |
+| `VIBEFORGE_NUM_CASES` | Case count defaults |
+| `VIBEFORGE_REPEAT` | Repeat count for profile runs |
 
 Never commit API keys. Prefer local providers for private profiles.
 
@@ -371,8 +371,8 @@ Never commit API keys. Prefer local providers for private profiles.
 
 | Surface | How |
 |---|---|
-| Claude Code | `/vibecheckbench` — see `.claude/commands/vibecheckbench.md` |
-| Codex | `skills/vibecheckbench/` after `npm run skill:install` |
+| Claude Code | `/vibeforge` — see `.claude/commands/vibeforge.md` |
+| Codex | `skills/vibeforge/` after `npm run skill:install` |
 | Project guide | `CLAUDE.md` |
 
 Operator eval (can the agent run the tooling?) is **not** the same as preference-fit eval (do the model’s answers fit the user?).

@@ -7,13 +7,12 @@
 
 IQ-style tests measure capability. This project measures **fit**.
 
-![VibeForge social preview](assets/vibecheckbench-social-preview.png)
+![VibeForge social preview](assets/vibeforge-social-preview.png)
 
-**Repo:** [github.com/riacheruvu/VibeForge](https://github.com/riacheruvu/VibeForge) (formerly *VibeCheckBench*)  
-**Primary UX:** the **agent skill** (Codex / Claude Code) — you talk in plain language; the skill runs local scripts. You should not need to type `npm` day to day.  
+**Repo:** [github.com/riacheruvu/VibeForge](https://github.com/riacheruvu/VibeForge)  
+**Primary UX:** `/vibeforge` or “Use VibeForge…” — the skill runs local scripts (no day-to-day `npm`).  
 **Getting started:** [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) · **Contributor scripts:** [docs/COMMANDS.md](docs/COMMANDS.md)  
-**Static demo:** open [`docs/index.html`](docs/index.html) locally, or enable GitHub Pages on the `docs/` folder.  
-**Compatibility:** skill/CLI ids `vibecheckbench` and `vibeforge` both work during the transition.
+**Static demo:** open [`docs/index.html`](docs/index.html) locally, or enable GitHub Pages on the `docs/` folder.
 
 ---
 
@@ -35,7 +34,7 @@ Complementary to public arenas (e.g. LMSYS): arenas tell you who wins popularity
 
 Personal-fit comparison on checked-in demo data — higher scores mean better match to *this* preference profile on *these* cases:
 
-![Preference fit matrix](assets/vibecheckbench-preference-matrix.png)
+![Preference fit matrix](assets/vibeforge-preference-matrix.png)
 
 | Config (demo) | Pass rate | Mean score | Read |
 |---|---:|---:|---|
@@ -85,7 +84,7 @@ observe preferences / friction
 
 Raw conversation content stays local. You review every candidate. Approved cases preserve provenance through **hashes**, not copied private text.
 
-![Hybrid local preview](assets/vibecheckbench-hybrid-local-preview.png)
+![Hybrid local preview](assets/vibeforge-hybrid-local-preview.png)
 
 ---
 
@@ -132,7 +131,7 @@ Use VibeForge. Create a fit review from:
 "The user prefers concise, honest answers that push back kindly without flattery."
 ```
 
-Draft-only; no model calls. Artifacts land in `vibecheckbench-out/`.
+Draft-only; no model calls. Artifacts land in `vibeforge-out/`.
 
 ---
 
@@ -141,10 +140,10 @@ Draft-only; no model calls. Artifacts land in `vibecheckbench-out/`.
 **1. Install the skill once** (Codex example):
 
 ```text
-Use this repo. Install the VibeForge / VibeCheckBench skill.
+Use this repo. Install the VibeForge skill.
 ```
 
-Or Claude Code: open the repo and use `/vibeforge` (alias: `/vibecheckbench`).
+Or Claude Code: open the repo and use `/vibeforge`.
 
 **2. Talk to the skill** — paste any of these:
 
@@ -202,7 +201,7 @@ Definitions, why each matters, and pass/fail examples: **[docs/DIMENSIONS.md](do
 | **[docs/ROADMAP.md](docs/ROADMAP.md)** | Current / Next / Future |
 | **[docs/COMMANDS.md](docs/COMMANDS.md)** | Contributor script map (not day-to-day UX) |
 | **[CLAUDE.md](CLAUDE.md)** | Agent integration |
-| **[skills/vibecheckbench/SKILL.md](skills/vibecheckbench/SKILL.md)** | Canonical skill behavior |
+| **[skills/vibeforge/SKILL.md](skills/vibeforge/SKILL.md)** | Canonical skill behavior |
 
 ---
 
@@ -221,7 +220,7 @@ Use VibeForge. Run the offline case studies.
 
 ## Architecture (short)
 
-**Primary UX:** agent skill → local Node scripts under `skills/vibecheckbench/scripts/`.
+**Primary UX:** agent skill → local Node scripts under `skills/vibeforge/scripts/`.
 
 **Preferred regression path (skill-driven):** preference profile + cases + system prompt → Promptfoo export → `promptfoo eval` (Promptfoo optional; skill asks before install/API).
 

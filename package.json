@@ -2,13 +2,18 @@
   "name": "vibecheckbench",
   "private": true,
   "type": "module",
+  "description": "VibeForge / VibeCheckBench — measure and improve personal AI setup fit",
   "bin": {
-    "vibecheckbench": "bin/vibecheckbench.mjs"
+    "vibecheckbench": "bin/vibecheckbench.mjs",
+    "vibeforge": "bin/vibecheckbench.mjs"
   },
   "scripts": {
     "vibecheckbench": "node bin/vibecheckbench.mjs",
+    "vibeforge": "node bin/vibecheckbench.mjs",
+    "start": "node bin/vibecheckbench.mjs --help",
     "dashboard": "node skills/vibecheckbench/dashboard/server.mjs",
     "dashboard:demo": "node skills/vibecheckbench/scripts/build-dashboard-demo.mjs",
+    "chart:demo": "node skills/vibecheckbench/scripts/chart-results.mjs --input examples/promptfoo-results.user-fit-demo.json --out reports/skill-chart.html",
     "skill:install": "node skills/vibecheckbench/scripts/install-codex-skill.mjs",
     "promptfoo:check": "node skills/vibecheckbench/scripts/check-promptfoo.mjs",
     "fit:mine": "node skills/vibecheckbench/scripts/mine-conversation-history.mjs",
@@ -17,6 +22,8 @@
     "fit:review": "node skills/vibecheckbench/scripts/create-fit-review.mjs",
     "fit:recommend": "node skills/vibecheckbench/scripts/recommend-next-experiment.mjs",
     "fit:plan": "node skills/vibecheckbench/scripts/plan-setup-experiment.mjs",
+    "fit:optimize": "node skills/vibecheckbench/scripts/optimize-config.mjs",
+    "fit:eval": "node skills/vibecheckbench/scripts/run-fit-eval.mjs",
     "case:studies": "node skills/vibecheckbench/scripts/run-case-study.mjs --all"
   }
 }

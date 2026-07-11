@@ -10,7 +10,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 function usage() {
-  console.log(`VibeCheckBench next-experiment recommender
+  console.log(`VibeForge next-experiment recommender
 
 Usage:
   node skills/vibecheckbench/scripts/recommend-next-experiment.mjs --input reports/results.json
@@ -248,16 +248,21 @@ function main() {
   const outPath = path.resolve(args.out);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
-  console.log(`Wrote next-experiment decision: ${outPath}`);
-  console.log(`${report.decision.headline}.`);
-  console.log(`Next: ${report.decision.nextExperiment}`);
+  console.log("");
+  console.log("VibeForge · next experiment (candidate only — never auto-applied)");
+  console.log("─".repeat(56));
+  console.log(`✓ ${report.decision.headline}`);
+  console.log(`  Try: ${report.decision.nextExperiment}`);
+  console.log(`  File: ${outPath}`);
+  console.log("  Trust: human review required · automaticDeployment=false");
+  console.log("");
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
   try {
     main();
   } catch (error) {
-    console.error(`Recommendation error: ${error.message}`);
+    console.error(`VibeForge error (recommend): ${error.message}`);
     process.exit(1);
   }
 }

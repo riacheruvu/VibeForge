@@ -6,23 +6,38 @@ $ErrorActionPreference = "Stop"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $skillDir = Resolve-Path (Join-Path $scriptDir "..")
-$destination = Join-Path $DestinationRoot "vibecheckbench"
 
 New-Item -ItemType Directory -Force -Path $DestinationRoot | Out-Null
 
-if (Test-Path $destination) {
-  Remove-Item -Recurse -Force -LiteralPath $destination
-}
-
 $excludeDirs = @("__pycache__", "reports", ".openclaw-local", ".openclaw", "state")
 $excludeFiles = @("*.pyc", "npm-debug.log*")
+$skillNames = @("vibecheckbench", "vibeforge")
 
-Copy-Item -Recurse -LiteralPath $skillDir -Destination $destination -Exclude $excludeFiles
+foreach ($name in $skillNames) {
+  $destination = Join-Path $DestinationRoot $name
 
-foreach ($dir in $excludeDirs) {
-  Get-ChildItem -Recurse -Force -Directory -LiteralPath $destination |
-    Where-Object { $_.Name -eq $dir } |
-    Remove-Item -Recurse -Force
+  if (Test-Path $destination) {
+    Remove-Item -Recurse -Force -LiteralPath $destination
+  }
+
+  Copy-Item -Recurse -LiteralPath $skillDir -Destination $destination -Exclude $excludeFiles
+
+  foreach ($dir in $excludeDirs) {
+    Get-ChildItem -Recurse -Force -Directory -LiteralPath $destination |
+      Where-Object { $_.Name -eq $dir } |
+      Remove-Item -Recurse -Force
+  }
+
+  if ($name -eq "vibeforge") {
+    $skillMd = Join-Path $destination "SKILL.md"
+    if (Test-Path $skillMd) {
+      $text = Get-Content -Raw -LiteralPath $skillMd
+      $text = $text -replace '(?m)^name:\s*vibecheckbench\s*$', 'name: vibeforge'
+      Set-Content -LiteralPath $skillMd -Value $text -NoNewline
+    }
+  }
+
+  Write-Host "Installed VibeForge Codex skill as '$name' to $destination"
 }
 
-Write-Host "Installed VibeCheckBench Codex skill to $destination"
+Write-Host "Both vibecheckbench and vibeforge point at the same skill content."

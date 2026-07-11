@@ -7,21 +7,22 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { done, fail, helpHeader, isQuiet } from "./cli-ux.mjs";
 
 function usage() {
-  console.log(`VibeCheckBench Promptfoo config gate
-
-Usage:
+  helpHeader("config gate", "Train + held-out comparison. Pass = eligible for human review, never auto-deploy.");
+  console.log(`Usage:
   node skills/vibecheckbench/scripts/gate-config-results.mjs --train train.json --heldout heldout.json --out reports/config-gate.json
 
 Options:
-  --train <path>             Development-set Promptfoo results
-  --heldout <path>           Held-out Promptfoo results
+  --train <path>             Development-set results
+  --heldout <path>           Held-out results
   --out <path>               JSON report path
   --baseline <label>         Baseline config label (default: baseline)
   --candidate <label>        Candidate config label (default: candidate)
   --min-improvement <score>  Required held-out mean-score gain (default: 0.05)
-  --max-train-regression <n> Allowed development-set mean-score loss (default: 0.05)`);
+  --max-train-regression <n> Allowed development-set mean-score loss (default: 0.05)
+  --quiet                    Minimal output`);
 }
 
 function parseArgs(argv) {
@@ -33,6 +34,7 @@ function parseArgs(argv) {
     candidate: "candidate",
     minImprovement: 0.05,
     maxTrainRegression: 0.05,
+    quiet: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -43,6 +45,7 @@ function parseArgs(argv) {
     else if (arg === "--candidate") args.candidate = argv[++i];
     else if (arg === "--min-improvement") args.minImprovement = Number(argv[++i]);
     else if (arg === "--max-train-regression") args.maxTrainRegression = Number(argv[++i]);
+    else if (arg === "--quiet") args.quiet = true;
     else if (arg === "--help" || arg === "-h") { usage(); process.exit(0); }
   }
   if (!args.train || !args.heldout) throw new Error("--train and --heldout are required.");
@@ -100,9 +103,9 @@ function delta(candidate, baseline) {
 function markdown(report) {
   const pct = value => `${(value * 100).toFixed(0)}%`;
   const signed = value => `${value >= 0 ? "+" : ""}${value.toFixed(2)}`;
-  return `# VibeCheckBench Config Gate
+  return `# VibeForge Config Gate
 
-**Decision:** ${report.decision.eligibleForHumanReview ? "eligible for human review" : "rejected"}
+**Decision:** ${report.decision.eligibleForHumanReview ? "eligible for human review" : "not ready — keep baseline"}
 
 | Split | Config | Passed | Mean score | Avg latency | Tokens |
 |---|---|---:|---:|---:|---:|
@@ -167,19 +170,38 @@ function main() {
     },
   };
 
+  if (args.quiet) process.env.VIBEFORGE_QUIET = "1";
   const outPath = path.resolve(args.out);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   const markdownPath = outPath.replace(/\.json$/i, ".md");
   fs.writeFileSync(markdownPath, markdown(report), "utf8");
-  console.log(`Wrote config gate: ${outPath}`);
-  console.log(`Wrote config gate summary: ${markdownPath}`);
+  if (isQuiet()) {
+    console.log(`Wrote config gate: ${outPath}`);
+  } else {
+    const heldDelta = report.heldout?.delta?.meanScore;
+    done({
+      title: eligibleForHumanReview ? "Gate: eligible for human review" : "Gate: not ready — keep baseline",
+      summary: eligibleForHumanReview
+        ? "Candidate cleared configured evidence gates. Inspect outputs before keeping any change."
+        : "Candidate did not clear the gate. Do not replace your setup yet.",
+      facts: [
+        ["Held-out mean delta", Number.isFinite(heldDelta) ? heldDelta.toFixed(3) : "n/a"],
+        ["Reasons", (report.decision.reasons || []).join(" · ") || "—"],
+      ],
+      files: [outPath, markdownPath],
+      next: eligibleForHumanReview
+        ? ["Read failing/passing outputs manually", "Apply only the smallest setup change if you still agree"]
+        : ["Collect more held-out cases or revise the candidate", "Re-run the gate before any deploy"],
+      trust: ["automaticDeployment is always false in this report."],
+    });
+  }
   if (!eligibleForHumanReview) process.exitCode = 1;
 }
 
 try {
   main();
 } catch (error) {
-  console.error(`Config gate error: ${error.message}`);
+  fail("config-gate", error);
   process.exit(1);
 }

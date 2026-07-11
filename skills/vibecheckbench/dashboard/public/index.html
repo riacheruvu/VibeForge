@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VibeCheckBench</title>
+  <title>VibeForge</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
-        <span class="brand-mark">VC</span>
-        <div><b>VibeCheckBench</b><span>Personal fit evaluations</span></div>
+        <span class="brand-mark">VF</span>
+        <div><b>VibeForge</b><span>Setup fit, not model IQ</span></div>
       </div>
       <nav>
         <button class="nav-item active" data-view="overview"><span>O</span>Overview</button>
@@ -20,23 +20,23 @@
         <button class="nav-item" data-view="changes"><span>C</span>Suggested changes</button>
         <button class="nav-item" data-view="runs"><span>R</span>Past runs</button>
       </nav>
-      <div class="privacy-note"><span class="status-dot"></span><div><b>Local mode</b><small>Nothing leaves this computer.</small></div></div>
+      <div class="privacy-note"><span class="status-dot"></span><div><b>Local mode</b><small>Draft-only by default. Nothing leaves this computer.</small></div></div>
     </aside>
 
     <main>
       <header class="topbar">
         <div>
-          <p class="eyebrow">YOUR AI, YOUR PREFERENCES</p>
+          <p class="eyebrow">YOUR AI SETUP, YOUR FIT</p>
           <h1>Which setup fits you?</h1>
-          <p class="subtitle">Compare how AI setups handle the preferences that shape your real work.</p>
+          <p class="subtitle">Compare models, instructions, and workflows on the preferences that shape your real work — then try the smallest improvement.</p>
         </div>
         <button id="new-run-button" class="primary-button">New evaluation</button>
       </header>
 
       <section id="empty-state" class="empty-state hidden">
-        <div class="empty-icon">VC</div>
+        <div class="empty-icon">VF</div>
         <h2>No evaluations yet</h2>
-        <p>Run a private local comparison to see which setup best matches the selected preferences.</p>
+        <p>Start with Build tests (one preference) or run a private local comparison. Scores are fit signals for review — not auto-deploy permission.</p>
         <button class="primary-button open-run-sheet">Start an evaluation</button>
       </section>
 
@@ -140,7 +140,7 @@
         <section class="section-block">
           <div class="section-heading">
             <div><p class="eyebrow">MAKE A TEST</p><h2>Start with one preference</h2></div>
-            <p>Describe the behavior you want. VibeCheckBench drafts a public-safe test for you to review.</p>
+            <p>Describe the behavior you want. VibeForge drafts a public-safe test for you to review — nothing is added without your approval.</p>
           </div>
           <div class="guided-builder">
             <div class="builder-prompt">
@@ -201,7 +201,7 @@
           <button class="secondary-button" data-jump-view="evidence">Build tests from interactions</button>
           <button class="secondary-button open-run-sheet">Open evaluation picker</button>
         </div>
-        <div class="plain-note"><b>What VibeCheckBench can do today</b><span>It can directly compare models and system prompts. It can also track planned changes to memory, skills, tools, context, and routing while their execution adapters are added.</span></div>
+        <div class="plain-note"><b>What VibeForge can do today</b><span>Directly compare models and system prompts. Track planned changes to memory, skills, tools, context, and routing. A better score is a reason to inspect outputs — never automatic deployment.</span></div>
         <section class="section-block">
           <div class="section-heading">
             <div><p class="eyebrow">CASE STUDIES</p><h2>What the loop looks like</h2></div>

@@ -184,7 +184,7 @@ function caseStudies() {
       return {
         ...payload,
         path: path.relative(ROOT, path.join(CASE_STUDIES_DIR, entry.name, "README.md")).replaceAll("\\", "/"),
-        runCommand: `Ask Codex: Use VibeCheckBench to run the "${payload.title || entry.name}" case study and summarize what changed.`,
+        runCommand: `Ask Codex: Use VibeForge / VibeCheckBench to run the "${payload.title || entry.name}" case study and summarize what changed.`,
       };
     })
     .filter(Boolean)
@@ -824,6 +824,7 @@ const server = http.createServer((request, response) => {
 fs.mkdirSync(RUNS_DIR, { recursive: true });
 fs.mkdirSync(FIT_DIR, { recursive: true });
 server.listen(PORT, "127.0.0.1", () => {
-  console.log(`VibeCheckBench dashboard: http://127.0.0.1:${PORT}`);
+  console.log(`VibeForge dashboard (local): http://127.0.0.1:${PORT}`);
+  console.log("Draft-only by default. Suggested changes are never auto-applied.");
   console.log("Local-only server. Press Ctrl+C to stop.");
 });

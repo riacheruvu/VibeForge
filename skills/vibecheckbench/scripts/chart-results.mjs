@@ -1,36 +1,57 @@
 #!/usr/bin/env node
 /**
- * Convert Promptfoo JSON/JSONL output into a compact VibeCheckBench skill chart.
+ * Convert Promptfoo JSON/JSONL output into a compact VibeForge fit scorecard.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { banner, done, fail, helpHeader, isQuiet, rel, skillSay } from "./cli-ux.mjs";
 
 function usage() {
-  console.log(`VibeCheckBench skill chart
+  helpHeader("fit scorecard / skill chart", "Personal fit chart — not a general model leaderboard.");
+  console.log(`Primary UX — ask the skill:
+  Use VibeForge. Show me a fit scorecard from the demo data.
 
-Usage:
-  node skills/vibecheckbench/scripts/chart-results.mjs --input results.json --out reports/skill-chart.md
+Implementation:
+  node skills/vibecheckbench/scripts/chart-results.mjs --input results.json --out reports/skill-chart.html
 
 Options:
-  --input <path>   Promptfoo JSON or JSONL output
+  --input <path>   Promptfoo / scored-results JSON or JSONL
   --out <path>     Markdown or HTML output path
-  --stdout         Print output instead of writing a file`);
+  --stdout         Print output instead of writing a file
+  --quiet          Minimal output (for nested orchestration)`);
 }
 
 function parseArgs(argv) {
-  const args = { input: "", out: "reports/skill-chart.md", stdout: false };
+  const args = { input: "", out: "reports/skill-chart.md", stdout: false, quiet: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "--input") { args.input = argv[++i]; continue; }
     if (arg === "--out") { args.out = argv[++i]; continue; }
     if (arg === "--stdout") { args.stdout = true; continue; }
+    if (arg === "--quiet") { args.quiet = true; continue; }
     if (arg === "--help" || arg === "-h") { usage(); process.exit(0); }
   }
   if (!args.input) throw new Error("--input is required.");
   return args;
+}
+
+function overallRanking(summary) {
+  return [...summary.keys()].map(provider => {
+    const all = [...summary.get(provider).values()].flat();
+    const passRate = all.length ? all.reduce((s, i) => s + (i.pass ? 1 : 0), 0) / all.length : 0;
+    const mean = all.length ? all.reduce((s, i) => s + i.score, 0) / all.length : 0;
+    return { provider, passRate, mean };
+  }).sort((a, b) => b.mean - a.mean);
+}
+
+function looksLikeDemoInput(inputPath, metadata) {
+  const normalized = String(inputPath).replaceAll("\\", "/");
+  if (/examples\/|user-fit-demo|models\.example|promptfoo-results\./i.test(normalized)) return true;
+  const source = String(metadata.source || metadata.evaluation_mode || "");
+  return /demo|example|hand-authored|public-safe example/i.test(source);
 }
 
 export function readInput(inputPath) {
@@ -172,7 +193,7 @@ export function render(summary, metadata = {}) {
   const providers = [...summary.keys()].sort();
   const metrics = [...new Set(providers.flatMap(provider => [...summary.get(provider).keys()]))].sort();
   const lines = [
-    "# VibeCheckBench Skill Chart",
+    "# VibeForge Fit Scorecard",
     "",
     "This is a personal-fit chart, not a general model leaderboard. Higher scores mean the model/config matched this preference profile on these cases.",
   ];
@@ -406,7 +427,7 @@ export function renderHtml(summary, metadata = {}) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VibeCheckBench Skill Chart</title>
+  <title>VibeForge Fit Scorecard</title>
   <style>
     :root {
       --ink: #17202a;
@@ -657,34 +678,68 @@ export function renderHtml(summary, metadata = {}) {
 `.replace(/[ \t]+$/gm, "");
 }
 
-export function chartResultsFile({ input, out = "reports/skill-chart.md", stdout = false }) {
-  const { rows, metadata } = readInput(path.resolve(process.cwd(), input));
+export function chartResultsFile({ input, out = "reports/skill-chart.md", stdout = false, quiet = false }) {
+  if (quiet) process.env.VIBEFORGE_QUIET = "1";
+  const inputPath = path.resolve(process.cwd(), input);
+  const { rows, metadata } = readInput(inputPath);
   if (!rows.length) throw new Error(`No Promptfoo result rows found in ${input}.`);
   const outPath = path.resolve(process.cwd(), out);
   const summary = summarize(rows);
+  const ranking = overallRanking(summary);
   const output = outPath.endsWith(".html") ? renderHtml(summary, metadata) : render(summary, metadata);
+  const demoData = looksLikeDemoInput(input, metadata);
 
   if (stdout) {
     process.stdout.write(output);
-    return { output, outPath: "" };
+    return { output, outPath: "", summary, ranking, demoData };
   }
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, output, "utf8");
-  console.log(`Wrote skill chart: ${outPath}`);
-  return { output, outPath };
+
+  if (!isQuiet()) {
+    banner("Fit scorecard", "Higher = better match to this preference profile on these cases");
+    const facts = ranking.slice(0, 5).map((item, index) => [
+      index === 0 ? "Leading setup" : `Setup ${index + 1}`,
+      `${item.provider} · mean ${item.mean.toFixed(2)} · pass ${(item.passRate * 100).toFixed(0)}%`,
+    ]);
+    facts.unshift(["Source", rel(inputPath)]);
+    done({
+      title: "Scorecard written",
+      summary: "Open the HTML/Markdown file for the full breakdown by preference area.",
+      facts,
+      files: [outPath],
+      demoData,
+      next: [
+        outPath.endsWith(".html") ? `Open ${rel(outPath)} in a browser` : `Read ${rel(outPath)}`,
+        "Review weak preference areas before changing anything",
+        ...skillSay(
+          "Use VibeForge. Create a fit review from my preference: …",
+          "Use VibeForge. Run the offline case studies.",
+          "Use VibeForge. Compare one setup change and re-chart held-out results.",
+        ),
+      ],
+      trust: [
+        "Deterministic rubrics are a regression signal, not proof of broad model quality.",
+      ],
+    });
+  } else {
+    console.log(`Wrote skill chart: ${outPath}`);
+  }
+
+  return { output, outPath, summary, ranking, demoData };
 }
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
-  chartResultsFile({ input: args.input, out: args.out, stdout: args.stdout });
+  chartResultsFile({ input: args.input, out: args.out, stdout: args.stdout, quiet: args.quiet });
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     main();
   } catch (error) {
-    console.error(`Skill chart error: ${error.message}`);
+    fail("chart", error);
     process.exit(1);
   }
 }

@@ -10,19 +10,32 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const NODE = process.execPath;
 
 function usage() {
-  console.log(`VibeCheckBench
+  console.log(`VibeForge / VibeCheckBench — personal AI setup fit (not model IQ)
 
-Usage:
-  vibecheckbench draft "I want concise, honest answers"
-  vibecheckbench demo pushback
-  vibecheckbench run
-  vibecheckbench capture --setup codex
-  vibecheckbench report
-  vibecheckbench recommend
+Primary UX (preferred):
+  Talk to the agent skill — do not send end users to npm.
+    Codex:  $vibecheckbench / $vibeforge
+    Claude: /vibecheckbench / /vibeforge
+  Example: "Use VibeForge. Create a fit review from: I want concise answers."
 
-Repo-local testing:
-  node bin/vibecheckbench.mjs draft "I want concise, honest answers"
-  npm run vibecheckbench -- draft "I want concise, honest answers"
+What this dispatcher is:
+  Thin contributor/debug CLI the skill may call. Same binary for vibecheckbench + vibeforge.
+
+Dispatcher commands:
+  vibeforge draft "I want concise, honest answers"
+  vibeforge demo pushback
+  vibeforge eval [--mode mock|auto|ollama|openai|anthropic]
+  vibeforge run
+  vibeforge capture --setup codex
+  vibeforge report
+  vibeforge recommend
+
+  eval = model-side fit eval on vibecheckbench-out (or --fit-review)
+  run  = plumbing smoke only (mock vs echo)
+
+Skill UX guide:   docs/GETTING-STARTED.md
+Script reference: docs/COMMANDS.md  (contributors)
+Product story:    README.md
 `);
 }
 
@@ -83,6 +96,10 @@ function commandRun(argv) {
   const limitIndex = argv.indexOf("--limit");
   const limit = limitIndex >= 0 ? argv[limitIndex + 1] || "1" : "1";
   ensureDir("vibecheckbench-out");
+  console.log("");
+  console.log("VibeForge · plumbing smoke (mock aligned provider vs echo)");
+  console.log("  Prefer: vibeforge eval  (model-side fit eval on your cases)");
+  console.log("");
   runNode([
     script("run-local-subjects.mjs"),
     "--provider",
@@ -98,6 +115,25 @@ function commandRun(argv) {
     "--chart-out",
     path.join("vibecheckbench-out", "fit-report.html"),
   ]);
+  console.log("Next (ask the skill): “Use VibeForge. Run a fit eval on my dual-case pack.”");
+  console.log("");
+}
+
+function commandEval(argv) {
+  const args = [
+    script("run-fit-eval.mjs"),
+    ...argv,
+  ];
+  if (!argv.includes("--fit-review") && !argv.includes("--cases")) {
+    const defaultReview = path.join(ROOT, "vibecheckbench-out");
+    if (fs.existsSync(path.join(defaultReview, "eval-cases.json"))) {
+      args.push("--fit-review", "vibecheckbench-out");
+    }
+  }
+  if (!argv.includes("--mode") && !argv.some((a, i) => argv[i - 1] === "--provider" || a === "--provider")) {
+    // leave mode default (auto) inside script
+  }
+  runNode(args);
 }
 
 function commandCapture(argv) {
@@ -181,6 +217,8 @@ if (!command || command === "--help" || command === "-h") {
   commandDemo(argv);
 } else if (command === "run") {
   commandRun(argv);
+} else if (command === "eval") {
+  commandEval(argv);
 } else if (command === "capture") {
   commandCapture(argv);
 } else if (command === "report") {

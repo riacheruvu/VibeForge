@@ -9,10 +9,11 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
-function usage() {
-  console.log(`VibeCheckBench captured-answer scorer
+import { done, fail, helpHeader, isQuiet } from "./cli-ux.mjs";
 
-Usage:
+function usage() {
+  helpHeader("captured-answer scorer", "Score pasted/local model answers against preference checks (no live model calls).");
+  console.log(`Usage:
   node skills/vibecheckbench/scripts/score-answers.mjs --input answers.json --out reports/results.captured.json
 
 Input shape:
@@ -29,16 +30,18 @@ Input shape:
 Options:
   --input <path>  Captured answers JSON file
   --out <path>    Promptfoo-shaped JSON output path
-  --stdout        Print output instead of writing a file`);
+  --stdout        Print output instead of writing a file
+  --quiet         Minimal output`);
 }
 
 function parseArgs(argv) {
-  const args = { input: "", out: "reports/results.captured.json", stdout: false };
+  const args = { input: "", out: "reports/results.captured.json", stdout: false, quiet: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "--input") { args.input = argv[++i]; continue; }
     if (arg === "--out") { args.out = argv[++i]; continue; }
     if (arg === "--stdout") { args.stdout = true; continue; }
+    if (arg === "--quiet") { args.quiet = true; continue; }
     if (arg === "--help" || arg === "-h") { usage(); process.exit(0); }
   }
   if (!args.input) throw new Error("--input is required.");
@@ -165,7 +168,8 @@ export function toPromptfooRows(rows) {
   });
 }
 
-export function scoreAnswersFile({ input, out = "reports/results.captured.json", stdout = false }) {
+export function scoreAnswersFile({ input, out = "reports/results.captured.json", stdout = false, quiet = false }) {
+  if (quiet) process.env.VIBEFORGE_QUIET = "1";
   const inputPath = path.resolve(process.cwd(), input);
   const { rows: answerRows, metadata } = readAnswers(inputPath);
   const rows = toPromptfooRows(answerRows);
@@ -187,21 +191,37 @@ export function scoreAnswersFile({ input, out = "reports/results.captured.json",
   const outPath = path.resolve(process.cwd(), out);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, output, "utf8");
-  console.log(`Wrote scored results: ${outPath}`);
-  console.log(`Rows: ${rows.length}`);
+  if (isQuiet()) {
+    console.log(`Wrote scored results: ${outPath}`);
+  } else {
+    done({
+      title: "Answers scored",
+      summary: "Deterministic preference checks applied. Chart next for a fit scorecard.",
+      facts: [
+        ["Rows", String(rows.length)],
+        ["Input", input],
+      ],
+      files: [outPath],
+      next: [
+        `Ask: “Use VibeForge. Chart these scored results and explain the weak areas.”`,
+        `Contributor: node skills/vibecheckbench/scripts/chart-results.mjs --input ${out} --out reports/skill-chart.html`,
+      ],
+      trust: ["This scores captured text only — not whether an agent ran tools correctly."],
+    });
+  }
   return { payload, outPath };
 }
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
-  scoreAnswersFile({ input: args.input, out: args.out, stdout: args.stdout });
+  scoreAnswersFile({ input: args.input, out: args.out, stdout: args.stdout, quiet: args.quiet });
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     main();
   } catch (error) {
-    console.error(`Captured-answer scoring error: ${error.message}`);
+    fail("score-answers", error);
     process.exit(1);
   }
 }

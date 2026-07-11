@@ -20,7 +20,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "../../..");
 
 function usage() {
-  console.log(`VibeCheckBench local subject runner
+  console.log(`VibeForge local subject runner
 
 Usage:
   node skills/vibecheckbench/scripts/run-local-subjects.mjs --example complex --provider ollama:chat:qwen3:8b
@@ -180,16 +180,26 @@ async function main() {
     },
     results,
   });
-  console.log(`Wrote captured answers: ${answersPath}`);
-  console.log(`Rows: ${results.length}`);
+  console.log("");
+  console.log("VibeForge · local subject run");
+  console.log("─".repeat(56));
+  console.log(`✓ Captured answers: ${answersPath}`);
+  console.log(`  Rows: ${results.length}`);
+  console.log(`  Providers: ${args.providers.join(", ")}`);
 
-  if (!args.score) return;
+  if (!args.score) {
+    console.log("  Next: score + chart with score-answers.mjs / chart-results.mjs");
+    console.log("");
+    return;
+  }
 
   scoreAnswersFile({ input: args.out, out: args.scoredOut });
   chartResultsFile({ input: args.scoredOut, out: args.chartOut });
+  console.log("  Trust: preference-fit on these answers only — not an IQ leaderboard.");
+  console.log("");
 }
 
 main().catch(error => {
-  console.error(`Local subject runner error: ${error.message}`);
+  console.error(`VibeForge error (local subjects): ${error.message}`);
   process.exit(1);
 });

@@ -70,7 +70,7 @@ const SIGNAL_PATTERNS = [
 ];
 
 function usage() {
-  console.log(`VibeCheckBench conversation-history miner
+  console.log(`VibeForge conversation-history miner
 
 Usage:
   node skills/vibecheckbench/scripts/mine-conversation-history.mjs --input conversations.json
@@ -370,10 +370,14 @@ export function mineConversationFile(options) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const result = mineConversationFile(args);
-  console.log(`Scanned ${result.conversations.length} conversation(s).`);
-  console.log(`Wrote ${result.candidates.length} review candidate(s): ${result.outPath}`);
-  console.log(`Wrote draft tasks: ${result.tasksDir}`);
-  console.log("Review is required before these drafts become benchmark cases.");
+  console.log("");
+  console.log("VibeForge · history mine (local · deterministic · no model calls)");
+  console.log(`✓ Scanned ${result.conversations.length} conversation(s)`);
+  console.log(`  Candidates: ${result.candidates.length} → ${result.outPath}`);
+  console.log(`  Draft tasks: ${result.tasksDir}`);
+  console.log("  Next: review every candidate; promote only public-safe accepts");
+  console.log("  Trust: nothing is benchmark evidence until you approve it");
+  console.log("");
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {

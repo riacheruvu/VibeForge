@@ -5,6 +5,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { draftTestCaseFromPreference } from "./draft-test-case.mjs";
+import { banner, done, fail, helpHeader, skillSay } from "./cli-ux.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..", "..", "..");
@@ -43,17 +44,23 @@ const SUGGESTIONS = {
 };
 
 function usage() {
-  console.log(`VibeCheckBench fit review
+  helpHeader("fit review", "Turn one plain-language preference into local review artifacts (no model calls).");
+  console.log(`Primary UX — ask the skill (do not send users to npm):
+  Use VibeForge. Create a fit review from: "The user prefers concise, high-signal answers."
 
-Usage:
-  node skills/vibecheckbench/scripts/create-fit-review.mjs --preference "The user prefers concise, high-signal answers that preserve necessary nuance."
+Implementation (skill/contributors run this under the hood):
+  node skills/vibecheckbench/scripts/create-fit-review.mjs --preference "…"
   node skills/vibecheckbench/scripts/create-fit-review.mjs --preference-file preference.txt --out vibecheckbench-out
 
 Options:
   --preference <text>       Plain-language preference
   --preference-file <path>  Read the preference from a text file
-  --out <dir>               Output directory. Default: vibecheckbench-out
+  --out <dir>               Output directory (default: vibecheckbench-out)
   --force                   Replace files in an existing output directory
+
+Creates: VIBE_REPORT.md, fit-report.html, eval-cases.json, suggested-config.md,
+         improvement-plan.md, next-experiment.json, provenance.json
+         (run-results.json starts as not_run — no models were called)
 `);
 }
 
@@ -476,15 +483,39 @@ function stableHash(text) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) return usage();
+  banner("Fit review", "Draft-only · no network · review before using as evidence");
   const preferenceText = loadPreferenceText(args);
   const result = createFitReview({ preferenceText, outDir: args.out, force: args.force });
-  console.log(`Created fit review: ${path.relative(ROOT, result.target) || result.target}`);
-  for (const file of result.files) console.log(`- ${path.join(path.relative(process.cwd(), result.target), file)}`);
+  const outRel = path.relative(process.cwd(), result.target) || result.target;
+  done({
+    title: "Fit review ready",
+    summary: "Local draft artifacts only. No models were called and nothing was auto-applied to your prompts.",
+    facts: [
+      ["Preference area", result.draft.preferenceLabel],
+      ["Case title", result.draft.title],
+      ["Output", outRel.replaceAll("\\", "/")],
+      ["Run status", "not_run (attach a real comparison later)"],
+    ],
+    files: result.files.map(file => path.join(result.target, file)),
+    next: [
+      `Open ${path.join(outRel, "VIBE_REPORT.md").replaceAll("\\", "/")} for the plain-English review`,
+      `Open ${path.join(outRel, "fit-report.html").replaceAll("\\", "/")} in a browser`,
+      "Edit the public-safe prompt and expected behavior before treating it as evidence",
+      ...skillSay(
+        "Use VibeForge. Run the offline case studies and explain the gate.",
+        "Use VibeForge. Smoke-test the tooling with the mock providers.",
+        "Use VibeForge. Open the local dashboard.",
+      ),
+    ],
+    trust: [
+      "suggested-config.md is a candidate note only — do not paste into production without a held-out recheck.",
+    ],
+  });
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   main().catch(error => {
-    console.error(`Fit review error: ${error.message}`);
+    fail("fit-review", error);
     process.exit(1);
   });
 }

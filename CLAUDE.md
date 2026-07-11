@@ -4,9 +4,11 @@ This file teaches Claude Code how to work with VibeCheckBench.
 
 ## What this repo does
 
-VibeCheckBench turns user preference profiles into runnable AI regression suites.
+VibeCheckBench measures and improves **personal AI setup fit** (model +
+instructions + memory + tools + routing), not raw model IQ. Working product
+name under consideration: **VibeForge**.
 
-The preferred path is:
+Preferred regression path:
 
 ```text
 preferences.yaml + cases.json + system-prompt.txt
@@ -15,25 +17,43 @@ preferences.yaml + cases.json + system-prompt.txt
   -> promptfoo eval
 ```
 
+**Primary UX:** slash commands `/vibecheckbench` and `/vibeforge` (alias) — the
+skill runs scripts; do not tell the user to run `npm` for normal flows.
+
+Golden path (you execute via skill): demo chart → fit review → offline case
+studies. UX guide: `docs/GETTING-STARTED.md`. Contributor scripts:
+`docs/COMMANDS.md`. Product story: root `README.md`.
+
 The judge-based runner is still available for optional A/B prompt comparison,
 but it should not be treated as the default architecture.
 
 ## Project layout
 
 ```
+README.md                  # Product pitch + 60s path (not a command wall)
+docs/
+  COMMANDS.md              # Full CLI / script reference
+  DIMENSIONS.md            # Preference dimensions with pass/fail
+  ROADMAP.md               # Current / Next / Future
+  index.html               # Static dashboard demo
 skills/vibecheckbench/scripts/
-  export-promptfoo.mjs        # Preferred: Promptfoo config exporter
-  run-vibecheckbench.mjs          # Node runner (llamacpp / openai / anthropic)
-  run-profile.mjs          # Full preference profile runner
-  run-vibecheckbench-local.py     # Python runner (llama-cpp-python, GGUF direct)
-  install-codex-skill.mjs  # Cross-platform installer for ~/.codex/skills/vibecheckbench
-.claude/commands/vibecheckbench.md # Claude Code slash command
-skills/vibecheckbench/agents/openai.yaml # Codex UI metadata
+  export-promptfoo.mjs     # Preferred: Promptfoo config exporter
+  create-fit-review.mjs    # One-preference local fit review
+  optimize-config.mjs      # Iterative setup improvement (held-out gated)
+  run-case-study.mjs       # Offline case-study loop
+  chart-results.mjs        # Fit scorecard HTML
+  run-vibecheckbench.mjs   # Node runner (llamacpp / openai / anthropic)
+  run-profile.mjs          # Full preference profile runner (legacy A/B)
+  run-vibecheckbench-local.py
+  install-codex-skill.mjs
+.claude/commands/vibecheckbench.md
+skills/vibecheckbench/agents/openai.yaml
+bin/vibecheckbench.mjs     # Thin CLI dispatcher
 docker/
-  sandbox.Dockerfile       # Lightweight sandbox - no inference deps
-  gateway.Dockerfile       # OpenClaw gateway
-docker-compose.yml         # OpenClaw + optional llama-server profile
-.env.example               # All config vars documented
+  sandbox.Dockerfile
+  gateway.Dockerfile
+docker-compose.yml
+.env.example
 ```
 
 ## Running a benchmark

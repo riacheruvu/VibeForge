@@ -60,7 +60,7 @@ const TEMPLATES = [
 ];
 
 function usage() {
-  console.log(`VibeCheckBench test-case drafter
+  console.log(`VibeForge test-case drafter
 
 Usage:
   node skills/vibecheckbench/scripts/draft-test-case.mjs --preference "The user prefers concise, high-signal answers that preserve necessary nuance." --stdout
@@ -133,14 +133,23 @@ async function main() {
     const outPath = path.resolve(process.cwd(), args.out);
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     fs.writeFileSync(outPath, payload, "utf8");
-    console.log(`Wrote draft test case: ${path.relative(ROOT, outPath) || outPath}`);
+    if (!args.stdout) {
+      console.log("");
+      console.log("VibeForge · draft test case (review before using as evidence)");
+      console.log(`✓ Wrote: ${path.relative(ROOT, outPath) || outPath}`);
+      console.log(`  Area: ${draft.preferenceLabel}`);
+      console.log("  Network: none · candidate only · edit public-safe prompt before promoting");
+      console.log("");
+    } else {
+      console.error(`Wrote draft test case: ${path.relative(ROOT, outPath) || outPath}`);
+    }
   }
   if (args.stdout || !args.out) process.stdout.write(payload);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   main().catch(error => {
-    console.error(`Draft error: ${error.message}`);
+    console.error(`VibeForge error (draft): ${error.message}`);
     process.exit(1);
   });
 }

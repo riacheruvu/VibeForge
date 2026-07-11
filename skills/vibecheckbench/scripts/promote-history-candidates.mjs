@@ -19,7 +19,7 @@ const DEFAULT_CHECKS = {
 };
 
 function usage() {
-  console.log(`VibeCheckBench candidate promoter
+  console.log(`VibeForge candidate promoter
 
 Usage:
   node skills/vibecheckbench/scripts/promote-history-candidates.mjs --review captures/history-review.json --decisions review-decisions.json
@@ -221,8 +221,13 @@ function main() {
     tasksDir,
     name: args.name,
   });
-  console.log(`Wrote personal-fit project: ${outPath}`);
-  console.log(`Promoted ${result.approved.length} approved case(s): ${tasksDir}`);
+  console.log("");
+  console.log("VibeForge · promote reviewed candidates");
+  console.log(`✓ Project: ${outPath}`);
+  console.log(`  Promoted: ${result.approved.length} case(s) → ${tasksDir}`);
+  console.log("  Next: score baseline vs candidate; gate on held-out before keeping a setup change");
+  console.log("  Trust: only explicitly accepted public-safe rewrites were promoted");
+  console.log("");
   if (!result.project.summary.heldOutCases) {
     console.warn("Warning: no held-out cases were approved. Do not promote config changes yet.");
   }

@@ -313,7 +313,7 @@ function renderChangeSuggestions() {
         <b>Before keeping it</b>
         <span>${escapeHtml(item.review)}</span>
       </div>
-    </article>`).join("") : `<div class="gentle-empty"><b>No suggested changes yet</b><span>Run an evaluation first. VibeCheckBench will turn the result into review notes here.</span></div>`;
+    </article>`).join("") : `<div class="gentle-empty"><b>No suggested changes yet</b><span>Run an evaluation first. VibeForge will turn the result into review notes here.</span></div>`;
 }
 
 function renderEvidence() {
@@ -474,7 +474,7 @@ function renderRecommendation(run) {
       <h3>${escapeHtml(decision.headline)}</h3>
       <p>${escapeHtml(decision.rationale)}</p>
     </div>
-    <div class="next-experiment"><b>Change next: ${escapeHtml(decision.targetSurface || "one part of the setup")}</b><span>${escapeHtml(decision.nextExperiment)}</span><small>VibeCheckBench will not apply the change automatically. Compare the new results before keeping it.</small></div>`;
+    <div class="next-experiment"><b>Change next: ${escapeHtml(decision.targetSurface || "one part of the setup")}</b><span>${escapeHtml(decision.nextExperiment)}</span><small>VibeForge will not apply the change automatically. Compare the new results before keeping it.</small></div>`;
 }
 
 function renderRun(run) {
@@ -568,7 +568,7 @@ async function init() {
     $("#promote-evidence").disabled = true;
     $("#draft-test").disabled = true;
     $("#draft-preview").classList.remove("hidden");
-    $("#draft-preview").innerHTML = "<b>Read-only demo</b><span>Run the dashboard locally or ask Codex to use VibeCheckBench to draft tests from your own preferences.</span>";
+    $("#draft-preview").innerHTML = "<b>Read-only demo</b><span>Run the dashboard locally or ask Codex to use VibeForge to draft tests from your own preferences.</span>";
     $("#manual-case-form").querySelectorAll("input, textarea, select, button").forEach(control => { control.disabled = true; });
     $("#candidate-list").querySelectorAll("textarea, select, button").forEach(control => { control.disabled = true; });
     $("#empty-state").classList.add("hidden");
@@ -677,5 +677,5 @@ async function init() {
 }
 
 init().catch(error => {
-  document.body.innerHTML = `<main><h1>VibeCheckBench could not start</h1><p>${escapeHtml(error.message)}</p></main>`;
+  document.body.innerHTML = `<main><h1>VibeForge could not start</h1><p>${escapeHtml(error.message)}</p></main>`;
 });

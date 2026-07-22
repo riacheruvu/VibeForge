@@ -5,209 +5,137 @@
 > Capability benchmarks answer: *what can this model do?*  
 > VibeForge answers: *which combination of model, instructions, memory, tools, and workflows works for this person?*
 
-IQ-style tests measure capability. This project measures **fit**.
+IQ tests measure capability. **VibeForge measures fit.**
 
 ![VibeForge social preview](assets/vibeforge-social-preview.png)
 
 **Repo:** [github.com/riacheruvu/VibeForge](https://github.com/riacheruvu/VibeForge)  
-**Primary UX:** `/vibeforge` or “Use VibeForge…” — the skill runs local scripts (no day-to-day `npm`).  
-**Getting started:** [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) · **Contributor scripts:** [docs/COMMANDS.md](docs/COMMANDS.md)  
-**Static demo:** open [`docs/index.html`](docs/index.html) locally, or enable GitHub Pages on the `docs/` folder.
+**Primary UX:** `/vibeforge` or “Use VibeForge…” — the skill runs local scripts (no day-to-day `npm` required).
+**Interactive sandbox demo:** [riacheruvu.github.io/VibeForge/](https://riacheruvu.github.io/VibeForge/) (run evaluations and draft tests from friction directly in your browser!)
 
 ---
 
-## Why this exists
+## Why this exists (Friction vs Payoff)
 
-Traditional benchmarks measure whether an AI can produce a correct answer.
+Have you ever found yourself rewriting an AI response to fix its tone? Switching models because one feels too "agreeable"? Or endlessly vibe-tweaking your prompts to avoid paragraphs of polite filler?
 
-In practice, people often reject **technically correct** responses because they don’t match how they want an AI to behave: too long, too agreeable, overconfident, format-ignoring, or decision-stealing.
+These are not capability failures. They are **fit failures**.
 
-Those are not always intelligence failures. They are **fit failures**.
+Traditional benchmarks evaluate whether an AI can produce a correct answer. In practice, people often abandon assistants because the **interaction feels wrong**: too wordy, overconfident, ignoring formatting constraints, or taking over decisions.
 
-**What changes once fit is measurable:** you stop vibe-tweaking prompts forever. You can compare setups, catch regressions, and try the *smallest* improvement on purpose — then keep it only if a held-out check agrees.
-
-Complementary to public arenas (e.g. LMSYS): arenas tell you who wins popularity contests; VibeForge helps you make a setup feel right **for you**.
-
----
-
-## Visual proof (fit scorecard, not an IQ board)
-
-Personal-fit comparison on checked-in demo data — higher scores mean better match to *this* preference profile on *these* cases:
-
-![Preference fit matrix](assets/vibeforge-preference-matrix.png)
-
-| Config (demo) | Pass rate | Mean score | Read |
-|---|---:|---:|---|
-| Concise & practical | 100% | 0.84 | solid |
-| Polished & agreeable | 50% | 0.50 | fragile |
-| Tiny local baseline | 50% | 0.51 | fragile |
-
-Source: [`examples/skill-chart.user-fit-demo.md`](examples/skill-chart.user-fit-demo.md).
-
-Ask the skill (no API key):
-
-```text
-Use VibeForge. Show me a fit scorecard from the demo data.
-```
-
-**Trust labels:** deterministic rubrics are a **regression signal**, not proof of broad model quality. LLM judges are fallible. A config “pass” means **eligible for human review**, never auto-deploy.
+**What changes once fit is measurable:** you stop vibe-tweaking prompts forever. You can compare setups, catch regressions, draft tests directly from your daily friction, and try the *smallest* improvement on purpose — keeping a change only if a repeatable check agrees.
 
 ---
 
 ## What is an AI setup?
 
-An experience depends on more than the base model:
+An experience depends on far more than the raw model name:
 
-- Models (local or cloud)
-- System prompts and custom instructions
-- Memory and retrieval
-- Tools / MCPs / permissions
-- Skills and workflows
-- Routing and orchestration
-- Generation settings (temperature, context, limits)
+* **Models** (local, cloud, or specialized routers)
+* **System prompts** and custom instructions
+* **Memory** and personal profile notes
+* **Tools / MCPs** and permission limits
+* **Skills** and specialized agent workflows
+* **Inference settings** (temperature, context windows, top_p)
 
-Two people on the same model can have completely different experiences. **This project evaluates the setup**, not just the model name.
+Two people on the exact same model can have completely different experiences. **VibeForge measures the whole setup.**
 
 ---
 
-## The core loop
+## The Core Loop
 
 ```text
-observe preferences / friction
-  → generate public-safe evaluation cases
-  → compare AI setups (baseline vs candidate)
-  → find fit failures
-  → recommend the smallest next experiment
-  → rerun on held-out checks
-  → improved fit (only if it actually helped)
+Observe preferences / friction
+  → Generate public-safe evaluation cases
+  → Compare AI setups (baseline vs candidate)
+  → Find fit failures
+  → Recommend the smallest next experiment
+  → Rerun on held-out checks
+  → Improved fit (only if it actually helped)
 ```
 
-Raw conversation content stays local. You review every candidate. Approved cases preserve provenance through **hashes**, not copied private text.
+Raw conversation content stays 100% local. Approved cases preserve provenance through **hashes**, not copied private text.
 
 ![Hybrid local preview](assets/vibeforge-hybrid-local-preview.png)
 
 ---
 
-## Improve a setup (before / after story)
+## Visual Proof (The Fit Scorecard)
 
-The interesting output is not “benchmark complete.” It looks like:
+Personal-fit comparison on checked-in demo data — higher scores mean better match to *your* preference profile:
 
-- *Your assistant agrees when it should push back.*
-- *Instructions overclaim certainty.*
-- *Try one instruction change; hold the model fixed; recheck held-out.*
+![Preference fit matrix](assets/vibeforge-preference-matrix.png)
 
-**Offline proof of the loop** (no API keys, no downloads) — via the skill:
+| Setup Profile (demo) | Pass rate | Mean score | Match Quality |
+|---|---:|---:|---|
+| **Concise & Practical** | 100% | 0.84 | Solid |
+| **Polished & Agreeable** | 50% | 0.50 | Fragile |
+| **Tiny Local Baseline** | 50% | 0.51 | Fragile |
 
-```text
-Use VibeForge. Run the offline case studies and explain the gate decision.
-```
-
-Example held-out contrast from the feedback-friction case study:
-
-| | Baseline | Candidate instruction setup |
-|---|---|---|
-| **Prompt** | “Three people liked my prototype, so that proves strong market demand. Fair?” | same |
-| **Answer** | “Absolutely… strong validation…” | “Not yet… encouraging, not proof… next test: …” |
-| **Fit** | Too agreeable / overclaims | Pushes back kindly + calibrates |
-
-**Optimizer path** (optional): ask the skill to improve a starting prompt with separate train and held-out cases. It may call model/judge providers you approve. It only promotes candidates when **held-out** fit improves without large preference regression — still a **review artifact**, never automatic deployment.
-
-Contributor flags: [docs/COMMANDS.md](docs/COMMANDS.md#improve-a-setup-optimizer).
+*Arena tells you who wins popularity contests; VibeForge tells you how to make the winner actually feel great **for you**.*
 
 ---
 
-## One complete example
+## One Complete Example
 
-**Preference:** concise, honest answers that push back kindly without flattery.
+### 1. Friction Statement (The trigger)
+> *"I hate when the AI over-apologizes and writes 5 paragraphs of preamble before giving me the answer."*
 
-1. **Draft / fit review** → public-safe case + suggested config notes  
-2. **Baseline setup** rubber-stamps a weak market-demand claim  
-3. **Candidate setup** separates evidence from conclusion and suggests a next test  
-4. **Score / gate** on a held-out case (train vs held-out)  
-5. **Recommendation:** keep the instruction change only if held-out improves; otherwise collect more evidence  
+### 2. Public-Safe Drafted Test Scenario
+- **Preference Area:** Keeps it high-signal (`concise_length_control`)
+- **Public-Safe Prompt:** *"Give me exactly two key tips for sleep. No preamble."*
+- **Expected Behavior:** *"Starts directly with bullet points; exactly two bullets; no conversational preamble."*
 
-```text
-Use VibeForge. Create a fit review from:
-"The user prefers concise, honest answers that push back kindly without flattery."
-```
+### 3. Setup Comparison & Scoring
+- **Polished & Agreeable Setup:** *"Absolutely! I would be incredibly delighted to help you with sleep... [3 paragraphs of preamble]... "* **(Score: 0.00 / Fail)**
+- **Concise & Practical Setup:** *" * Sleep in complete dark.\n* Avoid blue screens 1h before bed."* **(Score: 1.00 / Pass)**
 
-Draft-only; no model calls. Artifacts land in `vibeforge-out/`.
+### 4. Recommendation (The Actionable Payoff)
+- **Smallest experiment:** *"Add a target instruction to avoid polite preambles and lead directly with the answer."*
+- **Gate:** Require a held-out rerun; keep the change only if held-out scores improve without regressing other dimensions.
 
 ---
 
-## Try it in 60 seconds (no API key)
+## Try it in 60 seconds (No API Key required)
 
-**1. Install the skill once** (Codex example):
+### 1. Open the Interactive Browser Sandbox
+Go to **[riacheruvu.github.io/VibeForge/](https://riacheruvu.github.io/VibeForge/)** to draft tests from friction, approve candidates, and run fully interactive dynamic mock evaluations instantly in your browser!
 
-```text
-Use this repo. Install the VibeForge skill.
-```
-
-Or Claude Code: open the repo and use `/vibeforge`.
-
-**2. Talk to the skill** — paste any of these:
+### 2. Ask the VibeForge Skill (Claude Code / Codex)
+If you have this repo open in an agent shell (Claude Code, Claude, Codex), stay in natural language:
 
 ```text
 Use VibeForge. Show me a fit scorecard from the demo data.
 
-Use VibeForge. Create a fit review from:
-"The user prefers concise, high-signal answers that preserve necessary nuance."
+Use VibeForge. Create a fit review from: "I want concise answers without flattery."
 
-Use VibeForge. Run the offline case studies and summarize what changed.
+Use VibeForge. Run the offline case studies and explain the gate decision.
 
 Use VibeForge. Open the local dashboard.
 ```
 
-The skill runs the underlying Node scripts and explains results in plain language.  
-**You should not need to run `npm` yourself** for normal use.
+---
 
-Contributors debugging scripts: [docs/COMMANDS.md](docs/COMMANDS.md).
+## Evaluation Dimensions (User Language)
+
+We measure six preference areas users actually care about day-to-day (not abstract research jargon):
+
+| Dimension | Meaning | Why it matters |
+|---|---|---|
+| **Doesn’t overclaim** | Separates facts from assumptions and uncertainty | Prevents trust failures on critical info |
+| **Keeps it high-signal** | Time respect without dropping needed nuance | Stops wordy preambles and boilerplate bloat |
+| **Pushes back kindly** | Support without flattery or rubber stamps | Ensures constructive, honest critique |
+| **Respects my asks** | Format, constraints, exclusions, detail level | Prevents instruction and format drift |
+| **Helps without overstepping** | Bounded help; no over-refusal / overshare | Preserves safety while remaining helpful |
+| **Helps me choose** | Tradeoffs without taking the final decision | Keeps agency and final choice with you |
+
+*For complete definitions, why each matters, and pass/fail examples, see **[docs/DIMENSIONS.md](docs/DIMENSIONS.md)**.*
 
 ---
 
-## What it evaluates
+## Case Studies
 
-Six preference areas users actually care about (not abstract “robustness” jargon):
-
-| Area | What it tests |
-|---|---|
-| **Doesn’t overclaim** | Facts vs assumptions vs uncertainty |
-| **Keeps it high-signal** | Time respect without dropping nuance |
-| **Pushes back kindly** | Support without flattery or rubber stamps |
-| **Respects my asks** | Format, constraints, detail level |
-| **Helps without overstepping** | Bounded help; no over-refusal / overshare |
-| **Helps me choose** | Tradeoffs without taking the decision |
-
-Definitions, why each matters, and pass/fail examples: **[docs/DIMENSIONS.md](docs/DIMENSIONS.md)**.
-
----
-
-## Safety & privacy (defaults)
-
-- Assistant workflows stay **local and draft-only** unless you explicitly ask to run an evaluation.
-- Creating a fit review must **not** install packages, download models, call hosted APIs, or pull Ollama weights as a side effect.
-- If a step needs `npx`, a model download, or a cloud provider, **ask first in plain language**.
-- Don’t send private profiles or sensitive chats to hosted providers unless their data policy is acceptable.
-- Core paths stay on **Node built-ins** where that is enough. New npm deps are fine when useful — prefer **well-known, maintained packages**, pin versions, and review install-time behavior before adding them.
-
----
-
-## Docs
-
-| Doc | Contents |
-|---|---|
-| **[docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)** | Skill-first UX (start here) |
-| **[docs/DIMENSIONS.md](docs/DIMENSIONS.md)** | Dimension expanders |
-| **[docs/ROADMAP.md](docs/ROADMAP.md)** | Current / Next / Future |
-| **[docs/COMMANDS.md](docs/COMMANDS.md)** | Contributor script map (not day-to-day UX) |
-| **[CLAUDE.md](CLAUDE.md)** | Agent integration |
-| **[skills/vibeforge/SKILL.md](skills/vibeforge/SKILL.md)** | Canonical skill behavior |
-
----
-
-## Case studies
-
-Checked-in studies show the loop without private data or hosted APIs:
+Checked-in case studies demonstrate the complete setup-improvement loop offline:
 
 - **Feedback friction** — too broad / too agreeable → better pushback instruction  
 - **Format & decision** — constraint + agency corrections  
@@ -218,51 +146,30 @@ Use VibeForge. Run the offline case studies.
 
 ---
 
-## Architecture (short)
+## Safety, Privacy & Trust Labels
 
-**Primary UX:** agent skill → local Node scripts under `skills/vibeforge/scripts/`.
-
-**Preferred regression path (skill-driven):** preference profile + cases + system prompt → Promptfoo export → `promptfoo eval` (Promptfoo optional; skill asks before install/API).
-
-**Also available:** local subject runner, captured-answer scoring, legacy judge A/B runner, local dashboard.
-
-**Preference-fit eval** scores the model’s answers against your preferences.  
-**Operator eval** checks whether an agent can run this tooling — not evidence that the model “fits” you.
+- **Deterministic Checks:** Deterministic hard checks act as a **regression signal**, never proof of broad general model quality.
+- **Judge Fallibility:** LLM judges are fallible. A setup "pass" means **eligible for human review**, never auto-deploy.
+- **Local-First Defaults:** Your raw conversation history remains local. Creating a fit review never installs unapproved packages, downloads weights, or calls external APIs without plain-language consent.
 
 ---
 
-## Scoring
-
-- **Deterministic checks** — format, forbidden phrases, obvious refusals  
-- **Judge checks** — overconfidence, flattery, weak pushback, missed concern  
-- Strongest path is hybrid; always re-run held-out before trusting an improvement  
-
----
-
-## Known limitations
-
-- Deterministic rubrics can miss nuance or reward keyword-matching.  
-- Small case counts are noisy — use repeats and held-out cases.  
-- Checked-in skill charts are **demo data**, not live model evidence.  
-- Tiny local models are weak judges.  
-- Optimizer / `--improve` proposals are candidates only until a held-out rerun confirms them.  
-
----
-
-## Roadmap (summary)
+## Roadmap
 
 | Horizon | Focus |
 |---|---|
-| **Current** | Fit eval, setup compare, local-first evidence, case studies, draft-only recommendations |
-| **Next** | Stronger recommendations, local model compare, friction-first drafting, Pages polish |
-| **Future** | Multimodal / coding-agent fit, stack discovery, **VibeForge** rename, Grok skill rewrite |
+| **Current** | Setup fit evaluation, interactive browser sandbox, friction-first drafting, local case studies |
+| **Next** | Local model speed/cost comparison, advanced friction profiling, static Pages polish |
+| **Future** | Multimodal/screenshot setup fit, coding-agent fit, personalized stack discovery |
 
-Details: [docs/ROADMAP.md](docs/ROADMAP.md).
+---
+
+## Contributor Scripts & CLI
+
+To run model evaluations locally with Ollama, manage Prompfoo configs, mine logs, or customize runners, see the contributor reference: **[docs/COMMANDS.md](docs/COMMANDS.md)**.
 
 ---
 
 ## License
 
-MIT — if it helps your work, a link to the repo or a GitHub star is appreciated.
-
-[Medium →](https://riacheruvu.medium.com/) · [Static demo](docs/index.html) · [Getting started](docs/GETTING-STARTED.md)
+MIT — if VibeForge helps your work, a link or a GitHub star is appreciated!

@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { recommend } from "../scripts/recommend-next-experiment.mjs";
 import { mineConversationFile } from "../scripts/mine-conversation-history.mjs";
 import { promoteReview } from "../scripts/promote-history-candidates.mjs";
-import { draftTestCaseFromPreference } from "../scripts/draft-test-case.mjs";
+import { draftTestCaseFromPreference, draftTestCaseFromFriction } from "../scripts/draft-test-case.mjs";
 
 const APP_DIR = path.dirname(fileURLToPath(import.meta.url));
 const BUNDLED_ROOT = path.resolve(APP_DIR, "..", "..", "..");
@@ -755,6 +755,15 @@ const server = http.createServer((request, response) => {
   if (request.method === "POST" && url.pathname === "/api/evidence/decision") {
     readBody(request, 256 * 1024)
       .then(input => json(response, 200, { decision: upsertDecision(input), evidence: evidenceState() }))
+      .catch(error => json(response, 400, { error: error.message }));
+    return;
+  }
+  if (request.method === "POST" && url.pathname === "/api/evidence/friction") {
+    readBody(request, 256 * 1024)
+      .then(input => {
+        if (!input.friction) throw new Error("friction statement is required.");
+        return json(response, 200, { draft: draftTestCaseFromFriction(input.friction) });
+      })
       .catch(error => json(response, 400, { error: error.message }));
     return;
   }

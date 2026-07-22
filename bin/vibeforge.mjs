@@ -23,6 +23,7 @@ What this dispatcher is:
 
 Dispatcher commands:
   vibeforge draft "I want concise, honest answers"
+  vibeforge friction "I hate when it starts with Sure I can help..."
   vibeforge demo pushback
   vibeforge eval [--mode mock|auto|ollama|openai|anthropic]
   vibeforge run
@@ -74,6 +75,16 @@ function commandDraft(argv) {
     return;
   }
   runNode([script("draft-test-case.mjs"), "--preference", text, "--stdout"]);
+}
+
+function commandFriction(argv) {
+  const text = preferenceText(argv);
+  if (!text) {
+    console.error("Please provide a friction statement, for example: vibeforge friction \"I hate when it is too wordy\"");
+    process.exitCode = 1;
+    return;
+  }
+  runNode([script("draft-test-case.mjs"), "--friction", text, "--stdout"]);
 }
 
 function commandDemo(argv) {
@@ -213,6 +224,8 @@ if (!command || command === "--help" || command === "-h") {
   usage();
 } else if (command === "draft") {
   commandDraft(argv);
+} else if (command === "friction") {
+  commandFriction(argv);
 } else if (command === "demo") {
   commandDemo(argv);
 } else if (command === "run") {

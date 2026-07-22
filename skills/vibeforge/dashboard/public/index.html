@@ -139,17 +139,27 @@
         </section>
         <section class="section-block">
           <div class="section-heading">
-            <div><p class="eyebrow">MAKE A TEST</p><h2>Start with one preference</h2></div>
-            <p>Describe the behavior you want. VibeForge drafts a public-safe test for you to review — nothing is added without your approval.</p>
+            <div><p class="eyebrow">MAKE A TEST</p><h2>Draft from friction or preference</h2></div>
+            <p>Tell VibeForge what frustrates you or describe the behavior you want. VibeForge drafts a public-safe test case for you to review and add to your set — no private details, local only.</p>
           </div>
           <div class="guided-builder">
-            <div class="builder-prompt">
-              <label>Preference in plain language
-                <textarea id="plain-preference" rows="3">The user prefers concise, high-signal answers that preserve necessary nuance.</textarea>
-              </label>
-              <button id="draft-test" class="primary-button" type="button">Draft a test</button>
+            <div class="builder-prompt" style="display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+              <div class="builder-panel" style="border: 1px solid var(--line); padding: 16px; border-radius: 12px; background: var(--panel);">
+                <div class="label" style="color: var(--coral); margin-bottom: 8px;"><b>Option A: Start from friction (I hate when...)</b></div>
+                <label>What makes you frustrated with AI?
+                  <textarea id="plain-friction" rows="3" style="width: 100%; margin-top: 8px;" placeholder="e.g., I hate when the AI over-apologizes and writes 5 paragraphs of preamble before giving me the answer."></textarea>
+                </label>
+                <button id="draft-friction-test" class="primary-button" style="margin-top: 12px; background: var(--coral); border-color: var(--coral);" type="button">Analyze & Draft from Friction</button>
+              </div>
+              <div class="builder-panel" style="border: 1px solid var(--line); padding: 16px; border-radius: 12px; background: var(--panel);">
+                <div class="label" style="color: var(--teal); margin-bottom: 8px;"><b>Option B: Start from preference (I prefer...)</b></div>
+                <label>Describe the behavior you want
+                  <textarea id="plain-preference" rows="3" style="width: 100%; margin-top: 8px;">The user prefers concise, high-signal answers that preserve necessary nuance.</textarea>
+                </label>
+                <button id="draft-test" class="primary-button" style="margin-top: 12px;" type="button">Draft from Preference</button>
+              </div>
             </div>
-            <div id="draft-preview" class="draft-preview hidden">
+            <div id="draft-preview" class="draft-preview hidden" style="margin-top: 16px;">
               <b>Draft ready for review</b>
               <span>Edit anything below, then add it to your test set.</span>
             </div>
